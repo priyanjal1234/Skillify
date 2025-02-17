@@ -7,6 +7,7 @@ const app = express();
 
 // Route Imports 
 import userRouter from './routes/user.router.js'
+import errorHandler from "./utils/errorHandler.js";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,5 +21,7 @@ app.use(
 
 
 app.use("/api/users",userRouter)
+
+app.use(errorHandler)
 
 export default app;
