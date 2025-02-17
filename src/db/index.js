@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
+import { mongodbUri } from "../constants.js";
 
 async function db() {
     try {
-        let conn = await mongoose.connect(process.env.MONGODB_URI)
+        let conn = await mongoose.connect(mongodbUri)
         console.log(`Connected to ${conn.connection.host}`)
     } catch (error) {
         if(error instanceof Error) {
