@@ -3,8 +3,8 @@ import ApiError from './ApiError.js';
 function errorHandler(err, req, res, next) {
   if (err instanceof ApiError) {
     res.status(err.statusCode).json({
-      success: err.success,
       message: err.message,
+      success: err.success,
     });
   } else {
     res.status(500).json({
@@ -15,4 +15,4 @@ function errorHandler(err, req, res, next) {
   }
 }
 
-export default errorHandler
+export default errorHandler;
