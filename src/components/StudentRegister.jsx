@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import FormField from "./FormField";
 import SubmitBtn from "./SubmitBtn";
 import { BookOpen } from "lucide-react";
@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 
 const StudentRegister = () => {
   const { darkMode } = useContext(ThemeDataContext);
+  let navigate = useNavigate()
 
   const { values, errors, handleChange } = useFormHandler(
     { name: "", email: "", password: "",role: "student" },
@@ -25,9 +26,10 @@ const StudentRegister = () => {
 
     try {
       await userService.createAccount(values);
+      toast.success("Check Your Email For Email Verification")
+      navigate("/verify-email")
     } catch (error) {
-      console.log(error)
-      
+      console.log(error)    
     }
   }
 
