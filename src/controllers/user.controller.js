@@ -5,6 +5,7 @@ import nodemailer from 'nodemailer';
 import generateVerificationCode from '../utils/generateVerificationCode.js';
 import generateToken from '../utils/generateToken.js';
 import crypto from 'crypto';
+import sendMail from '../utils/sendEmail.js';
 
 const registerUser = async function (req, res, next) {
   try {
@@ -34,26 +35,7 @@ const registerUser = async function (req, res, next) {
       verificationCodeExpiry,
     });
 
-    let transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.USER_EMAIL,
-        pass: process.env.USER_PASS,
-      },
-    });
-
-    let mailOptions = {
-      from: 'Learnify Support',
-      to: email,
-      subject: 'Verify your email for Learnify',
-      html: `<p>Hello ${name},</p>
-                 <p>Thank you for registering with Learnify! Please verify your email address with the OTP given below:</p>
-                 <p>Verification Code: ${verificationCode}</p>
-                 <p>This Code is Valid for 10 minutes</p>
-                 <p>If you did not register for Learnify, please ignore this email.</p>`,
-    };
-
-    await transporter.sendMail(mailOptions);
+    await sendMail(user.name, verificationCode,email);
 
     return res
       .status(201)
@@ -63,11 +45,46 @@ const registerUser = async function (req, res, next) {
   }
 };
 
+const resendCode = async function (req, res, next) {
+  try {
+    let { email } = req.body;
+
+    if (!email) {
+      return next(new ApiError(400, 'Write the Email in the input box'));
+    }
+
+    let user = await userModel.findOne({ email });
+    if (!user) {
+      return next(new ApiError(404, 'User with this email not found'));
+    }
+
+    let newVerificationCode = generateVerificationCode();
+    user.verificationCode = newVerificationCode;
+    user.verificationCodeExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    await user.save();
+
+    console.log(user);
+
+    await sendMail(user.name, newVerificationCode, email);
+
+    return res
+      .status(200)
+      .json({ message: 'Check Your Email for Verification Code' });
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error resending code'
+      )
+    );
+  }
+};
+
 const verifyEmail = async function (req, res, next) {
   try {
-    let { email, code } = req.body;
+    let { email, verificationCode } = req.body;
 
-    if (!email || !code) {
+    if (!email || !verificationCode) {
       return next(
         new ApiError(400, 'Both Email Address and Code are required')
       );
@@ -77,13 +94,14 @@ const verifyEmail = async function (req, res, next) {
     if (!user) {
       return next(new ApiError(404, 'User with this email not found'));
     }
-
+    
     if (
-      code === user.verificationCode &&
+      Number(verificationCode) === user.verificationCode &&
       user.verificationCodeExpiry > Date.now()
     ) {
       let token = generateToken(user.name, user.email);
       res.cookie('token', token);
+      user.isVerified = true
       user.verificationCode = undefined;
       user.verificationCodeExpiry = undefined;
       await user.save();
@@ -273,6 +291,7 @@ const resetPassword = async function (req, res, next) {
 export {
   registerUser,
   verifyEmail,
+  resendCode,
   loginUser,
   getLoggedinUser,
   logoutUser,

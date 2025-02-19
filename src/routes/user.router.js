@@ -5,6 +5,7 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  resendCode,
   resetPassword,
   updateLoggedinUser,
   verifyEmail,
@@ -17,6 +18,8 @@ const router = express.Router();
 router.route('/register').post(asyncHandler(registerUser));
 
 router.route('/verify-email').post(asyncHandler(verifyEmail));
+
+router.route("/resend-code").post(asyncHandler(resendCode))
 
 router.route('/login').post(asyncHandler(loginUser));
 
