@@ -5,8 +5,10 @@ import Features from "../components/Features";
 import CalltoAction from "../components/CalltoAction";
 import { ThemeDataContext } from "../context/ThemeContext";
 
+ 
 const Home = () => {
   const {darkMode} = useContext(ThemeDataContext)
+  
   return (
     <div
       className={`min-h-screen ${

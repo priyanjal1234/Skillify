@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import FormField from "./FormField";
 import SubmitBtn from "./SubmitBtn";
@@ -13,23 +13,36 @@ import userService from "../services/User";
 import { toast } from "react-toastify";
 
 const StudentRegister = () => {
+  const [loading, setloading] = useState(false);
   const { darkMode } = useContext(ThemeDataContext);
-  let navigate = useNavigate()
+  let navigate = useNavigate();
 
   const { values, errors, handleChange } = useFormHandler(
-    { name: "", email: "", password: "",role: "student" },
+    { name: "", email: "", password: "", role: "student" },
     registerSchema
   );
 
   async function handleRegisterSubmit(e) {
     e.preventDefault();
 
+    setloading(true);
+    const parsedData = registerSchema.safeParse(values);
+
+    if (!parsedData.success) {
+      setloading(false);
+      const firstError = parsedData.error.issues[0]?.message;
+      toast.error(firstError);
+      return;
+    }
+
     try {
       await userService.createAccount(values);
-      toast.success("Check Your Email For Email Verification")
-      navigate("/verify-email")
+      toast.success("Check Your Email For Email Verification");
+      setloading(false);
+      navigate("/verify-email");
     } catch (error) {
-      console.log(error)    
+      setloading(false);
+      toast.error(error?.response?.data?.message || "Error Registering User");
     }
   }
 
@@ -57,7 +70,7 @@ const StudentRegister = () => {
                 />
               </div>
             </div>
-            <h2 className="text-4xl font-extrabold mb-2">Join EduLearn</h2>
+            <h2 className="text-4xl font-extrabold mb-2">Join Learnify</h2>
             <p className="text-lg text-gray-400">
               Start your learning journey today
             </p>
@@ -105,7 +118,7 @@ const StudentRegister = () => {
                 error={errors.password}
               />
               {/* Register Button */}
-              <SubmitBtn btnText="Create Account" />
+              <SubmitBtn loading={loading} btnText="Create Account" />
             </form>
 
             {/* Login Link */}

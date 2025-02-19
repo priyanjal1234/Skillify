@@ -19,7 +19,6 @@ const FormField = ({
         <Icon className="absolute left-3 top-3.5 h-5 w-5 text-indigo-500" />
         <input
           type={type}
-          required
           className={`pl-10 w-full h-12 border-2 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
             darkMode
               ? "border-gray-600 bg-gray-700 text-white"

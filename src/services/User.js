@@ -15,6 +15,28 @@ class UserService {
       throw error;
     }
   }
+
+  async verifyEmail(verifyData) {
+    try {
+      return await this.api.post(`${this.baseUrl}/verify-email`, verifyData, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async resendCode(email) {
+    try {
+      return await this.api.post(
+        `${this.baseUrl}/resend-code`,
+        { email },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 let userService = new UserService();
