@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { Mail, MapPin, Calendar, User, LogOut, Edit } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,10 +8,27 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { setLoggedin } from "../redux/reducers/UserReducer";
 import { ThemeDataContext } from "../context/ThemeContext";
+import { getUserLocation } from "../utils/getUserLocation";
+import { getAddressFromCoordinates } from "../utils/convertToRealLocation";
 
 const Profile = () => {
   let { currentUser } = useSelector((state) => state.user);
   let { darkMode } = useContext(ThemeDataContext);
+  const [location, setlocation] = useState('');
+
+  useEffect(() => {
+    async function fetchLocation() {
+      try {
+        let { latitude, longitude } = await getUserLocation();
+        let {address} = await getAddressFromCoordinates(latitude, longitude);
+        setlocation(address);
+      } catch (error) {
+        setlocation({ street: "Unknown", city: "Unknown", state: "Unknown" });
+      }
+    }
+
+    fetchLocation();
+  }, []);
 
   let dispatch = useDispatch();
   let navigate = useNavigate();
@@ -28,12 +45,20 @@ const Profile = () => {
   }
 
   return (
-    <div className={darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}>
+    <div
+      className={
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
+      }
+    >
       <Navbar />
 
       <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className={`rounded-2xl shadow-xl overflow-hidden ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+          <div
+            className={`rounded-2xl shadow-xl overflow-hidden ${
+              darkMode ? "bg-gray-800" : "bg-white"
+            }`}
+          >
             {/* Header/Cover Image */}
             <div className="h-32 bg-gradient-to-r from-indigo-600 to-purple-600"></div>
 
@@ -66,7 +91,9 @@ const Profile = () => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <MapPin className="h-5 w-5 text-indigo-500" />
-                    <span>{currentUser?.location}</span>
+                    <span>
+                      {location}
+                    </span>
                   </div>
                 </div>
 
@@ -82,7 +109,9 @@ const Profile = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <User className="h-5 w-5 text-indigo-500" />
-                      <span className="font-semibold">{String(currentUser?.role).toUpperCase()}</span>
+                      <span className="font-semibold">
+                        {String(currentUser?.role).toUpperCase()}
+                      </span>
                     </div>
                   </div>
                 </div>
