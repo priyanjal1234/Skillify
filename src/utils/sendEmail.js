@@ -10,14 +10,14 @@ async function sendMail(name,verificationCode,email) {
   });
 
   let mailOptions = {
-    from: 'Learnify Support',
+    from: 'Skillify Support',
     to: email,
     subject: 'Verify your email for Learnify',
     html: `<p>Hello ${name},</p>
-                     <p>Thank you for registering with Learnify! Please verify your email address with the OTP given below:</p>
+                     <p>Thank you for registering with Skillify! Please verify your email address with the OTP given below:</p>
                      <p>Verification Code: ${verificationCode}</p>
                      <p>This Code is Valid for 10 minutes</p>
-                     <p>If you did not register for Learnify, please ignore this email.</p>`,
+                     <p>If you did not register for Skillify, please ignore this email.</p>`,
   };
 
   await transporter.sendMail(mailOptions);

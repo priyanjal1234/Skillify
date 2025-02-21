@@ -115,31 +115,41 @@ const verifyEmail = async function (req, res, next) {
 
 const loginUser = async function (req, res, next) {
   try {
+    console.log(req.body);
     let { email, password, role } = req.body;
 
-    if (!email || !password) {
-      return next(new ApiError(400, 'Both Email and Password are required'));
+    if (!email || !password || !role) {
+      return next(new ApiError(400, 'Email, Password, and Role are required'));
     }
+
+    email = email.trim().toLowerCase(); // Normalize email
+    role = role.trim().toLowerCase(); // Normalize role
 
     let user = await userModel.findOne({ email });
     if (!user) {
       return next(new ApiError(404, 'You are not registered'));
     }
 
-    if (user.role !== role) {
+    let isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return next(new ApiError(401, 'Invalid Credentials'));
+    }
+
+    if (user.role.toLowerCase() !== role) {
       return next(
         new ApiError(403, `${user.role}s should login from their login page`)
       );
     }
 
-    let isMatch = await bcrypt.compare(password, user.password);
-    if (isMatch) {
-      let token = generateToken(user.name, user.email);
-      res.cookie('token', token);
-      return res.status(200).json({ message: 'Login Success' });
-    } else {
-      return next(new ApiError(401, 'Invalid Credentials'));
-    }
+    let token = generateToken(user.name, user.email);
+
+    // Set cookie with security options
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    return res.status(200).json({ message: 'Login Success', token });
   } catch (error) {
     return next(new ApiError(500, error.message || 'Error Logging in'));
   }
