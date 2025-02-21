@@ -31,11 +31,9 @@ const StudentLogin = () => {
   async function handleLoginSubmit(e) {
     e.preventDefault();
 
-    setvalues(() => {
-      let newValues = {...values}
-      newValues.role = "student"
-      return newValues
-    })
+    let newValues = {...values}
+    newValues.role = "student"
+    setvalues(newValues)
 
     setloading(true);
     const parsedData = loginSchema.safeParse(values);
@@ -48,7 +46,7 @@ const StudentLogin = () => {
     }
 
     try {
-      await userService.loginAccount(values);
+      await userService.loginAccount(newValues);
       setloading(false);
       toast.success("Login Success");
       dispatch(setLoggedin(true));

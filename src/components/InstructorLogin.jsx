@@ -26,11 +26,9 @@ const InstructorLogin = () => {
   async function handleLoginSubmit(e) {
     e.preventDefault();
 
-    setvalues(() => {
-      let newValues = { ...values };
-      newValues.role = "instructor";
-      return newValues;
-    });
+    let newValues = { ...values };
+    newValues.role = "instructor";
+    setvalues(newValues);
 
     const parsedData = loginSchema.safeParse(values);
 
@@ -41,7 +39,7 @@ const InstructorLogin = () => {
     }
 
     try {
-      await userService.loginAccount(values);
+      await userService.loginAccount(newValues);
       toast.success("Login Success");
       dispatch(setLoggedin(true));
       navigate("/");
@@ -151,7 +149,7 @@ const InstructorLogin = () => {
                   to="/register/instructor"
                   className="mt-4 inline-block text-indigo-600 hover:text-indigo-500 font-medium"
                 >
-                  Create an account
+                  Sign Up as Instructor
                 </Link>
                 <Link
                   to="/login/student"
@@ -161,18 +159,6 @@ const InstructorLogin = () => {
                 </Link>
               </div>
             </div>
-          </div>
-
-          {/* Terms and Conditions */}
-          <div className="mt-6 text-center text-sm">
-            By signing in, you agree to our{" "}
-            <a href="#" className="text-indigo-600 hover:text-indigo-500">
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            <a href="#" className="text-indigo-600 hover:text-indigo-500">
-              Privacy Policy
-            </a>
           </div>
         </div>
       </div>

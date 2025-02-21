@@ -65,6 +65,30 @@ class UserService {
       throw error;
     }
   }
+
+  async forgotPassword(email) {
+    try {
+      return await this.api.post(
+        `${this.baseUrl}/forgot-password`,
+        { email },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async resetPassword(password, token) {
+    try {
+      return await this.api.post(
+        `${this.baseUrl}/reset-password/${token}`,
+        { password },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 let userService = new UserService();

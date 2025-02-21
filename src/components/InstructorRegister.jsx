@@ -124,7 +124,7 @@ const InstructorRegister = () => {
                 error={errors.password}
               />
               {/* Register Button */}
-              <SubmitBtn btnText="Create Account" />
+              <SubmitBtn btnText="Create Account" loading={loading} />
             </form>
 
             {/* Login Link */}
