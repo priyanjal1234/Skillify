@@ -25,6 +25,7 @@ function useFormHandler(initials, validationSchema) {
 
   return {
     values,
+    setvalues,
     handleChange,
     errors,
   };

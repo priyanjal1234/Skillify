@@ -1,14 +1,37 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Features from "../components/Features";
 import CalltoAction from "../components/CalltoAction";
 import { ThemeDataContext } from "../context/ThemeContext";
+import { useQuery } from "@tanstack/react-query";
+import userService from "../services/User";
+import { useDispatch } from "react-redux";
+import { setCurrentUser, setLoggedin } from "../redux/reducers/UserReducer";
 
- 
 const Home = () => {
-  const {darkMode} = useContext(ThemeDataContext)
-  
+  const { darkMode } = useContext(ThemeDataContext);
+  let dispatch = useDispatch();
+
+  async function fetchLoggedinUser() {
+    try {
+      let fetchLoggedinUserRes = await userService.getLoggedinUser();
+      dispatch(
+        setCurrentUser(
+          fetchLoggedinUserRes.status === 200 ? fetchLoggedinUserRes.data : {}
+        )
+      );
+      return fetchLoggedinUserRes.data;
+    } catch (error) {
+      console.log(error?.response?.data?.message);
+    }
+  }
+
+  const { data } = useQuery({
+    queryKey: ["loggedinUser"],
+    queryFn: fetchLoggedinUser,
+  });
+
   return (
     <div
       className={`min-h-screen ${

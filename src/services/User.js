@@ -37,6 +37,34 @@ class UserService {
       throw error;
     }
   }
+
+  async loginAccount(loginData) {
+    try {
+      return await this.api.post(`${this.baseUrl}/login`, loginData, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async logoutAccount() {
+    try {
+      await this.api.get(`${this.baseUrl}/logout`, { withCredentials: true });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getLoggedinUser() {
+    try {
+      return await this.api.get(`${this.baseUrl}/profile`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 let userService = new UserService();

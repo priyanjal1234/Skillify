@@ -1,12 +1,24 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BookOpen, Sun, Moon } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { getRandomColor, hslToRgb } from "../utils/generateRandomColor";
 
 const Navbar = () => {
   const { darkMode, setDarkMode } = useContext(ThemeDataContext);
-  let { isLoggedin } = useSelector((state) => state.user);
+  let { isLoggedin, currentUser } = useSelector((state) => state.user);
+  const [color, setcolor] = useState("");
+
+  useEffect(() => {
+    let randomColor = getRandomColor();
+    let rgbColor = hslToRgb(
+      randomColor.hue,
+      randomColor.saturation,
+      randomColor.lightness
+    );
+    setcolor(rgbColor);
+  }, []);
 
   return (
     <nav className={`shadow-lg ${darkMode ? "bg-gray-800" : "bg-white"}`}>
@@ -18,13 +30,14 @@ const Navbar = () => {
                 darkMode ? "text-indigo-400" : "text-indigo-600"
               }`}
             />
-            <span
+            <Link
+              to={'/'}
               className={`ml-2 text-xl font-bold ${
                 darkMode ? "text-white" : "text-gray-800"
               }`}
             >
-              Learnify
-            </span>
+              Skillify
+            </Link>
           </div>
           <div className="flex items-center space-x-4">
             <button
@@ -49,7 +62,13 @@ const Navbar = () => {
                   to={"/register/student"}
                   className={`text-sm ${
                     window.location.href ===
-                    "http://localhost:5173/register/student"
+                      "http://localhost:5173/register/student" ||
+                    window.location.href ===
+                      "http://localhost:5173/login/student" ||
+                    window.location.href ===
+                      "http://localhost:5173/register/instructor" ||
+                    window.location.href ===
+                      "http://localhost:5173/login/instructor"
                       ? "hidden"
                       : "block"
                   } font-medium ${
@@ -65,7 +84,13 @@ const Navbar = () => {
                   to={"/login/student"}
                   className={`text-sm ${
                     window.location.href ===
-                    "http://localhost:5173/register/student"
+                      "http://localhost:5173/register/student" ||
+                    window.location.href ===
+                      "http://localhost:5173/login/student" ||
+                    window.location.href ===
+                      "http://localhost:5173/register/instructor" ||
+                    window.location.href ===
+                      "http://localhost:5173/login/instructor"
                       ? "hidden"
                       : "block"
                   } font-medium ${
@@ -77,7 +102,15 @@ const Navbar = () => {
                   Login
                 </Link>
               </>
-            ) : <div>Profile</div>}
+            ) : (
+              <Link
+                to={'/profile'}
+                style={{ backgroundColor: color }}
+                className="w-[40px] h-[40px] cursor-pointer  text-lg flex items-center justify-center rounded-full"
+              >
+                {String(currentUser?.name).split("")[0]}
+              </Link>
+            )}
           </div>
         </div>
       </div>

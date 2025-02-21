@@ -70,7 +70,7 @@ const StudentRegister = () => {
                 />
               </div>
             </div>
-            <h2 className="text-4xl font-extrabold mb-2">Join Learnify</h2>
+            <h2 className="text-4xl font-extrabold mb-2">Join Skillify</h2>
             <p className="text-lg text-gray-400">
               Start your learning journey today
             </p>
@@ -144,7 +144,7 @@ const StudentRegister = () => {
                 </div>
               </div>
               <Link
-                to="/login"
+                to="/login/student"
                 className={`mt-4 inline-block font-medium ${
                   darkMode
                     ? "text-indigo-400 hover:text-indigo-300"

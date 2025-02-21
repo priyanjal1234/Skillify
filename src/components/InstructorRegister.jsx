@@ -1,15 +1,55 @@
-import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import FormField from "./FormField";
 import { BookOpen } from "lucide-react";
 import Navbar from "./Navbar";
 import { ThemeDataContext } from "../context/ThemeContext";
-import { User,Mail,Lock } from "lucide-react";
+import { User, Mail, Lock } from "lucide-react";
 import SubmitBtn from "./SubmitBtn";
 import Terms from "./Terms";
+import useFormHandler from "../hooks/useFormHandler";
+import registerSchema from "../schemas/registerSchema";
+import { toast } from "react-toastify";
+import userService from "../services/User";
+import { useDispatch } from "react-redux";
+import { setLoggedin } from "../redux/reducers/UserReducer";
 
 const InstructorRegister = () => {
   const { darkMode } = useContext(ThemeDataContext);
+  const [loading, setloading] = useState(false);
+
+  let dispatch = useDispatch();
+  let navigate = useNavigate();
+
+  const { values, handleChange, errors } = useFormHandler(
+    { name: "", email: "", password: "", role: "instructor" },
+    registerSchema
+  );
+
+  async function handleRegisterSubmit(e) {
+    e.preventDefault();
+
+    setloading(true);
+    const parsedResult = registerSchema.safeParse(values);
+    if (!parsedResult.success) {
+      setloading(false);
+      const firstError = parsedResult.error.issues[0]?.message;
+      toast.error(firstError);
+      return;
+    }
+
+    try {
+      await userService.createAccount(values);
+      toast.success("Check your email for verification");
+      setloading(false);
+      dispatch(setLoggedin(true));
+      navigate("/verify-email");
+    } catch (error) {
+      setloading(false);
+      toast.error(error?.response?.data?.message);
+    }
+  }
+
   return (
     <div
       className={`${
@@ -34,9 +74,11 @@ const InstructorRegister = () => {
                 />
               </div>
             </div>
-            <h2 className="text-4xl font-extrabold mb-2">Join EduLearn</h2>
+            <h2 className="text-4xl font-extrabold mb-2">
+              Join Skillify as Instructor
+            </h2>
             <p className="text-lg text-gray-400">
-              Start your learning journey today
+              Start your teaching journey today
             </p>
           </div>
 
@@ -45,13 +87,17 @@ const InstructorRegister = () => {
               darkMode ? "bg-gray-800" : "bg-white"
             }`}
           >
-            <form className="space-y-6">
+            <form onSubmit={handleRegisterSubmit} className="space-y-6">
               {/* Full Name Field */}
               <FormField
                 label="Full Name"
                 icon={User}
                 type="text"
+                name="name"
+                value={values.name}
+                handleChange={handleChange}
                 placeholder="John Doe"
+                error={errors.name}
               />
 
               {/* Email Field */}
@@ -59,7 +105,11 @@ const InstructorRegister = () => {
                 label="Email Address"
                 icon={Mail}
                 type="email"
+                name="email"
+                value={values.email}
+                handleChange={handleChange}
                 placeholder="you@example.com"
+                error={errors.email}
               />
 
               {/* Password Field */}
@@ -67,7 +117,11 @@ const InstructorRegister = () => {
                 label="Password"
                 icon={Lock}
                 type="password"
+                name="password"
+                value={values.password}
+                handleChange={handleChange}
                 placeholder="••••••••"
+                error={errors.password}
               />
               {/* Register Button */}
               <SubmitBtn btnText="Create Account" />
@@ -96,7 +150,7 @@ const InstructorRegister = () => {
                 </div>
               </div>
               <Link
-                to="/login"
+                to="/login/instructor"
                 className={`mt-4 inline-block font-medium ${
                   darkMode
                     ? "text-indigo-400 hover:text-indigo-300"
@@ -105,7 +159,16 @@ const InstructorRegister = () => {
               >
                 Sign in to your account
               </Link>
-              <Link to="/" />
+              <Link
+                className={`mt-4 block font-medium ${
+                  darkMode
+                    ? "text-indigo-400 hover:text-indigo-300"
+                    : "text-indigo-600 hover:text-indigo-500"
+                }`}
+                to="/register/student"
+              >
+                Sign Up as Student
+              </Link>
             </div>
           </div>
           <Terms />
