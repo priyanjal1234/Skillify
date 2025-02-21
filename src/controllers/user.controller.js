@@ -18,9 +18,10 @@ const registerUser = async function (req, res, next) {
     let user = await userModel.findOne({ email });
 
     if (user) {
-      return next(new ApiError(409, 'You are already registered'));
+      return next(
+        new ApiError(409, 'User with this email is already registered')
+      );
     }
-
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
     const verificationCode = generateVerificationCode();
@@ -35,7 +36,7 @@ const registerUser = async function (req, res, next) {
       verificationCodeExpiry,
     });
 
-    await sendMail(user.name, verificationCode,email);
+    await sendMail(user.name, verificationCode, email);
 
     return res
       .status(201)
@@ -62,8 +63,6 @@ const resendCode = async function (req, res, next) {
     user.verificationCode = newVerificationCode;
     user.verificationCodeExpiry = new Date(Date.now() + 10 * 60 * 1000);
     await user.save();
-
-    console.log(user);
 
     await sendMail(user.name, newVerificationCode, email);
 
@@ -94,14 +93,14 @@ const verifyEmail = async function (req, res, next) {
     if (!user) {
       return next(new ApiError(404, 'User with this email not found'));
     }
-    
+
     if (
       Number(verificationCode) === user.verificationCode &&
       user.verificationCodeExpiry > Date.now()
     ) {
       let token = generateToken(user.name, user.email);
       res.cookie('token', token);
-      user.isVerified = true
+      user.isVerified = true;
       user.verificationCode = undefined;
       user.verificationCodeExpiry = undefined;
       await user.save();
@@ -116,7 +115,7 @@ const verifyEmail = async function (req, res, next) {
 
 const loginUser = async function (req, res, next) {
   try {
-    let { email, password } = req.body;
+    let { email, password, role } = req.body;
 
     if (!email || !password) {
       return next(new ApiError(400, 'Both Email and Password are required'));
@@ -125,6 +124,12 @@ const loginUser = async function (req, res, next) {
     let user = await userModel.findOne({ email });
     if (!user) {
       return next(new ApiError(404, 'You are not registered'));
+    }
+
+    if (user.role !== role) {
+      return next(
+        new ApiError(403, `${user.role}s should login from their login page`)
+      );
     }
 
     let isMatch = await bcrypt.compare(password, user.password);
