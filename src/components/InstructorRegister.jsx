@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import FormField from "./FormField";
 import { BookOpen } from "lucide-react";
@@ -50,10 +50,9 @@ const InstructorRegister = () => {
     }
   }
 
-  function handleGoogleLogin() {
+  async function handleGoogleLogin() {
     try {
       window.open("http://localhost:3000/api/users/google", "_self");
-      dispatch(setLoggedin(true));
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Error logging with google"
@@ -140,7 +139,12 @@ const InstructorRegister = () => {
               <button
                 type="button"
                 onClick={handleGoogleLogin}
-                className="w-full h-12 mb-8 flex items-center justify-center space-x-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200"
+                className={`w-full h-12 mb-8 flex items-center justify-center space-x-3 border-2 rounded-xl transition duration-200 
+    ${
+      darkMode
+        ? "border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
+        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+    }`}
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path
@@ -160,8 +164,8 @@ const InstructorRegister = () => {
                     fill="#EA4335"
                   />
                 </svg>
-                <span className="text-gray-700 dark:text-gray-300 font-medium">
-                  Continue with Google
+                <span className="font-medium">
+                  {darkMode ? "Continue with Google" : "Continue with Google"}
                 </span>
               </button>
             </form>

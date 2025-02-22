@@ -6,46 +6,50 @@ import CalltoAction from "../components/CalltoAction";
 import { ThemeDataContext } from "../context/ThemeContext";
 import { useQuery } from "@tanstack/react-query";
 import userService from "../services/User";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser, setLoggedin } from "../redux/reducers/UserReducer";
 
 const Home = () => {
   const { darkMode } = useContext(ThemeDataContext);
-  let dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const { isLoggedin } = useSelector((state) => state.user);
 
-  async function fetchLoggedinUser() {
-    try {
-      let fetchLoggedinUserRes = await userService.getLoggedinUser();
-      dispatch(
-        setCurrentUser(
-          fetchLoggedinUserRes.status === 200 ? fetchLoggedinUserRes.data : {}
-        )
-      );
-      return fetchLoggedinUserRes.data;
-    } catch (error) {
-      console.log(error?.response?.data?.message);
-    }
-  }
+  useEffect(() => {
+    const cookie = document.cookie;
+    dispatch(setLoggedin(!!cookie));
+  }, [dispatch]);
 
-  async function fetchGoogleLoggedinUser() {
-    try {
-      let googleUserRes = await userService.getGoogleUser();
-      return googleUserRes.data;
-    } catch (error) {
-      console.log(error?.response?.data?.message);
-    }
-  }
-
-  const query1 = useQuery({
+  const { data: loggedInUser } = useQuery({
     queryKey: ["loggedinUser"],
-    queryFn: fetchLoggedinUser,
+    queryFn: async () => {
+      try {
+        const res = await userService.getLoggedinUser();
+        if (res.status === 200) {
+          dispatch(setCurrentUser(res.data));
+          return res.data;
+        }
+        return {};
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+        return {};
+      }
+    },
+    enabled: isLoggedin,
   });
 
-  const {data} = useQuery({
+  const { data: googleUser } = useQuery({
     queryKey: ["getGoogleUser"],
-    queryFn: fetchGoogleLoggedinUser,
+    queryFn: async () => {
+      try {
+        const res = await userService.getGoogleUser();
+        return res.data;
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+        return {};
+      }
+    },
+    enabled: isLoggedin,
   });
-
 
   return (
     <div
@@ -53,12 +57,10 @@ const Home = () => {
         darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"
       }`}
     >
-      <div className={`transition-colors duration-200`}>
+      <div className="transition-colors duration-200">
         <Navbar />
         <Hero />
-
         <Features />
-
         <CalltoAction />
       </div>
     </div>
