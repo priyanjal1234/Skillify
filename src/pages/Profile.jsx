@@ -68,12 +68,7 @@ const Profile = () => {
               <div className="relative -mt-16 mb-8 flex justify-center">
                 <div className="relative">
                   <img
-                    src={
-                      currentUser?.profileImage
-                        ? currentUser?.profileImage
-                        : `https://cdn-icons-png.flaticon.com/512/149/149071.png`
-                    }
-                    alt="Profile"
+                    src={currentUser?.profileImage}
                     className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-700"
                   />
                 </div>
