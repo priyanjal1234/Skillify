@@ -68,11 +68,11 @@ class UserService {
 
   async updateLoggedinUser(formdata) {
     try {
-      return this.api.put(`${this.baseUrl}/update/profile`, formdata, {
+      return await this.api.put(`${this.baseUrl}/update/profile`, formdata, {
         withCredentials: true,
       });
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 

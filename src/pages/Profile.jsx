@@ -69,8 +69,8 @@ const Profile = () => {
                 <div className="relative">
                   <img
                     src={
-                      currentUser?.profilePicture
-                        ? currentUser?.profilePicture
+                      currentUser?.profileImage
+                        ? currentUser?.profileImage
                         : `https://cdn-icons-png.flaticon.com/512/149/149071.png`
                     }
                     alt="Profile"
