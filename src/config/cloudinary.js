@@ -1,11 +1,5 @@
-import cloudinary from 'cloudinary';
-cloudinary.v2;
-
-import {
-  cloudinaryApiKey,
-  cloudinaryApiSecret,
-  cloudName,
-} from '../constants.js';
+import { v2 as cloudinary } from 'cloudinary';
+import { cloudinaryApiKey, cloudinaryApiSecret, cloudName } from '../constants.js';
 
 cloudinary.config({
   cloud_name: cloudName,
@@ -13,4 +7,4 @@ cloudinary.config({
   api_secret: cloudinaryApiSecret,
 });
 
-export default cloudinary
+export default cloudinary 

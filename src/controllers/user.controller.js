@@ -177,7 +177,6 @@ const getLoggedinUser = async function (req, res, next) {
 const updateLoggedinUser = async function (req, res, next) {
   try {
     const { name, email, role } = req.body;
-
     // Check if the user exists
     let user = await userModel.findOne({ email: req.user.email });
     if (!user) {

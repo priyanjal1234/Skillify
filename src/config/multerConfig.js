@@ -1,15 +1,14 @@
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
-import cloudinary from './cloudinary.js';
+import cloudinary from '../config/cloudinary.js';
 
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+  cloudinary,
   params: {
-    folder: 'learnify-uploads', // Specify the folder in Cloudinary
-    allowed_formats: ['jpg', 'png', 'jpeg'], // Allowed file types
+    folder: 'learnify-uploads',
   },
 });
 
-const upload = multer({storage})
+const upload = multer({storage: storage})
 
 export default upload
