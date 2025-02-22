@@ -115,7 +115,6 @@ const verifyEmail = async function (req, res, next) {
 
 const loginUser = async function (req, res, next) {
   try {
-    console.log(req.body);
     let { email, password, role } = req.body;
 
     if (!email || !password || !role) {

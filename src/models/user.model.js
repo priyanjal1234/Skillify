@@ -15,7 +15,6 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
       minlength: [6, 'Password must be at least 6 characters'],
     },
     role: {
@@ -42,16 +41,21 @@ const userSchema = mongoose.Schema(
       type: Number,
     },
     verificationCodeExpiry: {
-      type: Date
+      type: Date,
     },
     isVerified: {
       type: Boolean,
       default: false,
     },
+    googleId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
   },
   { timestamps: true }
 );
 
-const userModel = mongoose.model("user",userSchema)
+const userModel = mongoose.model('user', userSchema);
 
-export default userModel
+export default userModel;
