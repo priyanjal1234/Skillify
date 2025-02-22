@@ -24,7 +24,7 @@ const userSchema = mongoose.Schema(
     },
     profileImage: {
       type: String,
-      default: 'default-profile.jpg',
+      default: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
     },
     enrolledCourses: [
       {
