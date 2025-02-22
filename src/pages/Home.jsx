@@ -27,10 +27,25 @@ const Home = () => {
     }
   }
 
-  const { data } = useQuery({
+  async function fetchGoogleLoggedinUser() {
+    try {
+      let googleUserRes = await userService.getGoogleUser();
+      return googleUserRes.data;
+    } catch (error) {
+      console.log(error?.response?.data?.message);
+    }
+  }
+
+  const query1 = useQuery({
     queryKey: ["loggedinUser"],
     queryFn: fetchLoggedinUser,
   });
+
+  const {data} = useQuery({
+    queryKey: ["getGoogleUser"],
+    queryFn: fetchGoogleLoggedinUser,
+  });
+
 
   return (
     <div

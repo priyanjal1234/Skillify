@@ -89,6 +89,14 @@ class UserService {
       throw error;
     }
   }
+
+  async getGoogleUser() {
+    try {
+      return this.api.get(`${this.baseUrl}/me`,{withCredentials: true})
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
 let userService = new UserService();
