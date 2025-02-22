@@ -129,8 +129,13 @@ const loginUser = async function (req, res, next) {
       return next(new ApiError(404, 'You are not registered'));
     }
 
-    if(!user.password) {
-      return next(new ApiError(401,"You are already authenticated with google. Try Logging in with Google"))
+    if (!user.password) {
+      return next(
+        new ApiError(
+          401,
+          'You are already authenticated with google. Try Logging in with Google'
+        )
+      );
     }
 
     let isMatch = await bcrypt.compare(password, user.password);
@@ -160,7 +165,7 @@ const getLoggedinUser = async function (req, res, next) {
     let user = await userModel
       .findOne({ email: req.user.email })
       .select('-password');
-    if(!user) return
+    if (!user) return;
     return res.status(200).json(user);
   } catch (error) {
     return next(
@@ -171,7 +176,7 @@ const getLoggedinUser = async function (req, res, next) {
 
 const updateLoggedinUser = async function (req, res, next) {
   try {
-    const { name, email } = req.body;
+    const { name, email, role } = req.body;
 
     // Check if the user exists
     let user = await userModel.findOne({ email: req.user.email });
@@ -188,6 +193,7 @@ const updateLoggedinUser = async function (req, res, next) {
         {
           name: name || user.name,
           email: email || user.email,
+          role: role || user.role,
           profileImage: req.file.path,
         },
         { new: true }
@@ -198,6 +204,7 @@ const updateLoggedinUser = async function (req, res, next) {
         {
           name: name || user.name,
           email: email || user.email,
+          role: role || user.role,
         },
         { new: true }
       );
