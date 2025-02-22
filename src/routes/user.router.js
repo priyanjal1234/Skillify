@@ -35,7 +35,7 @@ router
   .route('/update/profile')
   .put(
     isLoggedin,
-    upload.single('profileImage'),
+    upload.single('profilePicture'),
     asyncHandler(updateLoggedinUser)
   );
 
