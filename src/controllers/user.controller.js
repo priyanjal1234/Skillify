@@ -159,6 +159,7 @@ const getLoggedinUser = async function (req, res, next) {
     let user = await userModel
       .findOne({ email: req.user.email })
       .select('-password');
+    if(!user) return
     return res.status(200).json(user);
   } catch (error) {
     return next(

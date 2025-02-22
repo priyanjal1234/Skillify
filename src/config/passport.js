@@ -23,7 +23,7 @@ passport.use(
 
           return done(null, user);
         } else {
-          throw new Error('You are already registered');
+          return done(null,user)
         }
       } catch (error) {
         return done(error, null);
