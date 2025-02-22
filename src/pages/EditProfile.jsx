@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import FormField from "../components/FormField";
 import { Mail, User, Upload } from "lucide-react";
 import useFormHandler from "../hooks/useFormHandler";
@@ -6,6 +6,7 @@ import userService from "../services/User";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import SubmitBtn from "../components/SubmitBtn";
+import { ThemeDataContext } from "../context/ThemeContext";
 
 const EditProfile = () => {
   const { values, handleChange } = useFormHandler({
@@ -15,6 +16,7 @@ const EditProfile = () => {
   });
 
   let navigate = useNavigate();
+  const { darkMode } = useContext(ThemeDataContext);
 
   const [profilePicture, setprofilePicture] = useState(null);
   const [loading, setloading] = useState(false);
@@ -43,8 +45,16 @@ const EditProfile = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#101828] flex items-center justify-center overflow-hidden p-4">
-      <div className="w-full max-w-md p-6 bg-gray-800 text-white rounded-lg shadow-md">
+    <div
+      className={`w-full min-h-screen flex items-center justify-center overflow-hidden p-4 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+      }`}
+    >
+      <div
+        className={`w-full max-w-md p-6 rounded-lg shadow-md ${
+          darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+        }`}
+      >
         <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
         <form onSubmit={handleEditProfile} className="space-y-4">
           <FormField
@@ -68,9 +78,7 @@ const EditProfile = () => {
 
           {/* Role Selection */}
           <div className="form-group">
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Role
-            </label>
+            <label className="block text-sm font-medium mb-2">Role</label>
             <div className="flex flex-col sm:flex-row sm:space-x-4">
               <label className="flex items-center mb-2 sm:mb-0">
                 <input
@@ -81,7 +89,7 @@ const EditProfile = () => {
                   onChange={handleChange}
                   className="text-indigo-600 focus:ring-indigo-500"
                 />
-                <span className="ml-2 text-gray-300">Student</span>
+                <span className="ml-2">Student</span>
               </label>
               <label className="flex items-center">
                 <input
@@ -92,14 +100,14 @@ const EditProfile = () => {
                   onChange={handleChange}
                   className="text-indigo-600 focus:ring-indigo-500"
                 />
-                <span className="ml-2 text-gray-300">Instructor</span>
+                <span className="ml-2">Instructor</span>
               </label>
             </div>
           </div>
 
           {/* Profile Picture Upload */}
           <div className="form-group">
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium mb-2">
               Profile Picture
             </label>
             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3">
@@ -115,9 +123,7 @@ const EditProfile = () => {
                 />
               </label>
               {profilePicture && (
-                <span className="text-gray-300 text-sm">
-                  {profilePicture.name}
-                </span>
+                <span className="text-sm">{profilePicture.name}</span>
               )}
             </div>
           </div>
