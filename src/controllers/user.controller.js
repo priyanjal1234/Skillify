@@ -129,6 +129,10 @@ const loginUser = async function (req, res, next) {
       return next(new ApiError(404, 'You are not registered'));
     }
 
+    if(!user.password) {
+      return next(new ApiError(401,"You are already authenticated with google. Try Logging in with Google"))
+    }
+
     let isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return next(new ApiError(401, 'Invalid Credentials'));
@@ -143,10 +147,7 @@ const loginUser = async function (req, res, next) {
     let token = generateToken(user.name, user.email);
 
     // Set cookie with security options
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-    });
+    res.cookie('token', token);
 
     return res.status(200).json({ message: 'Login Success', token });
   } catch (error) {

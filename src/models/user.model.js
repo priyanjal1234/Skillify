@@ -10,7 +10,7 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: [true, 'Email is required'],
-      unique: false,
+      unique: true, // Ensure emails are unique
       match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
     },
     password: {
@@ -49,8 +49,8 @@ const userSchema = mongoose.Schema(
     },
     googleId: {
       type: String,
-      required: true,
       unique: true,
+      sparse: true,
     },
   },
   { timestamps: true }
