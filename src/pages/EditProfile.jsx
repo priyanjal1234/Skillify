@@ -43,8 +43,8 @@ const EditProfile = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#101828] flex items-center justify-center overflow-hidden">
-      <div className="max-w-md w-full p-6 bg-gray-800 text-white rounded-lg shadow-md">
+    <div className="w-full min-h-screen bg-[#101828] flex items-center justify-center overflow-hidden p-4">
+      <div className="w-full max-w-md p-6 bg-gray-800 text-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
         <form onSubmit={handleEditProfile} className="space-y-4">
           <FormField
@@ -71,8 +71,8 @@ const EditProfile = () => {
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Role
             </label>
-            <div className="flex space-x-4">
-              <label className="flex items-center">
+            <div className="flex flex-col sm:flex-row sm:space-x-4">
+              <label className="flex items-center mb-2 sm:mb-0">
                 <input
                   type="radio"
                   name="role"
@@ -102,8 +102,8 @@ const EditProfile = () => {
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Profile Picture
             </label>
-            <div className="flex items-center space-x-3">
-              <label className="flex items-center cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md shadow-md">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3">
+              <label className="flex items-center cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md shadow-md mb-2 sm:mb-0">
                 <Upload className="mr-2" size={16} />
                 <span>Upload</span>
                 <input
