@@ -19,7 +19,7 @@ const Home = () => {
     dispatch(setLoggedin(!!cookie));
   }, [dispatch]);
 
-  const { data: loggedInUser } = useQuery({
+  const { data } = useQuery({
     queryKey: ["loggedinUser"],
     queryFn: async () => {
       try {
@@ -37,7 +37,7 @@ const Home = () => {
     enabled: isLoggedin,
   });
 
-  const { data: googleUser } = useQuery({
+  const { data1 } = useQuery({
     queryKey: ["getGoogleUser"],
     queryFn: async () => {
       try {
