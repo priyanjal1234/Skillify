@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import convertToRealDate from "../utils/createdAtConversion";
 import userService from "../services/User";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { setLoggedin } from "../redux/reducers/UserReducer";
 import { ThemeDataContext } from "../context/ThemeContext";
 import { getUserLocation } from "../utils/getUserLocation";
@@ -14,13 +14,13 @@ import { getAddressFromCoordinates } from "../utils/convertToRealLocation";
 const Profile = () => {
   let { currentUser } = useSelector((state) => state.user);
   let { darkMode } = useContext(ThemeDataContext);
-  const [location, setlocation] = useState('');
+  const [location, setlocation] = useState("");
 
   useEffect(() => {
     async function fetchLocation() {
       try {
         let { latitude, longitude } = await getUserLocation();
-        let {address} = await getAddressFromCoordinates(latitude, longitude);
+        let { address } = await getAddressFromCoordinates(latitude, longitude);
         setlocation(address);
       } catch (error) {
         setlocation({ street: "Unknown", city: "Unknown", state: "Unknown" });
@@ -91,9 +91,7 @@ const Profile = () => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <MapPin className="h-5 w-5 text-indigo-500" />
-                    <span>
-                      {location}
-                    </span>
+                    <span>{location}</span>
                   </div>
                 </div>
 
@@ -116,10 +114,18 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
-
+              <div className="flex justify-center pb-5">
+                <div className="text-gray-400">
+                  <p className="text-sm">
+                    If You are Logged in with Google then by default your role
+                    is Student, you can edit your profile to change your role
+                  </p>
+                </div>
+              </div>
               {/* Buttons */}
               <div className="flex justify-center space-x-4">
-                <button
+                <Link
+                  to="/edit-profile"
                   type="button"
                   className="px-6 py-2 flex items-center space-x-2 rounded-lg transition-colors"
                   style={{
@@ -129,7 +135,7 @@ const Profile = () => {
                 >
                   <Edit className="h-4 w-4" />
                   <span>Edit Profile</span>
-                </button>
+                </Link>
 
                 <button
                   onClick={handleLogout}

@@ -66,6 +66,16 @@ class UserService {
     }
   }
 
+  async updateLoggedinUser(formdata) {
+    try {
+      return this.api.put(`${this.baseUrl}/update/profile`, formdata, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error
+    }
+  }
+
   async forgotPassword(email) {
     try {
       return await this.api.post(
@@ -92,9 +102,9 @@ class UserService {
 
   async getGoogleUser() {
     try {
-      return this.api.get(`${this.baseUrl}/me`,{withCredentials: true})
+      return this.api.get(`${this.baseUrl}/me`, { withCredentials: true });
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 }
