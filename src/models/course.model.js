@@ -17,11 +17,11 @@ const courseSchema = mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['Programming', 'Business', 'Design', 'Math', 'Science', 'Other'],
     },
     thumbnail: {
       type: String,
-      default: 'default-course-thumbnail.jpg',
+      default:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoeC_2VgaUp-id_Sqlsf0lG1DfmABAF6aTBw&s',
     },
     price: {
       type: Number,

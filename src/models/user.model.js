@@ -26,6 +26,12 @@ const userSchema = mongoose.Schema(
       type: String,
       default: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
     },
+    createdCourses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "course"
+      }
+    ],
     enrolledCourses: [
       {
         type: mongoose.Schema.Types.ObjectId,
