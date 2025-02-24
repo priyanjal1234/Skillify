@@ -33,6 +33,7 @@ const createCourse = async function (req, res, next) {
     instructor.createdCourses.push(course._id);
     await instructor.save();
 
+    await redisClient.del('allcourses');
     return res.status(201).json({ message: 'Course Created Successfully' });
   } catch (error) {
     return next(

@@ -14,3 +14,9 @@ export const cloudName = process.env.CLOUDINARY_CLOUD_NAME
 export const cloudinaryApiKey = process.env.CLOUDINARY_API_KEY
 
 export const cloudinaryApiSecret = process.env.CLOUDINARY_API_SECRET
+
+export const redisHost = process.env.REDIS_HOST 
+
+export const redisPort = process.env.REDIS_PORT 
+
+export const redisPassword = process.env.REDIS_PASSWORD 
