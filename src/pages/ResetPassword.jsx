@@ -38,16 +38,23 @@ const ResetPassword = () => {
 
   async function handleResetPassword(e) {
     e.preventDefault();
-
+  
     try {
+      const parsedData = resetPasswordSchema.parse({ password });
+  
       await userService.resetPassword(password, token);
       toast.success("Password Reset Successfully");
       navigate("/login/student");
     } catch (error) {
-      toast.error(error?.response?.data?.message);
+      if (error instanceof z.ZodError) {
+        const firstError = error.errors[0]?.message;
+        toast.error(firstError);
+      } else {
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      }
     }
   }
-
+  
   return (
     <div
       className={`min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center ${
