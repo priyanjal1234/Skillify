@@ -86,7 +86,7 @@ const getInstructorCourses = async function (req, res, next) {
     let { instructorId } = req.params;
     let instructorCourses = await courseModel.find({
       instructor: instructorId,
-    });
+    }).populate("instructor");
     if (Array.isArray(instructorCourses) && instructorCourses.length === 0) {
       return next(new ApiError(404, 'No Courses to display for you'));
     }
