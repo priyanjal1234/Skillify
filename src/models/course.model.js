@@ -27,6 +27,10 @@ const courseSchema = mongoose.Schema(
       type: Number,
       default: 0, // Free courses by default
     },
+    level: {
+      type: String,
+      enum: ["Beginner" || "beginner","Intermediate" || "intermediate","Advanced" || "advanced"]
+    },
     lessons: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -43,10 +47,11 @@ const courseSchema = mongoose.Schema(
       average: { type: Number, default: 0 },
       totalRatings: { type: Number, default: 0 },
     },
-    published: {
-      type: Boolean,
-      default: false,
-    },
+    status: {
+      type: String,
+      enum: ["Published","Review","Draft"],
+      default: "Draft"
+    }
   },
   { timestamps: true }
 );

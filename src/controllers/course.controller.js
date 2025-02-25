@@ -4,7 +4,7 @@ import ApiError from '../utils/ApiError.js';
 
 const createCourse = async function (req, res, next) {
   try {
-    let { title, description, category, price } = req.body;
+    let { title, description, category, price, level } = req.body;
     let instructor = await userModel.findOne({ email: req.user.email });
 
     if (!title || !description || !category) {
@@ -18,6 +18,7 @@ const createCourse = async function (req, res, next) {
         instructor: instructor?._id,
         category: String(category).toLowerCase(),
         price,
+        level,
       });
     } else {
       course = await courseModel.create({
@@ -33,7 +34,6 @@ const createCourse = async function (req, res, next) {
     instructor.createdCourses.push(course._id);
     await instructor.save();
 
-    await redisClient.del('allcourses');
     return res.status(201).json({ message: 'Course Created Successfully' });
   } catch (error) {
     return next(
@@ -47,7 +47,8 @@ const createCourse = async function (req, res, next) {
 
 const getAllCourses = async function (req, res, next) {
   try {
-    let allCourses = await courseModel.find();
+    let allCourses = await courseModel.find().populate('instructor');
+
     return res.status(200).json(allCourses);
   } catch (error) {
     return next(
@@ -75,6 +76,29 @@ const getOneCourse = async function (req, res, next) {
         error instanceof Error
           ? error.message
           : 'Error fetching the single course'
+      )
+    );
+  }
+};
+
+const getInstructorCourses = async function (req, res, next) {
+  try {
+    let { instructorId } = req.params;
+    let instructorCourses = await courseModel.find({
+      instructor: instructorId,
+    });
+    if (Array.isArray(instructorCourses) && instructorCourses.length === 0) {
+      return next(new ApiError(404, 'No Courses to display for you'));
+    }
+
+    return res.status(200).json(instructorCourses);
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error
+          ? error.message
+          : 'Error fetching the course of instructor'
       )
     );
   }
@@ -122,4 +146,33 @@ const enrollInCourse = async function (req, res, next) {
   }
 };
 
-export { createCourse, getAllCourses, getOneCourse, enrollInCourse };
+const changeCourseStatus = async function (req, res, next) {
+  try {
+    let { courseId } = req.params;
+    let { status } = req.body;
+    let course = await courseModel.findOne({ _id: courseId });
+    if (!course)
+      return next(new ApiError(404, 'Course with this id not found'));
+    course.status = status;
+    await course.save();
+    return res.status(200).json({ message: 'Course Status Changed' });
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error
+          ? error.message
+          : 'Error occurred in changing the status of the course'
+      )
+    );
+  }
+};
+
+export {
+  createCourse,
+  getAllCourses,
+  getOneCourse,
+  getInstructorCourses,
+  enrollInCourse,
+  changeCourseStatus,
+};
