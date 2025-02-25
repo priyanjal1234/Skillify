@@ -8,6 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import userService from "../services/User";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser, setLoggedin } from "../redux/reducers/UserReducer";
+import courseService from "../services/Course";
+import { setAllCourses } from "../redux/reducers/CourseReducer";
 
 const Home = () => {
   const { darkMode } = useContext(ThemeDataContext);
@@ -19,9 +21,9 @@ const Home = () => {
     dispatch(setLoggedin(!!cookie));
   }, [dispatch]);
 
-  const { data } = useQuery({
+  useQuery({
     queryKey: ["loggedinUser"],
-    queryFn: async () => {
+    queryFn: async function () {
       try {
         const res = await userService.getLoggedinUser();
         if (res.status === 200) {
@@ -37,9 +39,9 @@ const Home = () => {
     enabled: isLoggedin,
   });
 
-  const { data1 } = useQuery({
+  useQuery({
     queryKey: ["getGoogleUser"],
-    queryFn: async () => {
+    queryFn: async function () {
       try {
         const res = await userService.getGoogleUser();
         return res.data;
@@ -49,6 +51,19 @@ const Home = () => {
       }
     },
     enabled: isLoggedin,
+  });
+
+  useQuery({
+    queryKey: ["getAllCourses"],
+    queryFn: async function () {
+      try {
+        let getAllCoursesRes = await courseService.getAllCourses();
+        return dispatch(setAllCourses(getAllCoursesRes.data));
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+        return;
+      }
+    },
   });
 
   return (

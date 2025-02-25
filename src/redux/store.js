@@ -3,6 +3,7 @@ import storage from "redux-persist/lib/storage"; // Uses localStorage as default
 import { persistReducer, persistStore } from "redux-persist";
 
 import UserReducer from './reducers/UserReducer'
+import CourseReducer from './reducers/CourseReducer'
 
 const persistConfig = {
   key: "root",
@@ -10,7 +11,8 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  user: UserReducer
+  user: UserReducer,
+  course: CourseReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

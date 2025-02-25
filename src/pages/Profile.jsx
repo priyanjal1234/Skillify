@@ -118,7 +118,7 @@ const Profile = () => {
                 </div>
               </div>
               {/* Buttons */}
-              <div className="flex justify-center space-x-4">
+              <div className="flex justify-center items-center space-x-4">
                 <Link
                   to="/edit-profile"
                   type="button"
@@ -144,6 +144,18 @@ const Profile = () => {
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>
                 </button>
+                {currentUser?.role === "instructor" && (
+                  <Link
+                    to="/dashboard/instructor"
+                    className="px-6 py-2 flex items-center space-x-2 rounded-lg transition-colors"
+                    style={{
+                      backgroundColor: darkMode ? "#2563eb" : "#3b82f6",
+                      color: darkMode ? "#ffffff" : "#ffffff",
+                    }}
+                  >
+                    <span>Instructor Dashboard</span>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
