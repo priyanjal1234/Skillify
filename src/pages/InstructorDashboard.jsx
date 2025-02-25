@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import courseService from "../services/Course";
 import { setInstructorCourses } from "../redux/reducers/CourseReducer";
+import { Link } from "react-router-dom";
 
 const InstructorDashboard = () => {
   const [activeItem, setActiveItem] = useState("Dashboard");
@@ -38,15 +39,16 @@ const InstructorDashboard = () => {
         }
         return [];
       } catch (error) {
-        if(error?.response?.data?.message === "No Courses to display for you") {
-          dispatch(setInstructorCourses([]))
+        if (
+          error?.response?.data?.message === "No Courses to display for you"
+        ) {
+          dispatch(setInstructorCourses([]));
         }
         return [];
       }
     },
     enabled: isLoggedin,
   });
-
 
   const menuItems = [
     { name: "Dashboard", icon: Home },
@@ -108,12 +110,15 @@ const InstructorDashboard = () => {
             <LogOut size={20} />
             Logout
           </div>
+          <Link className="block text-blue-600 mt-3" to={"/"}>
+            Go back to home
+          </Link>
         </div>
       </aside>
 
       {/* Main content */}
       <main className="flex-1 p-5">
-        {activeItem === "Courses" && <InstructorCourse refetch = {refetch} />}
+        {activeItem === "Courses" && <InstructorCourse refetch={refetch} />}
       </main>
     </div>
   );

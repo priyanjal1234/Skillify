@@ -10,20 +10,23 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "./redux/store.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ButtonDisabilityContext from "./context/ButtonDisabilityContext.jsx";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <ThemeContext>
-      <Provider store={store}>
-        <PersistGate persistor={persistor}>
-          <QueryClientProvider client={queryClient}>
-            <App />
-          </QueryClientProvider>
-        </PersistGate>
-      </Provider>
-      <ToastContainer />
-    </ThemeContext>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeContext>
+            <ButtonDisabilityContext>
+              <App />
+            </ButtonDisabilityContext>
+          </ThemeContext>
+        </QueryClientProvider>
+      </PersistGate>
+    </Provider>
+    <ToastContainer />
   </BrowserRouter>
 );

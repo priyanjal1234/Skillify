@@ -120,7 +120,7 @@ const InstructorCourse = ({refetch}) => {
               >
                 {instructorCourses?.map((course) => (
                   <tr
-                    key={course.id}
+                    key={course?._id}
                     className={
                       darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                     }
@@ -146,7 +146,7 @@ const InstructorCourse = ({refetch}) => {
                         )}`}
                       >
                         {getStatusIcon(course?.status)}
-                        <span className="ml-1 capitalize">{course.status}</span>
+                        <span className="ml-1 capitalize">{course?.status}</span>
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
