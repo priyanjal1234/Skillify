@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   ArrowLeft,
   BarChart,
@@ -13,19 +13,32 @@ import courseService from "../services/Course";
 import { toast } from "react-toastify";
 import { ThemeDataContext } from "../context/ThemeContext";
 
+
 const CoursePreview = () => {
   let { courseId } = useParams();
   let { darkMode } = useContext(ThemeDataContext);
   let navigate = useNavigate();
   let { instructorCourses } = useSelector((state) => state.course);
+  const [courseStatus, setcourseStatus] = useState("")
+
+  useEffect(() => {
+    async function fetchCourse() {
+      let res = await courseService.getSingleCourse(courseId)
+      setcourseStatus(res?.data?.status)
+    }
+    fetchCourse()
+  },[courseId])
 
   let specificCourse =
     Array.isArray(instructorCourses) &&
     instructorCourses.find((course) => course?._id === courseId);
 
+
+
   async function handlePublishCourse() {
     try {
       await courseService.changeCourseStatus(specificCourse?._id, "Published");
+      setcourseStatus("Published")
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
@@ -60,17 +73,17 @@ const CoursePreview = () => {
 
           <div className="flex items-center space-x-4">
             <button
-              disabled={specificCourse?.status === "Published"}
+              disabled={courseStatus === "Published"}
               onClick={handlePublishCourse}
               className={`px-6 py-2 rounded-lg transition-colors flex items-center space-x-2 ${
-                specificCourse?.status === "Published"
+                courseStatus === "Published"
                   ? "bg-gray-400 cursor-not-allowed"
                   : " bg-green-600 hover:bg-green-700 text-white"
               }`}
             >
               <CheckCircle className="h-5 w-5" />
               <span>
-                {specificCourse?.status === "Published"
+                {courseStatus === "Published"
                   ? "Published"
                   : "Publish Course"}
               </span>

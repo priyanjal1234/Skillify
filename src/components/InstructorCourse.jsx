@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import courseService from "../services/Course";
 import { toast } from "react-toastify";
 
-const InstructorCourse = ({refetch}) => {
+const InstructorCourse = ({ refetch }) => {
   const [showAddCourse, setShowAddCourse] = useState(false);
   const [errors, seterrors] = useState({});
   let { darkMode } = useContext(ThemeDataContext);
@@ -25,10 +25,9 @@ const InstructorCourse = ({refetch}) => {
   let navigate = useNavigate();
 
   async function handleGotoPreview(courseId) {
-    navigate(`/course-preview/${courseId}`);
-
     try {
       await courseService.changeCourseStatus(courseId, "Review");
+      navigate(`/course-preview/${courseId}`);
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
@@ -146,7 +145,9 @@ const InstructorCourse = ({refetch}) => {
                         )}`}
                       >
                         {getStatusIcon(course?.status)}
-                        <span className="ml-1 capitalize">{course?.status}</span>
+                        <span className="ml-1 capitalize">
+                          {course?.status}
+                        </span>
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -161,6 +162,7 @@ const InstructorCourse = ({refetch}) => {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-2">
                         <button
+                          disabled={course?.status === "Published"}
                           onClick={() => handleGotoPreview(course?._id)}
                           className="p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
                         >
@@ -191,7 +193,7 @@ const InstructorCourse = ({refetch}) => {
           errors={errors}
           seterrors={seterrors}
           setShowAddCourse={setShowAddCourse}
-          refetch = {refetch}
+          refetch={refetch}
         />
       )}
     </div>

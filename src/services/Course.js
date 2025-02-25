@@ -36,6 +36,16 @@ class CourseService {
     }
   }
 
+  async getSingleCourse(courseId) {
+    try {
+      return await this.api.get(`${this.baseUrl}/course/${courseId}`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async changeCourseStatus(courseId, status) {
     try {
       return await this.api.post(
@@ -44,7 +54,7 @@ class CourseService {
         { withCredentials: true }
       );
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 }
