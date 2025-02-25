@@ -12,10 +12,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import courseService from "../services/Course";
 import { toast } from "react-toastify";
 import { ThemeDataContext } from "../context/ThemeContext";
-import { ButtonDisabilityDataContext } from "../context/ButtonDisabilityContext";
 
 const CoursePreview = () => {
-  let { disabled, setdisabled } = useContext(ButtonDisabilityDataContext);
   let { courseId } = useParams();
   let { darkMode } = useContext(ThemeDataContext);
   let navigate = useNavigate();
@@ -28,7 +26,6 @@ const CoursePreview = () => {
   async function handlePublishCourse() {
     try {
       await courseService.changeCourseStatus(specificCourse?._id, "Published");
-      setdisabled(true);
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
@@ -51,7 +48,9 @@ const CoursePreview = () => {
             <button
               onClick={() => navigate("/dashboard/instructor")}
               className={`${
-                darkMode ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900"
+                darkMode
+                  ? "text-gray-300 hover:text-white"
+                  : "text-gray-600 hover:text-gray-900"
               }`}
             >
               <ArrowLeft className="h-6 w-6" />
@@ -61,16 +60,20 @@ const CoursePreview = () => {
 
           <div className="flex items-center space-x-4">
             <button
-              disabled={disabled}
+              disabled={specificCourse?.status === "Published"}
               onClick={handlePublishCourse}
               className={`px-6 py-2 rounded-lg transition-colors flex items-center space-x-2 ${
-                !disabled
-                  ? "bg-green-600 hover:bg-green-700 text-white"
-                  : "bg-gray-400 cursor-not-allowed"
+                specificCourse?.status === "Published"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : " bg-green-600 hover:bg-green-700 text-white"
               }`}
             >
               <CheckCircle className="h-5 w-5" />
-              <span>{!disabled ? "Publish Course" : "Published"}</span>
+              <span>
+                {specificCourse?.status === "Published"
+                  ? "Published"
+                  : "Publish Course"}
+              </span>
             </button>
           </div>
         </div>
@@ -143,10 +146,30 @@ const CoursePreview = () => {
             }`}
           >
             <div className="space-y-4">
-              <InfoRow darkMode={darkMode} icon={Clock} label="Duration" value={specificCourse?.duration} />
-              <InfoRow darkMode={darkMode} icon={BarChart} label="Level" value={specificCourse?.level} />
-              <InfoRow darkMode={darkMode} icon={Users} label="Students" value={specificCourse?.studentsEnrolled?.length} />
-              <InfoRow darkMode={darkMode} icon={Star} label="Rating" value={specificCourse?.rating?.totalRatings} />
+              <InfoRow
+                darkMode={darkMode}
+                icon={Clock}
+                label="Duration"
+                value={specificCourse?.duration}
+              />
+              <InfoRow
+                darkMode={darkMode}
+                icon={BarChart}
+                label="Level"
+                value={specificCourse?.level}
+              />
+              <InfoRow
+                darkMode={darkMode}
+                icon={Users}
+                label="Students"
+                value={specificCourse?.studentsEnrolled?.length}
+              />
+              <InfoRow
+                darkMode={darkMode}
+                icon={Star}
+                label="Rating"
+                value={specificCourse?.rating?.totalRatings}
+              />
             </div>
           </div>
 
@@ -163,7 +186,9 @@ const CoursePreview = () => {
                 className="h-12 w-12 rounded-full"
               />
               <div>
-                <h4 className="font-medium">{specificCourse?.instructor?.name}</h4>
+                <h4 className="font-medium">
+                  {specificCourse?.instructor?.name}
+                </h4>
               </div>
             </div>
           </div>
@@ -175,7 +200,9 @@ const CoursePreview = () => {
           >
             <div className="flex items-center justify-between">
               <span>Price</span>
-              <span className="text-2xl font-bold">₹{specificCourse?.price}</span>
+              <span className="text-2xl font-bold">
+                ₹{specificCourse?.price}
+              </span>
             </div>
           </div>
         </div>
@@ -189,7 +216,11 @@ const InfoRow = ({ darkMode, icon: Icon, label, value }) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-2">
-        <Icon className={`h-5 w-5 ${darkMode ? "text-indigo-400" : "text-indigo-600"}`} />
+        <Icon
+          className={`h-5 w-5 ${
+            darkMode ? "text-indigo-400" : "text-indigo-600"
+          }`}
+        />
         <span>{label}</span>
       </div>
       <span className="font-medium">{value}</span>
