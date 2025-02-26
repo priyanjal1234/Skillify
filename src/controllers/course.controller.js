@@ -28,6 +28,7 @@ const createCourse = async function (req, res, next) {
         category: String(category).toLowerCase(),
         thumbnail: req.file.path,
         price,
+        level,
       });
     }
 
@@ -84,9 +85,11 @@ const getOneCourse = async function (req, res, next) {
 const getInstructorCourses = async function (req, res, next) {
   try {
     let { instructorId } = req.params;
-    let instructorCourses = await courseModel.find({
-      instructor: instructorId,
-    }).populate("instructor");
+    let instructorCourses = await courseModel
+      .find({
+        instructor: instructorId,
+      })
+      .populate('instructor');
     if (Array.isArray(instructorCourses) && instructorCourses.length === 0) {
       return next(new ApiError(404, 'No Courses to display for you'));
     }
@@ -168,6 +171,100 @@ const changeCourseStatus = async function (req, res, next) {
   }
 };
 
+const deleteCourse = async function (req, res, next) {
+  try {
+    let { courseId } = req.params;
+    let user = await userModel.findOne({ email: req.user.email });
+    let courseToBeDeleted = await courseModel.findOne({
+      _id: courseId,
+      instructor: user._id,
+    });
+    if (!courseToBeDeleted) return next(new ApiError(404, 'Course not found'));
+    user.createdCourses = user.createdCourses.filter(
+      (course) => String(course) !== String(courseId)
+    );
+    
+    await courseModel.findByIdAndDelete(courseId);
+
+    await user.save();
+    return res.status(200).json({ message: 'Course Deleted Successfully' });
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error in deleting the course'
+      )
+    );
+  }
+};
+
+const updateCourse = async function (req, res, next) {
+  try {
+    
+    let { title, description, category, level, price } = req.body;
+    let { courseId } = req.params;
+
+    let user = await userModel.findOne({
+      email: req.user.email,
+      role: 'instructor',
+    });
+    if (!user)
+      return next(
+        new ApiError(403, 'Unauthorized: Only instructors can update courses')
+      );
+
+    let course = await courseModel.findOne({
+      _id: courseId,
+      instructor: user._id,
+    });
+
+    if (!course) return next(new ApiError(404, 'Course not found'));
+
+    let updatedCourse;
+
+    if (req.file) {
+      updatedCourse = await courseModel.findOneAndUpdate(
+        { _id: courseId },
+        {
+          title: title || course.title,
+          description: description || course.description,
+          category: category || course.category,
+          level: level || course.level,
+          price: price || course.price,
+          thumbnail: req.file.path,
+        },
+        { new: true }
+      );
+    } else {
+      updatedCourse = await courseModel.findOneAndUpdate(
+        { _id: courseId },
+        {
+          title: title || course.title,
+          description: description || course.description,
+          category: category || course.category,
+          level: level || course.level,
+          price: price || course.price,
+        },
+        { new: true }
+      );
+    }
+
+    if (!updatedCourse)
+      return next(new ApiError(403, 'Unauthorized or Course Not Found'));
+
+    return res
+      .status(200)
+      .json({ message: 'Course Updated Successfully', updatedCourse });
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error Updating Course'
+      )
+    );
+  }
+};
+
 export {
   createCourse,
   getAllCourses,
@@ -175,4 +272,6 @@ export {
   getInstructorCourses,
   enrollInCourse,
   changeCourseStatus,
+  deleteCourse,
+  updateCourse,
 };

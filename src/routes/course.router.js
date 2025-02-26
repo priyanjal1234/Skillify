@@ -4,10 +4,12 @@ import isInstructor from '../middlewares/isInstructor.js';
 import {
   changeCourseStatus,
   createCourse,
+  deleteCourse,
   enrollInCourse,
   getAllCourses,
   getInstructorCourses,
   getOneCourse,
+  updateCourse,
 } from '../controllers/course.controller.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import upload from '../config/multerConfig.js';
@@ -32,5 +34,9 @@ router.route('/:id/enroll').post(isLoggedin, enrollInCourse);
 router.route('/:instructorId/courses').get(isLoggedin,isInstructor, getInstructorCourses);
 
 router.route("/change-course-status/:courseId").post(isLoggedin,isInstructor,changeCourseStatus)
+
+router.route("/delete-course/:courseId").delete(isLoggedin,isInstructor,deleteCourse)
+
+router.route("/edit-course/:courseId").put(isLoggedin,isInstructor,upload.single("thumbnail"),updateCourse)
 
 export default router;
