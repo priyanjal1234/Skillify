@@ -5,7 +5,7 @@ import { ThemeDataContext } from "../context/ThemeContext";
 import getStatusIcon from "../utils/getStatusIcon";
 import getStatusColor from "../utils/getStatusColor";
 import AddCourse from "./AddCourse";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import courseService from "../services/Course";
 import { toast } from "react-toastify";
 
@@ -28,6 +28,16 @@ const InstructorCourse = ({ refetch }) => {
     try {
       await courseService.changeCourseStatus(courseId, "Review");
       navigate(`/course-preview/${courseId}`);
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
+  }
+
+  async function handleDeleteCourse(courseId) {
+    try {
+      await courseService.deleteCourse(courseId);
+      toast.success("Course Deleted Successfully")
+      refetch()
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
@@ -168,10 +178,13 @@ const InstructorCourse = ({ refetch }) => {
                         >
                           <Eye className="h-5 w-5" />
                         </button>
-                        <button className="p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                        <Link to={`/edit-course/${course?._id}`} className="p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
                           <Edit3 className="h-5 w-5" />
-                        </button>
-                        <button className="p-1 text-gray-400 hover:text-red-500">
+                        </Link>
+                        <button
+                          onClick={() => handleDeleteCourse(course?._id)}
+                          className="p-1 text-gray-400 hover:text-red-500"
+                        >
                           <Trash2 className="h-5 w-5" />
                         </button>
                       </div>

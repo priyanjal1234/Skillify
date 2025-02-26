@@ -1,20 +1,23 @@
 import React, { useContext, useState } from "react";
-import FormFieldWithoutIcon from "./FormFieldWithoutIcon";
+import { useNavigate, useParams } from "react-router-dom";
 import { ThemeDataContext } from "../context/ThemeContext";
-import courseSchema from "../schemas/courseSchema";
-import { toast } from "react-toastify";
+import FormFieldWithoutIcon from "../components/FormFieldWithoutIcon";
 import courseService from "../services/Course";
+import { toast } from "react-toastify";
 
-const AddCourse = ({
-  addCourseData,
-  setaddCourseData,
-  errors,
-  seterrors,
-  setShowAddCourse,
-  refetch,
-}) => {
+const EditCourse = () => {
+  let { courseId } = useParams();
   const { darkMode } = useContext(ThemeDataContext);
-  const [loading, setLoading] = useState(false)
+  const [edit, setedit] = useState({
+    title: "",
+    description: "",
+    category: "",
+    level: "Beginner",
+    price: "",
+  });
+  const [thumbnail, setthumbnail] = useState();
+
+  let navigate = useNavigate();
 
   const containerStyles = {
     backgroundColor: darkMode ? "#1F2937" : "#ffffff",
@@ -27,65 +30,31 @@ const AddCourse = ({
     color: darkMode ? "#E5E7EB" : "#1F2937",
   };
 
-  const [thumbnail, setthumbnail] = useState();
-
-  function handleAddCourseChange(e) {
+  function handleEditCourseChange(e) {
     let { name, value } = e.target;
 
-    setaddCourseData((prev) => ({ ...prev, [name]: value }));
-
-    try {
-      courseSchema.pick({ [name]: true }).parse({ [name]: value });
-      seterrors((prev) => ({ ...prev, [name]: null }));
-    } catch (error) {
-      if (error.errors) {
-        const errorMessage = error.errors.reduce((acc, err) => {
-          acc[err.path[0]] = err.message;
-          return acc;
-        }, {});
-        seterrors(errorMessage);
-      }
-    }
+    setedit((prev) => ({ ...prev, [name]: value }));
   }
 
-  async function handleCreateCourse(e) {
+  async function handleEditCourse(e) {
     e.preventDefault();
 
-    setLoading(true)
+    let formData = new FormData();
 
-    const parsedData = courseSchema.safeParse(addCourseData);
-    if (!parsedData.success) {
-      setLoading(false)
-      const firstError = parsedData.error.issues[0]?.message;
-      toast.error(firstError);
-      return;
-    }
-
-    let formdata = new FormData();
-    formdata.append("title", addCourseData.title);
-    formdata.append("description", addCourseData.description);
-    formdata.append("category", addCourseData.category);
-    formdata.append("level", addCourseData.level);
-    formdata.append("price", addCourseData.price);
-    formdata.append("thumbnail", thumbnail);
+    if (edit.title) formData.append("title", edit.title);
+    if (edit.description) formData.append("description", edit.description);
+    if (edit.category) formData.append("category", edit.category);
+    if (edit.level) formData.append("level", edit.level);
+    if (edit.price) formData.append("price", edit.price);
+    if (thumbnail) formData.append("thumbnail", thumbnail);
 
     try {
-      await courseService.createCourse(formdata);
-      toast.success("Course Created Successfully");
-      setShowAddCourse(false);
-      setLoading(false)
-      setaddCourseData((prev) => ({
-        ...prev,
-        title: "",
-        description: "",
-        category: "",
-        level: "Beginner",
-        price: "",
-      }));
-      refetch();
+      let editCourseRes = await courseService.updateCourse(courseId, formData);
+      await courseService.changeCourseStatus(courseId,"Draft");
+      toast.success("Course Updated Successfully");
+      navigate("/dashboard/instructor");
     } catch (error) {
-      setLoading(false)
-      toast.error(error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || "Failed to update course");
     }
   }
 
@@ -95,16 +64,15 @@ const AddCourse = ({
         className="rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6"
         style={containerStyles}
       >
-        <h2 className="text-2xl font-semibold mb-4">Add New Course</h2>
-        <form onSubmit={handleCreateCourse} className="space-y-6">
+        <h2 className="text-2xl font-semibold mb-4">Edit Course</h2>
+        <form onSubmit={handleEditCourse} className="space-y-6">
           <FormFieldWithoutIcon
             label="Course Title"
             type="text"
-            placeholder="Write Course Title"
+            placeholder="Update Course Title"
             name="title"
-            value={addCourseData.title}
-            handleChange={handleAddCourseChange}
-            error={errors.title}
+            value={edit.title}
+            handleChange={handleEditCourseChange}
             inputStyles={inputStyles}
           />
 
@@ -115,16 +83,13 @@ const AddCourse = ({
             </label>
             <textarea
               name="description"
-              value={addCourseData.description}
-              onChange={handleAddCourseChange}
-              placeholder="Write Course Description"
+              placeholder="Update Course Description"
               rows={4}
               className="w-full px-4 py-2 resize-none border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               style={inputStyles}
+              value={edit.description}
+              onChange={handleEditCourseChange}
             />
-            {errors.description && (
-              <p className="text-red-500 mt-2">{errors.description}</p>
-            )}
           </div>
 
           {/* Category & Level */}
@@ -134,9 +99,8 @@ const AddCourse = ({
               type="text"
               placeholder="e.g., Programming"
               name="category"
-              value={addCourseData.category}
-              handleChange={handleAddCourseChange}
-              error={errors.category}
+              value={edit.category}
+              handleChange={handleEditCourseChange}
               inputStyles={inputStyles}
             />
 
@@ -144,18 +108,15 @@ const AddCourse = ({
               <label className="block text-sm font-medium mb-1">Level</label>
               <select
                 name="level"
-                value={addCourseData.level}
-                onChange={handleAddCourseChange}
                 className="w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 style={inputStyles}
+                onChange={handleEditCourseChange}
+                value={edit.level}
               >
                 <option value="Beginner">Beginner</option>
                 <option value="Intermediate">Intermediate</option>
                 <option value="Advanced">Advanced</option>
               </select>
-              {errors.level && (
-                <p className="text-red-500 mt-2">{errors.level}</p>
-              )}
             </div>
           </div>
 
@@ -169,15 +130,13 @@ const AddCourse = ({
               <input
                 type="number"
                 name="price"
-                value={addCourseData.price}
-                onChange={handleAddCourseChange}
+                placeholder="Update Price"
                 className="w-full pl-8 pr-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 style={inputStyles}
+                onChange={handleEditCourseChange}
+                value={edit.price}
               />
             </div>
-            {errors.price && (
-              <p className="text-red-500 mt-2">{errors.price}</p>
-            )}
           </div>
 
           {/* Course Thumbnail Upload */}
@@ -191,8 +150,8 @@ const AddCourse = ({
                 type="file"
                 name="thumbnail"
                 accept="image/*"
-                onChange={(e) => setthumbnail(e.target.files[0])}
                 className="hidden"
+                onChange={(e) => setthumbnail(e.target.files[0])}
               />
               <label
                 htmlFor="thumbnail-upload"
@@ -206,8 +165,8 @@ const AddCourse = ({
           {/* Action Buttons */}
           <div className="flex justify-end space-x-4">
             <button
+              onClick={() => navigate("/dashboard/instructor")}
               type="button"
-              onClick={() => setShowAddCourse(false)}
               className="px-4 py-2 border rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100"
               style={{
                 backgroundColor: darkMode ? "#374151" : "#E5E7EB",
@@ -218,10 +177,9 @@ const AddCourse = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg flex gap-3 items-center justify-center  text-white bg-indigo-600 hover:bg-indigo-700"
+              className="px-4 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700"
             >
-              Create Course
-              {loading && <span class="loader"></span>}
+              Update Course
             </button>
           </div>
         </form>
@@ -230,4 +188,4 @@ const AddCourse = ({
   );
 };
 
-export default AddCourse;
+export default EditCourse;

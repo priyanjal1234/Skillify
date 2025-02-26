@@ -10,6 +10,7 @@ import ResetPassword from "./pages/ResetPassword";
 import EditProfile from "./pages/EditProfile";
 import InstructorDashboard from "./pages/InstructorDashboard";
 import CoursePreview from "./pages/CoursePreview";
+import EditCourse from "./pages/EditCourse";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/edit-profile" element = {<EditProfile />}/>
         <Route path="/dashboard/instructor" element = {<InstructorDashboard />}/>
         <Route path="/course-preview/:courseId" element = {<CoursePreview />}/>
+        <Route path="/edit-course/:courseId" element = {<EditCourse />}/>
       </Routes>
     </>
   );

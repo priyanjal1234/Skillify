@@ -13,32 +13,29 @@ import courseService from "../services/Course";
 import { toast } from "react-toastify";
 import { ThemeDataContext } from "../context/ThemeContext";
 
-
 const CoursePreview = () => {
   let { courseId } = useParams();
   let { darkMode } = useContext(ThemeDataContext);
   let navigate = useNavigate();
   let { instructorCourses } = useSelector((state) => state.course);
-  const [courseStatus, setcourseStatus] = useState("")
+  const [courseStatus, setcourseStatus] = useState("");
 
   useEffect(() => {
     async function fetchCourse() {
-      let res = await courseService.getSingleCourse(courseId)
-      setcourseStatus(res?.data?.status)
+      let res = await courseService.getSingleCourse(courseId);
+      setcourseStatus(res?.data?.status);
     }
-    fetchCourse()
-  },[courseId])
+    fetchCourse();
+  }, [courseId]);
 
   let specificCourse =
     Array.isArray(instructorCourses) &&
     instructorCourses.find((course) => course?._id === courseId);
 
-
-
   async function handlePublishCourse() {
     try {
       await courseService.changeCourseStatus(specificCourse?._id, "Published");
-      setcourseStatus("Published")
+      setcourseStatus("Published");
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
@@ -83,9 +80,7 @@ const CoursePreview = () => {
             >
               <CheckCircle className="h-5 w-5" />
               <span>
-                {courseStatus === "Published"
-                  ? "Published"
-                  : "Publish Course"}
+                {courseStatus === "Published" ? "Published" : "Publish Course"}
               </span>
             </button>
           </div>
@@ -214,7 +209,10 @@ const CoursePreview = () => {
             <div className="flex items-center justify-between">
               <span>Price</span>
               <span className="text-2xl font-bold">
-                ₹{specificCourse?.price}
+                
+                {specificCourse?.price === 0 || specificCourse?.price === null
+                  ? "Free"
+                  : `₹${specificCourse?.price}`}
               </span>
             </div>
           </div>
