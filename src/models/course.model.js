@@ -20,12 +20,10 @@ const courseSchema = mongoose.Schema(
     },
     thumbnail: {
       type: String,
-      default:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoeC_2VgaUp-id_Sqlsf0lG1DfmABAF6aTBw&s',
+      default: '',
     },
     duration: {
       type: Number,
-      
     },
     price: {
       type: Number,
@@ -33,7 +31,11 @@ const courseSchema = mongoose.Schema(
     },
     level: {
       type: String,
-      enum: ["Beginner" || "beginner","Intermediate" || "intermediate","Advanced" || "advanced"]
+      enum: [
+        'Beginner' || 'beginner',
+        'Intermediate' || 'intermediate',
+        'Advanced' || 'advanced',
+      ],
     },
     lessons: [
       {
@@ -53,9 +55,9 @@ const courseSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Published","Review","Draft"],
-      default: "Draft"
-    }
+      enum: ['Published', 'Review', 'Draft'],
+      default: 'Draft',
+    },
   },
   { timestamps: true }
 );

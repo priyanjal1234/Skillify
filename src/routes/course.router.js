@@ -9,6 +9,7 @@ import {
   getAllCourses,
   getInstructorCourses,
   getOneCourse,
+  getPublishedCourses,
   updateCourse,
 } from '../controllers/course.controller.js';
 import asyncHandler from '../utils/asyncHandler.js';
@@ -38,5 +39,7 @@ router.route("/change-course-status/:courseId").post(isLoggedin,isInstructor,cha
 router.route("/delete-course/:courseId").delete(isLoggedin,isInstructor,deleteCourse)
 
 router.route("/edit-course/:courseId").put(isLoggedin,isInstructor,upload.single("thumbnail"),updateCourse)
+
+router.route("/published/all").get(getPublishedCourses)
 
 export default router;

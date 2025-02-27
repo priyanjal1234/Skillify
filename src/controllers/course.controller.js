@@ -4,8 +4,8 @@ import ApiError from '../utils/ApiError.js';
 
 const createCourse = async function (req, res, next) {
   try {
-    let { title, description, category, price, level,duration } = req.body;
-    
+    let { title, description, category, price, level, duration } = req.body;
+
     let instructor = await userModel.findOne({ email: req.user.email });
 
     if (!title || !description || !category) {
@@ -20,18 +20,18 @@ const createCourse = async function (req, res, next) {
         category: String(category).toLowerCase(),
         price,
         level,
-        duration
+        duration,
       });
     } else {
       course = await courseModel.create({
         title,
         description,
         instructor: instructor?._id,
-        category: String(category).toLowerCase(),
+        category,
         thumbnail: req.file.path,
         price,
         level,
-        duration
+        duration,
       });
     }
 
@@ -105,6 +105,23 @@ const getInstructorCourses = async function (req, res, next) {
         error instanceof Error
           ? error.message
           : 'Error fetching the course of instructor'
+      )
+    );
+  }
+};
+
+const getPublishedCourses = async function (req, res, next) {
+  try {
+    let publishedCourses = await courseModel.find({ status: 'Published' });
+  
+    return res.status(200).json(publishedCourses);
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error
+          ? error.message
+          : 'Error fetching Published Courses'
       )
     );
   }
@@ -186,7 +203,7 @@ const deleteCourse = async function (req, res, next) {
     user.createdCourses = user.createdCourses.filter(
       (course) => String(course) !== String(courseId)
     );
-    
+
     await courseModel.findByIdAndDelete(courseId);
 
     await user.save();
@@ -203,7 +220,6 @@ const deleteCourse = async function (req, res, next) {
 
 const updateCourse = async function (req, res, next) {
   try {
-    
     let { title, description, category, level, price } = req.body;
     let { courseId } = req.params;
 
@@ -277,4 +293,5 @@ export {
   changeCourseStatus,
   deleteCourse,
   updateCourse,
+  getPublishedCourses
 };
