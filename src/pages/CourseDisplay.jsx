@@ -16,8 +16,8 @@ const CourseDisplay = () => {
 
   const [category, setCategory] = useState("");
   const [level, setlevel] = useState("");
+  const [searchVal, setsearchVal] = useState("");
   const [filteredCourses, setFilteredCourses] = useState([]);
-  const [levelwisefilteredCourses, setlevelwisefilteredCourses] = useState([]);
 
   useQuery({
     queryKey: ["getPublishedCourses"],
@@ -37,28 +37,30 @@ const CourseDisplay = () => {
 
   useEffect(() => {
     function filterCourses() {
-      let result = allCourses
-      if(category !== "") {
-        result = result.filter(course => course?.category?.toLowerCase() === category.toLowerCase())
+      let result = allCourses;
+      if (category !== "") {
+        result = result.filter(
+          (course) => course?.category?.toLowerCase() === category.toLowerCase()
+        );
       }
 
-      if(level !== "") {
-        result = result.filter(course => course?.level?.toLowerCase() === level.toLowerCase())
+      if (level !== "") {
+        result = result.filter(
+          (course) => course?.level?.toLowerCase() === level.toLowerCase()
+        );
       }
 
-      setFilteredCourses(result)
+      if (searchVal !== "") {
+        result = result.filter((course) =>
+          course?.title?.toLowerCase().includes(searchVal.toLowerCase())
+        );
+      }
+
+      setFilteredCourses(result);
     }
 
-    if(allCourses?.length) filterCourses()
-  },[allCourses,category,level])
-
-  function handleCategoryChange(e) {
-    setCategory(e.target.value);
-  }
-
-  function handleLevelChange(e) {
-    setlevel(e.target.value);
-  }
+    if (allCourses?.length) filterCourses();
+  }, [allCourses, category, level, searchVal]);
 
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-50"}`}>
@@ -89,6 +91,8 @@ const CourseDisplay = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <input
+                value={searchVal}
+                onChange={(e) => setsearchVal(e.target.value)}
                 type="text"
                 placeholder="Search courses..."
                 className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 ${
@@ -102,7 +106,7 @@ const CourseDisplay = () => {
           <div className="flex gap-4">
             <select
               value={category}
-              onChange={handleCategoryChange}
+              onChange={(e) => setCategory(e.target.value)}
               className={`px-4 py-3 rounded-xl border-2 ${
                 darkMode
                   ? "border-gray-700 bg-gray-800 text-white"
@@ -132,13 +136,14 @@ const CourseDisplay = () => {
 
             <select
               value={level}
-              onChange={handleLevelChange}
+              onChange={(e) => setlevel(e.target.value)}
               className={`px-4 py-3 rounded-xl border-2 ${
                 darkMode
                   ? "border-gray-700 bg-gray-800 text-white"
                   : "border-gray-200 bg-white text-gray-900"
               } focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
             >
+              <option value="">All Levels</option>
               <option value="beginner">Beginner</option>
               <option value="intermediate">Intermediate</option>
               <option value="advanced">Advanced</option>
