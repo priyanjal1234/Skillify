@@ -130,7 +130,7 @@ const StudentLogin = () => {
                   error={errors.password}
                 />
                 <Link
-                  to="/forgot-password"
+                  to={"/forgot-password"}
                   className="text-sm text-indigo-600 mt-2 block dark:text-indigo-400 hover:text-indigo-500"
                 >
                   Forgot password?
@@ -195,13 +195,13 @@ const StudentLogin = () => {
               </div>
               <div className="flex flex-col">
                 <Link
-                  to="/register/student"
+                  to={"/register/student"}
                   className="mt-4 inline-block text-indigo-600 hover:text-indigo-500 font-medium"
                 >
                   Create an account
                 </Link>
                 <Link
-                  to="/login/instructor"
+                  to={"/login/instructor"}
                   className="mt-2 inline-block text-indigo-600 hover:text-indigo-500 font-medium"
                 >
                   Sign in as instructor

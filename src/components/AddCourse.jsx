@@ -14,7 +14,7 @@ const AddCourse = ({
   refetch,
 }) => {
   const { darkMode } = useContext(ThemeDataContext);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const containerStyles = {
     backgroundColor: darkMode ? "#1F2937" : "#ffffff",
@@ -29,8 +29,13 @@ const AddCourse = ({
 
   const [thumbnail, setthumbnail] = useState();
 
+
   function handleAddCourseChange(e) {
     let { name, value } = e.target;
+
+    if(name === "duration") {
+      value = value ? Number(value) : ""
+    }
 
     setaddCourseData((prev) => ({ ...prev, [name]: value }));
 
@@ -51,11 +56,11 @@ const AddCourse = ({
   async function handleCreateCourse(e) {
     e.preventDefault();
 
-    setLoading(true)
+    setLoading(true);
 
     const parsedData = courseSchema.safeParse(addCourseData);
     if (!parsedData.success) {
-      setLoading(false)
+      setLoading(false);
       const firstError = parsedData.error.issues[0]?.message;
       toast.error(firstError);
       return;
@@ -68,12 +73,13 @@ const AddCourse = ({
     formdata.append("level", addCourseData.level);
     formdata.append("price", addCourseData.price);
     formdata.append("thumbnail", thumbnail);
+    formdata.append("duration",addCourseData.duration)
 
     try {
       await courseService.createCourse(formdata);
       toast.success("Course Created Successfully");
       setShowAddCourse(false);
-      setLoading(false)
+      setLoading(false);
       setaddCourseData((prev) => ({
         ...prev,
         title: "",
@@ -81,10 +87,11 @@ const AddCourse = ({
         category: "",
         level: "Beginner",
         price: "",
+        duration: ""
       }));
       refetch();
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       toast.error(error?.response?.data?.message);
     }
   }
@@ -179,6 +186,18 @@ const AddCourse = ({
               <p className="text-red-500 mt-2">{errors.price}</p>
             )}
           </div>
+
+          {/* Duration Field */}
+          <FormFieldWithoutIcon
+            label="Duration"
+            type="number"
+            placeholder="e.g., 12 weeks"
+            name="duration"
+            value={addCourseData.duration}
+            handleChange={handleAddCourseChange}
+            error={errors.duration}
+            inputStyles={inputStyles}
+          />
 
           {/* Course Thumbnail Upload */}
           <div>

@@ -189,7 +189,7 @@ const StudentRegister = () => {
                 </div>
               </div>
               <Link
-                to="/login/student"
+                to={"/login/student"}
                 className={`mt-4 inline-block font-medium ${
                   darkMode
                     ? "text-indigo-400 hover:text-indigo-300"
@@ -199,7 +199,7 @@ const StudentRegister = () => {
                 Sign in to your account
               </Link>
               <Link
-                to="/register/instructor"
+                to={"/register/instructor"}
                 className={`mt-4 inline-block font-medium ${
                   darkMode
                     ? "text-indigo-400 hover:text-indigo-300"

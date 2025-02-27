@@ -11,6 +11,7 @@ import EditProfile from "./pages/EditProfile";
 import InstructorDashboard from "./pages/InstructorDashboard";
 import CoursePreview from "./pages/CoursePreview";
 import EditCourse from "./pages/EditCourse";
+import CourseDisplay from "./pages/CourseDisplay";
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/dashboard/instructor" element = {<InstructorDashboard />}/>
         <Route path="/course-preview/:courseId" element = {<CoursePreview />}/>
         <Route path="/edit-course/:courseId" element = {<EditCourse />}/>
+        <Route path="/course-display" element = {<CourseDisplay />}/>
       </Routes>
     </>
   );

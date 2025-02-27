@@ -120,7 +120,7 @@ const Profile = () => {
               {/* Buttons */}
               <div className="flex justify-center items-center space-x-4">
                 <Link
-                  to="/edit-profile"
+                  to={"/edit-profile"}
                   type="button"
                   className="px-6 py-2 flex items-center space-x-2 rounded-lg transition-colors"
                   style={{
@@ -146,7 +146,7 @@ const Profile = () => {
                 </button>
                 {currentUser?.role === "instructor" && (
                   <Link
-                    to="/dashboard/instructor"
+                    to={"/dashboard/instructor"}
                     className="px-6 py-2 flex items-center space-x-2 rounded-lg transition-colors"
                     style={{
                       backgroundColor: darkMode ? "#2563eb" : "#3b82f6",

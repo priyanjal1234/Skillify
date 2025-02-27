@@ -108,7 +108,7 @@ const ResetPassword = () => {
 
           <div className="mt-8 flex justify-center">
             <Link
-              to="/login"
+              to={"/login"}
               className={`flex items-center space-x-2 ${
                 darkMode
                   ? "text-indigo-400 hover:text-indigo-300"

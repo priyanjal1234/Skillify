@@ -193,7 +193,7 @@ const InstructorRegister = () => {
                 </div>
               </div>
               <Link
-                to="/login/instructor"
+                to={"/login/instructor"}
                 className={`mt-4 inline-block font-medium ${
                   darkMode
                     ? "text-indigo-400 hover:text-indigo-300"
@@ -208,7 +208,7 @@ const InstructorRegister = () => {
                     ? "text-indigo-400 hover:text-indigo-300"
                     : "text-indigo-600 hover:text-indigo-500"
                 }`}
-                to="/register/student"
+                to={"/register/student"}
               >
                 Sign Up as Student
               </Link>

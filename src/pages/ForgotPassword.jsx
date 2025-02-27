@@ -100,7 +100,7 @@ const ForgotPassword = () => {
 
           <div className="mt-8 flex justify-center">
             <Link
-              to="/login/student"
+              to={"/login/student"}
               className={`flex items-center space-x-2 transition duration-300 ${
                 darkMode
                   ? "text-indigo-400 hover:text-indigo-300"
@@ -116,7 +116,7 @@ const ForgotPassword = () => {
         <div className="mt-6 text-center text-sm transition duration-300">
           Remember your password?{" "}
           <Link
-            to="/login"
+            to={"/login"}
             className={`font-medium transition duration-300 ${
               darkMode
                 ? "text-indigo-400 hover:text-indigo-300"

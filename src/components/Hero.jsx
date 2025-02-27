@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { ThemeDataContext } from "../context/ThemeContext";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   const {darkMode} = useContext(ThemeDataContext)
@@ -17,9 +18,9 @@ const Hero = () => {
           Access world-class education from anywhere, at any time.
         </p>
         <div className="mt-8 flex justify-center space-x-4">
-          <button className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+          <Link to={'/course-display'} className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200">
             Get Started
-          </button>
+          </Link>
           <button
             className={`px-6 py-3 border rounded-lg transition-colors duration-200 ${
               darkMode
