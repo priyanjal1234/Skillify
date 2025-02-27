@@ -92,7 +92,11 @@ const CoursePreview = () => {
         <div className="lg:col-span-2 space-y-8">
           <div className="rounded-2xl overflow-hidden">
             <img
-              src={specificCourse?.thumbnail}
+              src={
+                specificCourse?.thumbnail === ""
+                  ? "https://cdn.pixabay.com/photo/2018/02/27/10/49/training-3185170_1280.jpg"
+                  : specificCourse?.thumbnail
+              }
               alt={specificCourse?.title}
               className="w-full h-[400px] object-cover"
             />
@@ -209,10 +213,9 @@ const CoursePreview = () => {
             <div className="flex items-center justify-between">
               <span>Price</span>
               <span className="text-2xl font-bold">
-                
                 {specificCourse?.price === 0 || specificCourse?.price === null
                   ? "Free"
-                  : `₹${specificCourse?.price}`}
+                  : `₹ ${specificCourse?.price}`}
               </span>
             </div>
           </div>

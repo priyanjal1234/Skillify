@@ -12,6 +12,7 @@ import InstructorDashboard from "./pages/InstructorDashboard";
 import CoursePreview from "./pages/CoursePreview";
 import EditCourse from "./pages/EditCourse";
 import CourseDisplay from "./pages/CourseDisplay";
+import CourseDescription from "./pages/CourseDescription";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/course-preview/:courseId" element = {<CoursePreview />}/>
         <Route path="/edit-course/:courseId" element = {<EditCourse />}/>
         <Route path="/course-display" element = {<CourseDisplay />}/>
+        <Route path="/course/:courseId" element = {<CourseDescription />}/>
       </Routes>
     </>
   );

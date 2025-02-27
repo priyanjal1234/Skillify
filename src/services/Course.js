@@ -36,6 +36,16 @@ class CourseService {
     }
   }
 
+  async getPublishedCourses() {
+    try {
+      return await this.api.get(`${this.baseUrl}/published/all`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getSingleCourse(courseId) {
     try {
       return await this.api.get(`${this.baseUrl}/course/${courseId}`, {
@@ -69,7 +79,6 @@ class CourseService {
   }
 
   async updateCourse(courseId, edited) {
-    
     try {
       return await this.api.put(
         `${this.baseUrl}/edit-course/${courseId}`,

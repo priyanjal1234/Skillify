@@ -21,7 +21,7 @@ const InstructorCourse = ({ refetch }) => {
     category: "",
     level: "Beginner",
     price: "",
-    duration: ""
+    duration: "",
   });
   let navigate = useNavigate();
 
@@ -37,8 +37,8 @@ const InstructorCourse = ({ refetch }) => {
   async function handleDeleteCourse(courseId) {
     try {
       await courseService.deleteCourse(courseId);
-      toast.success("Course Deleted Successfully")
-      refetch()
+      toast.success("Course Deleted Successfully");
+      refetch();
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
@@ -138,8 +138,11 @@ const InstructorCourse = ({ refetch }) => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <img
-                          src={course?.thumbnail}
-                          alt={course?.title}
+                          src={
+                            course?.thumbnail === ""
+                              ? "https://cdn.pixabay.com/photo/2018/02/27/10/49/training-3185170_1280.jpg"
+                              : course?.thumbnail
+                          }
                           className="h-10 w-16 object-cover rounded"
                         />
                         <div className="ml-4">
@@ -179,7 +182,10 @@ const InstructorCourse = ({ refetch }) => {
                         >
                           <Eye className="h-5 w-5" />
                         </button>
-                        <Link to={`/edit-course/${course?._id}`} className="p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                        <Link
+                          to={`/edit-course/${course?._id}`}
+                          className="p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+                        >
                           <Edit3 className="h-5 w-5" />
                         </Link>
                         <button

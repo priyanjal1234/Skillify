@@ -2,13 +2,31 @@ import React, { useContext } from "react";
 import { Search } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import Navbar from "../components/Navbar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CourseCard from "../components/CourseCard";
+import { useQuery } from "@tanstack/react-query";
+import courseService from "../services/Course";
+import { setAllCourses } from "../redux/reducers/CourseReducer";
 
 const CourseDisplay = () => {
   const { darkMode } = useContext(ThemeDataContext);
 
   let { allCourses } = useSelector((state) => state.course);
+  let dispatch = useDispatch();
+
+  useQuery({
+    queryKey: ["getPublishedCourses"],
+    queryFn: async () => {
+      try {
+        let getAllCoursesRes = await courseService.getPublishedCourses();
+
+        return dispatch(setAllCourses(getAllCoursesRes.data));
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+        return []; // Ensure error cases return an empty array
+      }
+    },
+  });
 
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-50"}`}>
@@ -72,11 +90,16 @@ const CourseDisplay = () => {
         </div>
 
         {/* Course Grid */}
-
         <div className="w-full flex gap-5 flex-wrap">
-          {allCourses?.map((course) => (
-            <CourseCard course = {course}/>
-          ))}
+          {allCourses?.length > 0 ? (
+            allCourses.map((course) => (
+              <CourseCard key={course?._id} course={course} />
+            ))
+          ) : (
+            <p className={`text-gray-500 ${darkMode && "text-gray-300"} text-lg`}>
+              No courses available at the moment.
+            </p>
+          )}
         </div>
       </div>
     </div>

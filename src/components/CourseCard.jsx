@@ -2,10 +2,11 @@ import React, { useContext } from "react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import { Clock, Star, Users, ChevronRight } from "lucide-react";
 import truncateText from "../utils/truncateText";
-
+import { Link } from "react-router-dom";
 
 const CourseCard = ({course}) => {
   let { darkMode } = useContext(ThemeDataContext);
+  
   return (
     <div
       className={`${
@@ -80,7 +81,8 @@ const CourseCard = ({course}) => {
               {course?.rating?.average}
             </span>
           </div>
-          <button
+          <Link
+            to={`/course/${course?._id}`}
             className={`flex items-center space-x-2 ${
               darkMode
                 ? "text-indigo-400 hover:text-indigo-500"
@@ -89,7 +91,7 @@ const CourseCard = ({course}) => {
           >
             <span>View Details</span>
             <ChevronRight className="h-4 w-4" />
-          </button>
+          </Link>
         </div>
       </div>
     </div>

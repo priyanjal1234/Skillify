@@ -6,7 +6,7 @@ import convertToRealDate from "../utils/createdAtConversion";
 import userService from "../services/User";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { setLoggedin } from "../redux/reducers/UserReducer";
+import { setCurrentUser, setLoggedin } from "../redux/reducers/UserReducer";
 import { ThemeDataContext } from "../context/ThemeContext";
 import { getUserLocation } from "../utils/getUserLocation";
 import { getAddressFromCoordinates } from "../utils/convertToRealLocation";
@@ -38,6 +38,7 @@ const Profile = () => {
       await userService.logoutAccount();
       toast.success("Logout Success");
       dispatch(setLoggedin(false));
+      dispatch(setCurrentUser({}));
       navigate("/");
     } catch (error) {
       toast.error(error?.response?.data?.message);
