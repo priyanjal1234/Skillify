@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import Navbar from "../components/Navbar";
@@ -10,27 +10,60 @@ import { setAllCourses } from "../redux/reducers/CourseReducer";
 
 const CourseDisplay = () => {
   const { darkMode } = useContext(ThemeDataContext);
+  const dispatch = useDispatch();
 
   let { allCourses } = useSelector((state) => state.course);
-  let dispatch = useDispatch();
+
+  const [category, setCategory] = useState("");
+  const [level, setlevel] = useState("");
+  const [filteredCourses, setFilteredCourses] = useState([]);
+  const [levelwisefilteredCourses, setlevelwisefilteredCourses] = useState([]);
 
   useQuery({
     queryKey: ["getPublishedCourses"],
     queryFn: async () => {
       try {
-        let getAllCoursesRes = await courseService.getPublishedCourses();
-
-        return dispatch(setAllCourses(getAllCoursesRes.data));
+        let getPublishedCoursesRes = await courseService.getPublishedCourses();
+        dispatch(setAllCourses(getPublishedCoursesRes.data));
+        setFilteredCourses(getPublishedCoursesRes.data);
+        setlevelwisefilteredCourses(getPublishedCoursesRes.data);
+        return getPublishedCoursesRes.data;
       } catch (error) {
         console.log(error?.response?.data?.message);
-        return []; // Ensure error cases return an empty array
+        return [];
       }
     },
   });
 
+  useEffect(() => {
+    function filterCourses() {
+      let result = allCourses
+      if(category !== "") {
+        result = result.filter(course => course?.category?.toLowerCase() === category.toLowerCase())
+      }
+
+      if(level !== "") {
+        result = result.filter(course => course?.level?.toLowerCase() === level.toLowerCase())
+      }
+
+      setFilteredCourses(result)
+    }
+
+    if(allCourses?.length) filterCourses()
+  },[allCourses,category,level])
+
+  function handleCategoryChange(e) {
+    setCategory(e.target.value);
+  }
+
+  function handleLevelChange(e) {
+    setlevel(e.target.value);
+  }
+
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-50"}`}>
       <Navbar />
+
       {/* Hero Section */}
       <div
         className={`${
@@ -50,7 +83,6 @@ const CourseDisplay = () => {
         </div>
       </div>
 
-      {/* Search and Filters */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="flex-1">
@@ -69,6 +101,8 @@ const CourseDisplay = () => {
           </div>
           <div className="flex gap-4">
             <select
+              value={category}
+              onChange={handleCategoryChange}
               className={`px-4 py-3 rounded-xl border-2 ${
                 darkMode
                   ? "border-gray-700 bg-gray-800 text-white"
@@ -76,27 +110,52 @@ const CourseDisplay = () => {
               } focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
             >
               <option value="">All Categories</option>
+              <option value="programming">Programming</option>
+              <option value="data science">Data Science</option>
+              <option value="web development">Web Development</option>
+              <option value="mobile development">Mobile Development</option>
+              <option value="ui/ux design">UI/UX Design</option>
+              <option value="cybersecurity">Cybersecurity</option>
+              <option value="cloud computing">Cloud Computing</option>
+              <option value="artificial intelligence & machine learning">
+                Artificial Intelligence & Machine Learning
+              </option>
+              <option value="business & entrepreneurship">
+                Business & Entrepreneurship
+              </option>
+              <option value="digital marketing">Digital Marketing</option>
+              <option value="graphic design">Graphic Design</option>
+              <option value="photography & video editing">
+                Photography & Video Editing
+              </option>
             </select>
+
             <select
+              value={level}
+              onChange={handleLevelChange}
               className={`px-4 py-3 rounded-xl border-2 ${
                 darkMode
                   ? "border-gray-700 bg-gray-800 text-white"
                   : "border-gray-200 bg-white text-gray-900"
               } focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
             >
-              <option value="">All Levels</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
             </select>
           </div>
         </div>
 
         {/* Course Grid */}
         <div className="w-full flex gap-5 flex-wrap">
-          {allCourses?.length > 0 ? (
-            allCourses.map((course) => (
+          {filteredCourses?.length > 0 ? (
+            filteredCourses?.map((course) => (
               <CourseCard key={course?._id} course={course} />
             ))
           ) : (
-            <p className={`text-gray-500 ${darkMode && "text-gray-300"} text-lg`}>
+            <p
+              className={`text-gray-500 ${darkMode && "text-gray-300"} text-lg`}
+            >
               No courses available at the moment.
             </p>
           )}

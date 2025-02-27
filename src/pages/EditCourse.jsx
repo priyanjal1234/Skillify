@@ -16,6 +16,7 @@ const EditCourse = () => {
     price: "",
   });
   const [thumbnail, setthumbnail] = useState();
+  const [loading, setloading] = useState(false);
 
   let navigate = useNavigate();
 
@@ -39,6 +40,8 @@ const EditCourse = () => {
   async function handleEditCourse(e) {
     e.preventDefault();
 
+    setloading(true);
+
     let formData = new FormData();
 
     if (edit.title) formData.append("title", edit.title);
@@ -50,10 +53,12 @@ const EditCourse = () => {
 
     try {
       let editCourseRes = await courseService.updateCourse(courseId, formData);
-      await courseService.changeCourseStatus(courseId,"Draft");
+      await courseService.changeCourseStatus(courseId, "Draft");
+      setloading(false);
       toast.success("Course Updated Successfully");
       navigate("/dashboard/instructor");
     } catch (error) {
+      setloading(false);
       toast.error(error?.response?.data?.message || "Failed to update course");
     }
   }
@@ -177,9 +182,10 @@ const EditCourse = () => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700"
+              className="px-4 py-2 rounded-lg flex gap-3 items-center justify-center text-white bg-indigo-600 hover:bg-indigo-700"
             >
               Update Course
+              {loading && <span className="loader"></span>}
             </button>
           </div>
         </form>

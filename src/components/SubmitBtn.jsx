@@ -9,7 +9,7 @@ const SubmitBtn = ({ loading, btnText }) => {
       >
         {btnText}
 
-        {loading && <span class="loader"></span>}
+        {loading && <span className="loader"></span>}
       </button>
     </div>
   );

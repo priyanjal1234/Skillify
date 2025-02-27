@@ -40,17 +40,7 @@ const CourseDescription = () => {
       <div className="relative">
         <div className="w-full h-[300px] md:h-[400px] overflow-hidden">
           <div className="w-full h-full bg-gray-300"></div>
-          {currentCourse?.thumbnail ? (
-            <div className="absolute inset-0">
-              <img
-                className="w-full h-full object-cover"
-                src={currentCourse?.thumbnail}
-                alt="Course Thumbnail"
-              />
-            </div>
-          ) : (
-            <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-          )}
+          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         </div>
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -58,7 +48,7 @@ const CourseDescription = () => {
               <Link
                 onClick={() => dispatch(setcurrentCourse({}))}
                 to={"/course-display"}
-                className="inline-flex items-center text-white bg-black bg-opacity-30 hover:bg-opacity-40 px-4 py-2 rounded-lg mb-4"
+                className="inline-flex items-center text-white bg-black bg-opacity-30 hover:bg-opacity-40  py-2 rounded-lg mb-4"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Courses
@@ -95,15 +85,25 @@ const CourseDescription = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div className={`rounded-xl shadow-sm p-6 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"}`}>
+            <div
+              className={`rounded-xl shadow-sm p-6 ${
+                darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+              }`}
+            >
               <h2 className="text-2xl font-bold mb-4">About This Course</h2>
               <p>{currentCourse?.description}</p>
             </div>
           </div>
 
           <div className="lg:col-span-1">
-            <div className={`rounded-xl shadow-sm p-6 sticky top-8 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"}`}>
-              <div className="text-3xl font-bold mb-4">Price: ₹ {currentCourse?.price}</div>
+            <div
+              className={`rounded-xl shadow-sm p-6 sticky top-8 ${
+                darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+              }`}
+            >
+              <div className="text-3xl font-bold mb-4">
+                Price: ₹ {currentCourse?.price}
+              </div>
               <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl mb-4 flex items-center justify-center">
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 Enroll Now
@@ -115,7 +115,9 @@ const CourseDescription = () => {
                 </div>
                 <div className="flex items-center">
                   <Users className="h-5 w-5 text-gray-400 mr-3" />
-                  <p>Students Enrolled: {currentCourse?.studentsEnrolled?.length}</p>
+                  <p>
+                    Students Enrolled: {currentCourse?.studentsEnrolled?.length}
+                  </p>
                 </div>
               </div>
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
