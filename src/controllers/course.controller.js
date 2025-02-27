@@ -4,7 +4,8 @@ import ApiError from '../utils/ApiError.js';
 
 const createCourse = async function (req, res, next) {
   try {
-    let { title, description, category, price, level } = req.body;
+    let { title, description, category, price, level,duration } = req.body;
+    
     let instructor = await userModel.findOne({ email: req.user.email });
 
     if (!title || !description || !category) {
@@ -19,6 +20,7 @@ const createCourse = async function (req, res, next) {
         category: String(category).toLowerCase(),
         price,
         level,
+        duration
       });
     } else {
       course = await courseModel.create({
@@ -29,6 +31,7 @@ const createCourse = async function (req, res, next) {
         thumbnail: req.file.path,
         price,
         level,
+        duration
       });
     }
 

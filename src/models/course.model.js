@@ -23,6 +23,10 @@ const courseSchema = mongoose.Schema(
       default:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoeC_2VgaUp-id_Sqlsf0lG1DfmABAF6aTBw&s',
     },
+    duration: {
+      type: Number,
+      
+    },
     price: {
       type: Number,
       default: 0, // Free courses by default
