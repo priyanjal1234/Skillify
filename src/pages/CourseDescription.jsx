@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import courseService from "../services/Course";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setcurrentCourse } from "../redux/reducers/CourseReducer";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Clock,
   Users,
@@ -22,6 +23,8 @@ const CourseDescription = () => {
   const { courseId } = useParams();
   const dispatch = useDispatch();
   const { currentCourse } = useSelector((state) => state.course);
+  const [loading, setloading] = useState(false);
+  let navigate = useNavigate();
 
   useQuery({
     queryKey: ["fetchsinglecourse"],
@@ -34,6 +37,20 @@ const CourseDescription = () => {
       }
     },
   });
+
+  async function handleEnrollment() {
+    setloading(true);
+    new Promise((res, rej) => setTimeout(res, 4000));
+    try {
+      await courseService.enrollInCourse(courseId);
+      toast.success("Enrollment Successfull");
+      setloading(false);
+      navigate(`/payment/${currentCourse?._id}`);
+    } catch (error) {
+      setloading(false);
+      toast.error(error?.response?.data?.message);
+    }
+  }
 
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-50"}`}>
@@ -104,10 +121,15 @@ const CourseDescription = () => {
               <div className="text-3xl font-bold mb-4">
                 Price: ₹ {currentCourse?.price}
               </div>
-              <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl mb-4 flex items-center justify-center">
+              <button
+                onClick={handleEnrollment}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl mb-4 flex items-center justify-center"
+              >
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 Enroll Now
+                {loading && <span className="loader"></span>}
               </button>
+
               <div className="space-y-4">
                 <div className="flex items-center">
                   <Clock className="h-5 w-5 text-gray-400 mr-3" />

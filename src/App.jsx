@@ -14,6 +14,7 @@ import EditCourse from "./pages/EditCourse";
 import CourseDisplay from "./pages/CourseDisplay";
 import CourseDescription from "./pages/CourseDescription";
 import ProtectedRoute from "./pages/ProtectedRoute";
+import PaymentPage from "./pages/PaymentPage";
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/payment/:courseId" element = {<PaymentPage />}/>
       </Routes>
     </>
   );

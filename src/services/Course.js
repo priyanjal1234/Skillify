@@ -89,6 +89,18 @@ class CourseService {
       throw error;
     }
   }
+
+  async enrollInCourse(courseId) {
+    try {
+      return await this.api.post(
+        `${this.baseUrl}/${courseId}/enroll`,
+        {},
+        { withCredentials: true }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 let courseService = new CourseService();
