@@ -15,6 +15,7 @@ const AddCourse = ({
 }) => {
   const { darkMode } = useContext(ThemeDataContext);
   const [loading, setLoading] = useState(false);
+  const [courseOutcomeList, setcourseOutcomeList] = useState([]);
 
   const containerStyles = {
     backgroundColor: darkMode ? "#1F2937" : "#ffffff",
@@ -29,12 +30,11 @@ const AddCourse = ({
 
   const [thumbnail, setthumbnail] = useState();
 
-
   function handleAddCourseChange(e) {
     let { name, value } = e.target;
 
-    if(name === "duration") {
-      value = value ? Number(value) : ""
+    if (name === "duration") {
+      value = value ? Number(value) : "";
     }
 
     setaddCourseData((prev) => ({ ...prev, [name]: value }));
@@ -53,6 +53,31 @@ const AddCourse = ({
     }
   }
 
+  function handleCourseOutcomeChange(e) {
+    let { value } = e.target;
+
+    if (value.includes(",")) {
+      const outcomes = value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      setcourseOutcomeList((prev) => [...prev, ...outcomes]);
+      setaddCourseData((prev) => ({
+        ...prev,
+        courseOutcome: [...prev.courseOutcome, ...outcomes],
+      }));
+
+      e.target.value = "";
+    }
+  }
+
+  function handleRemoveItem(index) {
+    const newList = courseOutcomeList.filter((_, i) => i !== index);
+    setcourseOutcomeList(newList);
+    setaddCourseData((prev) => ({ ...prev, courseOutcome: newList }));
+  }
+
   async function handleCreateCourse(e) {
     e.preventDefault();
 
@@ -66,6 +91,8 @@ const AddCourse = ({
       return;
     }
 
+    console.log(addCourseData.courseOutcome);
+
     let formdata = new FormData();
     formdata.append("title", addCourseData.title);
     formdata.append("description", addCourseData.description);
@@ -73,13 +100,17 @@ const AddCourse = ({
     formdata.append("level", addCourseData.level);
     formdata.append("price", addCourseData.price);
     formdata.append("thumbnail", thumbnail);
-    formdata.append("duration",addCourseData.duration)
+    formdata.append("duration", addCourseData.duration);
+    addCourseData.courseOutcome.forEach(function(outcome) {
+      formdata.append("courseOutcome[]",outcome)
+    })
 
     try {
       await courseService.createCourse(formdata);
       toast.success("Course Created Successfully");
       setShowAddCourse(false);
       setLoading(false);
+      let emptycourseOutcome = [];
       setaddCourseData((prev) => ({
         ...prev,
         title: "",
@@ -87,7 +118,8 @@ const AddCourse = ({
         category: "",
         level: "Beginner",
         price: "",
-        duration: ""
+        duration: "",
+        courseOutcome: emptycourseOutcome,
       }));
       refetch();
     } catch (error) {
@@ -198,6 +230,39 @@ const AddCourse = ({
             error={errors.duration}
             inputStyles={inputStyles}
           />
+
+          <div>
+            <label className="block text-smm font-medium mb-1">
+              What Students will Learn
+            </label>
+            <div
+              className="flex flex-wrap gap-2 p-2 border rounded-lg"
+              style={inputStyles}
+            >
+              {courseOutcomeList.map((outcome, index) => (
+                <span
+                  key={index}
+                  className="flex items-center bg-indigo-500 text-white px-2 py-1 rounded-lg"
+                >
+                  {outcome}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveItem(index)}
+                    className="ml-2 text-white font-bold hover:text-red-500"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+              <input
+                type="text"
+                name="courseOutcome"
+                placeholder="Type and press comma"
+                onChange={handleCourseOutcomeChange}
+                className="outline-none flex-grow bg-transparent px-2"
+              />
+            </div>
+          </div>
 
           {/* Course Thumbnail Upload */}
           <div>

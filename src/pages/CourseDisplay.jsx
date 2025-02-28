@@ -38,6 +38,7 @@ const CourseDisplay = () => {
   useEffect(() => {
     function filterCourses() {
       let result = allCourses;
+
       if (category !== "") {
         result = result.filter(
           (course) => course?.category?.toLowerCase() === category.toLowerCase()
@@ -60,7 +61,7 @@ const CourseDisplay = () => {
     }
 
     if (allCourses?.length) filterCourses();
-  }, [allCourses, category, level, searchVal]);
+  }, [allCourses, level, category, searchVal]);
 
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-50"}`}>

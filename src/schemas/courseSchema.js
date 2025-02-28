@@ -9,6 +9,9 @@ const courseSchema = z.object({
     (val) => Number(val),
     z.number().positive("Duration must be a positive number")
   ),
+  courseOutcome: z
+    .array(z.string().min(1, "Each course outcome must be a non-empty string"))
+    .min(1, "At least one course outcome is required"),
 });
 
 export default courseSchema;

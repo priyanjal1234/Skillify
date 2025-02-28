@@ -13,6 +13,7 @@ import CoursePreview from "./pages/CoursePreview";
 import EditCourse from "./pages/EditCourse";
 import CourseDisplay from "./pages/CourseDisplay";
 import CourseDescription from "./pages/CourseDescription";
+import ProtectedRoute from "./pages/ProtectedRoute";
 
 const App = () => {
   return (
@@ -23,14 +24,21 @@ const App = () => {
         <Route path="/login/:name" element={<Login />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/forgot-password" element = {<ForgotPassword />}/>
-        <Route path="/reset-password/:token" element = {<ResetPassword />}/>
-        <Route path="/edit-profile" element = {<EditProfile />}/>
-        <Route path="/dashboard/instructor" element = {<InstructorDashboard />}/>
-        <Route path="/course-preview/:courseId" element = {<CoursePreview />}/>
-        <Route path="/edit-course/:courseId" element = {<EditCourse />}/>
-        <Route path="/course-display" element = {<CourseDisplay />}/>
-        <Route path="/course/:courseId" element = {<CourseDescription />}/>
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/dashboard/instructor" element={<InstructorDashboard />} />
+        <Route path="/course-preview/:courseId" element={<CoursePreview />} />
+        <Route path="/edit-course/:courseId" element={<EditCourse />} />
+        <Route path="/course-display" element={<CourseDisplay />} />
+        <Route
+          path="/course/:courseId"
+          element={
+            <ProtectedRoute>
+              <CourseDescription />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );

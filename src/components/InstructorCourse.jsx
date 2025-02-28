@@ -22,6 +22,7 @@ const InstructorCourse = ({ refetch }) => {
     level: "Beginner",
     price: "",
     duration: "",
+    courseOutcome: []
   });
   let navigate = useNavigate();
 

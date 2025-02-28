@@ -14,7 +14,7 @@ const CourseCard = ({course}) => {
       } rounded-2xl  shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300`}
     >
       <div className="p-6">
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-4 justify-between mb-2">
           <span
             className={`text-sm font-medium px-3 py-1 rounded-full ${
               darkMode
