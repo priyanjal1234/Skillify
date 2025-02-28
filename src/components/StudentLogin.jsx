@@ -1,7 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { BookOpen, Lock, Mail } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ThemeDataContext } from "../context/ThemeContext";
 import FormField from "./FormField";
 import useFormHandler from "../hooks/useFormHandler";
@@ -18,6 +18,25 @@ const StudentLogin = () => {
 
   let dispatch = useDispatch();
   let navigate = useNavigate();
+
+  let location = useLocation();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const error = queryParams.get("error");
+
+    if (error) {
+      if (error === "account_exists") {
+        toast.error(
+          "An account with this email already exists. Please log in with your password first."
+        );
+      } else if (error === "google_login_failed") {
+        toast.error("Google login failed. Please try again.");
+      } else if (error === "auth_failed") {
+        toast.error("Authentication failed. Please try again.");
+      }
+    }
+  }, [location]);
 
   const { values, setvalues, handleChange, errors } = useFormHandler(
     {
@@ -58,7 +77,7 @@ const StudentLogin = () => {
 
   function handleGoogleLogin() {
     try {
-      window.open("http://localhost:3000/api/users/google","_self");
+      window.open("http://localhost:3000/api/users/google", "_self");
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Error logging with google"
