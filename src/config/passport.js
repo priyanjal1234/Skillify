@@ -11,9 +11,15 @@ passport.use(
     },
     async function (accessToken, refreshToken, profile, done) {
       try {
-        let user = await userModel.findOne({ googleId: profile.id });
+        let user = await userModel.findOne({ email: profile.emails[0].value });
 
-        if (!user) {
+        if (user) {
+          if (!user.googleId) {
+            user.googleId = profile.id;
+            await user.save();
+          }
+          return done(null, user);
+        } else {
           user = await userModel.create({
             googleId: profile.id,
             name: profile.displayName,
@@ -22,8 +28,6 @@ passport.use(
           });
 
           return done(null, user);
-        } else {
-          return done(null,user)
         }
       } catch (error) {
         return done(error, null);

@@ -31,14 +31,12 @@ router.route('/logout').get(logoutUser);
 
 router.route('/profile').get(isLoggedin, asyncHandler(getLoggedinUser));
 
-router
-  .route('/update/profile')
-  .put(
-    isLoggedin,
-    
-    upload.single('profilePicture'),
-    asyncHandler(updateLoggedinUser)
-  );
+router.route('/update/profile').put(
+  isLoggedin,
+
+  upload.single('profilePicture'),
+  asyncHandler(updateLoggedinUser)
+);
 
 router.route('/forgot-password').post(asyncHandler(forgotPassword));
 
@@ -50,19 +48,43 @@ router
 
 router.route('/auth/google/callback').get(
   passport.authenticate('google', {
-    failureRedirect: 'http://localhost:5173/login/student',
+    failureRedirect:
+      'http://localhost:5173/login/student?error=google_login_failed',
   }),
-  function (req, res) {
-    const token = jwt.sign(
-      { id: req.user._id, name: req.user.name, email: req.user.email },
-      process.env.JWT_KEY,
-      {
-        expiresIn: '7d',
+  async function (req, res) {
+    try {
+      if (!req.user) {
+        return res.redirect(
+          'http://localhost:5173/login/student?error=auth_failed'
+        );
       }
-    );
-    res.cookie('token', token);
 
-    return res.redirect('http://localhost:5173');
+      
+      const token = jwt.sign(
+        { id: req.user._id, name: req.user.name, email: req.user.email },
+        process.env.JWT_KEY,
+        {
+          expiresIn: '7d',
+        }
+      );
+
+      res.cookie('token', token);
+
+      return res.redirect('http://localhost:5173');
+    } catch (error) {
+      console.error('Google Auth Error:', error);
+
+      
+      if (error.code === 11000) {
+        return res.redirect(
+          'http://localhost:5173/login/student?error=account_exists'
+        );
+      }
+
+      return res.redirect(
+        'http://localhost:5173/login/student?error=google_login_failed'
+      );
+    }
   }
 );
 
