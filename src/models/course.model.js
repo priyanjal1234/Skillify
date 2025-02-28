@@ -37,6 +37,10 @@ const courseSchema = mongoose.Schema(
         'Advanced' || 'advanced',
       ],
     },
+    courseOutcome: {
+      type: Array,
+      default: []
+    },
     lessons: [
       {
         type: mongoose.Schema.Types.ObjectId,

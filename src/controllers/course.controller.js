@@ -4,23 +4,41 @@ import ApiError from '../utils/ApiError.js';
 
 const createCourse = async function (req, res, next) {
   try {
-    let { title, description, category, price, level, duration } = req.body;
+    let {
+      title,
+      description,
+      category,
+      price,
+      level,
+      duration,
+      courseOutcome,
+    } = req.body;
 
     let instructor = await userModel.findOne({ email: req.user.email });
 
     if (!title || !description || !category) {
       return next(new ApiError(400, 'All Fields are required'));
     }
+
+    if (typeof courseOutcome === 'string') {
+      courseOutcome = courseOutcome.split(',').map((outcome) => outcome.trim());
+    }
+
+    if (!Array.isArray(courseOutcome)) {
+      courseOutcome = [courseOutcome];
+    }
+
     let course;
     if (!req.file) {
       course = await courseModel.create({
         title,
         description,
         instructor: instructor?._id,
-        category: String(category).toLowerCase(),
+        category,
         price,
         level,
         duration,
+        courseOutcome,
       });
     } else {
       course = await courseModel.create({
@@ -32,6 +50,7 @@ const createCourse = async function (req, res, next) {
         price,
         level,
         duration,
+        courseOutcome,
       });
     }
 
@@ -113,7 +132,7 @@ const getInstructorCourses = async function (req, res, next) {
 const getPublishedCourses = async function (req, res, next) {
   try {
     let publishedCourses = await courseModel.find({ status: 'Published' });
-  
+
     return res.status(200).json(publishedCourses);
   } catch (error) {
     return next(
@@ -203,10 +222,9 @@ const deleteCourse = async function (req, res, next) {
     user.createdCourses = user.createdCourses.filter(
       (course) => String(course) !== String(courseId)
     );
-
+    await user.save();
     await courseModel.findByIdAndDelete(courseId);
 
-    await user.save();
     return res.status(200).json({ message: 'Course Deleted Successfully' });
   } catch (error) {
     return next(
@@ -293,5 +311,5 @@ export {
   changeCourseStatus,
   deleteCourse,
   updateCourse,
-  getPublishedCourses
+  getPublishedCourses,
 };
