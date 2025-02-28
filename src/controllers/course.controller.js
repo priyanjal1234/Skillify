@@ -1,4 +1,5 @@
 import courseModel from '../models/course.model.js';
+import enrollmentModel from '../models/enrollment.model.js';
 import userModel from '../models/user.model.js';
 import ApiError from '../utils/ApiError.js';
 
@@ -149,10 +150,12 @@ const getPublishedCourses = async function (req, res, next) {
 const enrollInCourse = async function (req, res, next) {
   try {
     let { id } = req.params;
+
     let student = await userModel.findOne({
       email: req.user.email,
       role: 'student',
     });
+
     let course = await courseModel.findOne({ _id: id });
 
     if (!course) {
@@ -172,6 +175,11 @@ const enrollInCourse = async function (req, res, next) {
 
     student.enrolledCourses.push(course._id);
     await student.save();
+
+    await enrollmentModel.create({
+      student: student._id,
+      course: course._id
+    })
 
     return res
       .status(200)
