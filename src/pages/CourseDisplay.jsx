@@ -26,7 +26,7 @@ const CourseDisplay = () => {
         let getPublishedCoursesRes = await courseService.getPublishedCourses();
         dispatch(setAllCourses(getPublishedCoursesRes.data));
         setFilteredCourses(getPublishedCoursesRes.data);
-        setlevelwisefilteredCourses(getPublishedCoursesRes.data);
+        
         return getPublishedCoursesRes.data;
       } catch (error) {
         console.log(error?.response?.data?.message);
@@ -153,7 +153,7 @@ const CourseDisplay = () => {
         </div>
 
         {/* Course Grid */}
-        <div className="w-full flex gap-5 flex-wrap">
+        <div className="grid grid-cols-2 gap-6 items-start">
           {filteredCourses?.length > 0 ? (
             filteredCourses?.map((course) => (
               <CourseCard key={course?._id} course={course} />

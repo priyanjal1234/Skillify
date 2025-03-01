@@ -6,11 +6,11 @@ class OrderService {
     this.baseUrl = "http://localhost:3000/api/orders";
   }
 
-  async createOrder(amount, courseId) {
+  async createOrder(amount, courseId,instructor) {
     try {
       return await this.api.post(
         `${this.baseUrl}/create-order`,
-        { amount, courseId },
+        { amount, courseId,instructor },
         { withCredentials: true }
       );
     } catch (error) {

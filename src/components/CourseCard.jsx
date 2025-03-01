@@ -3,10 +3,12 @@ import { ThemeDataContext } from "../context/ThemeContext";
 import { Clock, Star, Users, ChevronRight } from "lucide-react";
 import truncateText from "../utils/truncateText";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-const CourseCard = ({course}) => {
+const CourseCard = ({ course }) => {
   let { darkMode } = useContext(ThemeDataContext);
-  
+  let { currentUser } = useSelector((state) => state.user);
+
   return (
     <div
       className={`${
@@ -46,7 +48,7 @@ const CourseCard = ({course}) => {
             darkMode ? "dark:text-gray-300" : ""
           } mb-4`}
         >
-          {truncateText(course?.description,50)}
+          {truncateText(course?.description, 50)}
         </p>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
@@ -66,7 +68,11 @@ const CourseCard = ({course}) => {
                 darkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
-            {course?.studentsEnrolled?.length} students
+              {course?.studentsEnrolled?.length === 0
+                ? "0 Student"
+                : course?.studentsEnrolled?.length === 1
+                ? "1 Student"
+                : `${course?.studentsEnrolled?.length} students`}
             </span>
           </div>
         </div>
@@ -93,6 +99,17 @@ const CourseCard = ({course}) => {
             <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
+
+        {course?.studentsEnrolled?.includes(currentUser?._id) ? (
+          <Link
+            to={`/classroom/${course?._id}`}
+            className={`w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl ${
+              currentUser?.enrolledCourses?.includes(course?._id) ? "mb-4" : ""
+            } flex items-center justify-center`}
+          >
+            Go to Classroom
+          </Link>
+        ) : null}
       </div>
     </div>
   );

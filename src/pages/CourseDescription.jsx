@@ -25,6 +25,11 @@ const CourseDescription = () => {
   const { currentCourse } = useSelector((state) => state.course);
   const [loading, setloading] = useState(false);
   let navigate = useNavigate();
+  let { currentUser } = useSelector((state) => state.user);
+
+  // State for user rating and submission status
+  const [userRating, setUserRating] = useState(0);
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
 
   useQuery({
     queryKey: ["fetchsinglecourse"],
@@ -43,13 +48,16 @@ const CourseDescription = () => {
     new Promise((res, rej) => setTimeout(res, 4000));
     try {
       await courseService.enrollInCourse(courseId);
-      toast.success("Enrollment Successfull");
       setloading(false);
       navigate(`/payment/${currentCourse?._id}`);
     } catch (error) {
       setloading(false);
       toast.error(error?.response?.data?.message);
     }
+  }
+
+  function handleStarClick(value) {
+    setUserRating(value);
   }
 
   return (
@@ -65,7 +73,7 @@ const CourseDescription = () => {
               <Link
                 onClick={() => dispatch(setcurrentCourse({}))}
                 to={"/course-display"}
-                className="inline-flex items-center text-white bg-black bg-opacity-30 hover:bg-opacity-40  py-2 rounded-lg mb-4"
+                className="inline-flex items-center text-white bg-black bg-opacity-30 hover:bg-opacity-40 py-2 rounded-lg mb-4"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Courses
@@ -109,6 +117,52 @@ const CourseDescription = () => {
             >
               <h2 className="text-2xl font-bold mb-4">About This Course</h2>
               <p>{currentCourse?.description}</p>
+              <div className="mt-6">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                  What You'll Learn
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {currentCourse?.courseOutcome?.map((item, index) => (
+                    <div key={index} className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-300">
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Interactive Star Rating Component */}
+              <div
+                className="mt-8 p-4 rounded-xl shadow-sm"
+                style={{ backgroundColor: darkMode ? "#2d3748" : "#f7fafc" }}
+              >
+                <h3 className="text-xl font-bold mb-4">Rate this course</h3>
+                <div className="flex items-center">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => handleStarClick(star)}
+                      className="focus:outline-none mr-3 mb-4"
+                    >
+                      <Star
+                        fill={star <= userRating ? "currentColor" : "none"}
+                        className={`h-6 w-6 ${
+                          star <= userRating
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+                <button
+                  disabled={userRating === 0 || ratingSubmitted}
+                  className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
+                >
+                  {ratingSubmitted ? "Rated" : "Submit Rating"}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -118,17 +172,28 @@ const CourseDescription = () => {
                 darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
               }`}
             >
-              <div className="text-3xl font-bold mb-4">
-                Price: ₹ {currentCourse?.price}
-              </div>
-              <button
-                onClick={handleEnrollment}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl mb-4 flex items-center justify-center"
-              >
-                <ShoppingCart className="h-5 w-5 mr-2" />
-                Enroll Now
-                {loading && <span className="loader"></span>}
-              </button>
+              {currentCourse?.studentsEnrolled?.includes(currentUser?._id) ? (
+                <Link
+                  to={`/classroom/${courseId}`}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl mb-4 flex items-center justify-center"
+                >
+                  Go to Classroom
+                </Link>
+              ) : (
+                <>
+                  <div className="text-3xl font-bold mb-4">
+                    Price: ₹ {currentCourse?.price}
+                  </div>
+                  <button
+                    onClick={handleEnrollment}
+                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl mb-4 flex items-center justify-center"
+                  >
+                    <ShoppingCart className="h-5 w-5 mr-2" />
+                    Enroll Now
+                    {loading && <span className="loader"></span>}
+                  </button>
+                </>
+              )}
 
               <div className="space-y-4">
                 <div className="flex items-center">

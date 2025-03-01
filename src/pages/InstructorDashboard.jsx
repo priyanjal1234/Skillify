@@ -15,12 +15,15 @@ import { useQuery } from "@tanstack/react-query";
 import courseService from "../services/Course";
 import { setInstructorCourses } from "../redux/reducers/CourseReducer";
 import { Link } from "react-router-dom";
+import InstructorAnalytics from "./InstructorAnalytics";
+
 
 const InstructorDashboard = () => {
   const [activeItem, setActiveItem] = useState("Dashboard");
   const { darkMode } = useContext(ThemeDataContext);
   let { currentUser, isLoggedin } = useSelector((state) => state.user);
   let dispatch = useDispatch();
+
 
   let { refetch } = useQuery({
     queryKey: ["getInstructorCourses"],
@@ -119,6 +122,7 @@ const InstructorDashboard = () => {
       {/* Main content */}
       <main className="flex-1 p-5">
         {activeItem === "Courses" && <InstructorCourse refetch={refetch} />}
+        {activeItem === "Dashboard" && <InstructorAnalytics instructorId = {currentUser?._id}/>}
       </main>
     </div>
   );

@@ -146,6 +146,7 @@ const PaymentPage = () => {
             <PaymentButton
               courseId={courseId}
               amount={currentCourse?.price + calculateGST(currentCourse?.price)}
+              instructor = {currentCourse?.instructor}
             />
           </div>
         </div>

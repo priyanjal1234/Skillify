@@ -4,12 +4,13 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const PaymentButton = ({ courseId, amount }) => {
+const PaymentButton = ({ courseId, amount,instructor }) => {
   let { currentUser } = useSelector((state) => state.user);
   let navigate = useNavigate();
   async function handlePayment() {
     try {
-      const { data } = await orderService.createOrder(amount, courseId);
+      const { data } = await orderService.createOrder(amount, courseId,instructor);
+    
 
       const options = {
         key: import.meta.env.RAZORPAY_KEY_ID,
