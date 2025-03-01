@@ -101,6 +101,18 @@ class CourseService {
       throw error;
     }
   }
+
+  async unenrollFromCourse(courseId) {
+    try {
+      return await this.api.put(
+        `${this.baseUrl}/${courseId}/unenroll`,
+        {},
+        { withCredentials: true }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 let courseService = new CourseService();

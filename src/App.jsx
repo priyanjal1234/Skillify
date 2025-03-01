@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
@@ -17,6 +17,12 @@ import ProtectedRoute from "./pages/ProtectedRoute";
 import PaymentPage from "./pages/PaymentPage";
 
 const App = () => {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
   return (
     <>
       <Routes>
@@ -40,7 +46,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/payment/:courseId" element = {<PaymentPage />}/>
+        <Route path="/payment/:courseId" element={<PaymentPage />} />
       </Routes>
     </>
   );
