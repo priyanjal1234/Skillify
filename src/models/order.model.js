@@ -7,6 +7,11 @@ const orderSchema = mongoose.Schema(
       ref: 'user',
       required: true,
     },
+    instructor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user',
+      required: true,
+    },
     course: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'course',

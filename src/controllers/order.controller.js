@@ -13,7 +13,7 @@ const razorpay = new Razorpay({
 
 const createOrder = async function (req, res, next) {
   try {
-    let { amount, courseId } = req.body;
+    let { amount, courseId,instructor } = req.body;
 
     let student = await userModel.findOne({ email: req.user.email });
 
@@ -28,6 +28,7 @@ const createOrder = async function (req, res, next) {
     if (order) {
       await orderModel.create({
         student: student._id,
+        instructor: instructor,
         course: courseId,
         amountPaid: amount,
       });
