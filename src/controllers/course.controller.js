@@ -153,7 +153,6 @@ const enrollInCourse = async function (req, res, next) {
 
     let student = await userModel.findOne({
       email: req.user.email,
-      role: 'student',
     });
 
     let course = await courseModel.findOne({ _id: id });
@@ -176,11 +175,6 @@ const enrollInCourse = async function (req, res, next) {
     student.enrolledCourses.push(course._id);
     await student.save();
 
-    await enrollmentModel.create({
-      student: student._id,
-      course: course._id
-    })
-
     return res
       .status(200)
       .json({ message: 'Student is successfully enrolled in the course' });
@@ -191,6 +185,44 @@ const enrollInCourse = async function (req, res, next) {
         error instanceof Error
           ? error.message
           : 'Error in student enrollment of course'
+      )
+    );
+  }
+};
+
+const unenrollFromCourse = async function (req, res, next) {
+  try {
+    let { courseId } = req.params;
+    
+    let student = await userModel.findOne({ email: req.user.email });
+    let course = await courseModel.findOne({ _id: courseId });
+    if (!course) {
+      return next(new ApiError(404, 'Course with this id not found'));
+    }
+
+    if (
+      course.studentsEnrolled.includes(student._id) &&
+      student.enrolledCourses.includes(course._id)
+    ) {
+      course.studentsEnrolled = course.studentsEnrolled.filter(
+        (id) => id.toString() !== student._id.toString()
+      );
+      student.enrolledCourses = student.enrolledCourses.filter(
+        (id) => id.toString() !== course._id.toString()
+      );
+      await student.save();
+      await course.save();
+      return res.status(200).json({ message: 'Student successfully unenrolled from the course' });
+    } else {
+      return next(
+        new ApiError(401, 'Student is already unenrolled from the course')
+      );
+    }
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error in student unenrollment from course'
       )
     );
   }
@@ -316,6 +348,7 @@ export {
   getOneCourse,
   getInstructorCourses,
   enrollInCourse,
+  unenrollFromCourse,
   changeCourseStatus,
   deleteCourse,
   updateCourse,

@@ -20,3 +20,7 @@ export const redisHost = process.env.REDIS_HOST
 export const redisPort = process.env.REDIS_PORT 
 
 export const redisPassword = process.env.REDIS_PASSWORD 
+
+export const razorpayKeyId = process.env.RAZORPAY_KEY_ID
+
+export const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET

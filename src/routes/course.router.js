@@ -10,6 +10,7 @@ import {
   getInstructorCourses,
   getOneCourse,
   getPublishedCourses,
+  unenrollFromCourse,
   updateCourse,
 } from '../controllers/course.controller.js';
 import asyncHandler from '../utils/asyncHandler.js';
@@ -41,5 +42,7 @@ router.route("/delete-course/:courseId").delete(isLoggedin,isInstructor,deleteCo
 router.route("/edit-course/:courseId").put(isLoggedin,isInstructor,upload.single("thumbnail"),updateCourse)
 
 router.route("/published/all").get(getPublishedCourses)
+
+router.route("/:courseId/unenroll").put(isLoggedin,unenrollFromCourse)
 
 export default router;
