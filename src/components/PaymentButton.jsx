@@ -4,13 +4,18 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const PaymentButton = ({ courseId, amount,instructor }) => {
+const PaymentButton = ({ courseId, amount, instructor }) => {
   let { currentUser } = useSelector((state) => state.user);
+  let { currentCourse } = useSelector((state) => state.course);
+
   let navigate = useNavigate();
   async function handlePayment() {
     try {
-      const { data } = await orderService.createOrder(amount, courseId,instructor);
-    
+      const { data } = await orderService.createOrder(
+        amount,
+        courseId,
+        instructor
+      );
 
       const options = {
         key: import.meta.env.RAZORPAY_KEY_ID,
@@ -20,9 +25,11 @@ const PaymentButton = ({ courseId, amount,instructor }) => {
         description: "Pay karo tabhi milega course",
         order_id: data.order.id,
         handler: async function (response) {
+          let newResponse = { ...response };
+          newResponse.instructor = currentCourse?.instructor
           try {
             const verifyRes = await orderService.verifyPayment(
-              response,
+              newResponse,
               courseId
             );
 

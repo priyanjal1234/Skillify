@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import SubmitBtn from "../components/SubmitBtn";
 import { ThemeDataContext } from "../context/ThemeContext";
+import { useSelector } from "react-redux";
 
 const EditProfile = () => {
   const { values, handleChange } = useFormHandler({
@@ -20,6 +21,8 @@ const EditProfile = () => {
 
   const [profilePicture, setprofilePicture] = useState(null);
   const [loading, setloading] = useState(false);
+
+  let { currentUser } = useSelector((state) => state.user);
 
   const imageRef = useRef(null);
 
@@ -77,33 +80,35 @@ const EditProfile = () => {
           />
 
           {/* Role Selection */}
-          <div className="form-group">
-            <label className="block text-sm font-medium mb-2">Role</label>
-            <div className="flex flex-col sm:flex-row sm:space-x-4">
-              <label className="flex items-center mb-2 sm:mb-0">
-                <input
-                  type="radio"
-                  name="role"
-                  value="student"
-                  checked={values.role === "student"}
-                  onChange={handleChange}
-                  className="text-indigo-600 focus:ring-indigo-500"
-                />
-                <span className="ml-2">Student</span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="role"
-                  value="instructor"
-                  checked={values.role === "instructor"}
-                  onChange={handleChange}
-                  className="text-indigo-600 focus:ring-indigo-500"
-                />
-                <span className="ml-2">Instructor</span>
-              </label>
+          {currentUser?.googleId && (
+            <div className="form-group">
+              <label className="block text-sm font-medium mb-2">Role</label>
+              <div className="flex flex-col sm:flex-row sm:space-x-4">
+                <label className="flex items-center mb-2 sm:mb-0">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="student"
+                    checked={values.role === "student"}
+                    onChange={handleChange}
+                    className="text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span className="ml-2">Student</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="instructor"
+                    checked={values.role === "instructor"}
+                    onChange={handleChange}
+                    className="text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span className="ml-2">Instructor</span>
+                </label>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Profile Picture Upload */}
           <div className="form-group">

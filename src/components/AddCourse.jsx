@@ -91,8 +91,6 @@ const AddCourse = ({
       return;
     }
 
-    console.log(addCourseData.courseOutcome);
-
     let formdata = new FormData();
     formdata.append("title", addCourseData.title);
     formdata.append("description", addCourseData.description);
