@@ -29,14 +29,17 @@ const CourseDescription = () => {
 
   // State for user rating and submission status
   const [userRating, setUserRating] = useState(0);
-  const [ratingSubmitted, setRatingSubmitted] = useState(() => {
-    let saveRatingSubmitted = localStorage.getItem("ratingSubmitted");
-    return saveRatingSubmitted ? JSON.parse(saveRatingSubmitted) : false;
-  });
+  const [ratingSubmitted, setRatingSubmitted] = useState(false)
 
   useEffect(() => {
-    localStorage.setItem("ratingSubmitted",JSON.stringify(ratingSubmitted))
-  },[ratingSubmitted])
+    let ratingPresent = currentCourse?.ratings?.find(r => r.user === currentUser?._id)
+    if(ratingPresent) {
+      setRatingSubmitted(true)
+    }
+    else {
+      setRatingSubmitted(false)
+    }
+  },[])
 
   useQuery({
     queryKey: ["fetchsinglecourse"],
