@@ -10,6 +10,7 @@ import {
   getInstructorCourses,
   getOneCourse,
   getPublishedCourses,
+  rateCourse,
   unenrollFromCourse,
   updateCourse,
 } from '../controllers/course.controller.js';
@@ -44,5 +45,7 @@ router.route("/edit-course/:courseId").put(isLoggedin,isInstructor,upload.single
 router.route("/published/all").get(getPublishedCourses)
 
 router.route("/:courseId/unenroll").put(isLoggedin,unenrollFromCourse)
+
+router.route("/rate/:courseId").post(isLoggedin,rateCourse)
 
 export default router;

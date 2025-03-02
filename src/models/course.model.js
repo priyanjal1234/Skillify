@@ -39,7 +39,7 @@ const courseSchema = mongoose.Schema(
     },
     courseOutcome: {
       type: Array,
-      default: []
+      default: [],
     },
     lessons: [
       {
@@ -53,10 +53,12 @@ const courseSchema = mongoose.Schema(
         ref: 'user',
       },
     ],
-    rating: {
-      average: { type: Number, default: 0 },
-      totalRatings: { type: Number, default: 0 },
-    },
+    ratings: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+        value: { type: Number, default: 0, min: 1, max: 5 },
+      },
+    ],
     status: {
       type: String,
       enum: ['Published', 'Review', 'Draft'],

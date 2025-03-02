@@ -88,7 +88,9 @@ const getAllCourses = async function (req, res, next) {
 const getOneCourse = async function (req, res, next) {
   try {
     let { id } = req.params;
-    let singleCourse = await courseModel.findOne({ _id: id });
+    let singleCourse = await courseModel
+      .findOne({ _id: id })
+      .populate('instructor');
     if (!singleCourse) {
       return next(new ApiError(404, 'Course with the given id is not found'));
     }
@@ -259,19 +261,30 @@ const deleteCourse = async function (req, res, next) {
   try {
     let { courseId } = req.params;
     let user = await userModel.findOne({ email: req.user.email });
+
+    if (!user) {
+      return next(new ApiError(404, 'User not found'));
+    }
+
     let courseToBeDeleted = await courseModel.findOne({
       _id: courseId,
       instructor: user._id,
     });
-    if (!courseToBeDeleted) return next(new ApiError(404, 'Course not found'));
-    user.createdCourses = user.createdCourses.filter(
-      (course) => String(course) !== String(courseId)
+
+    if (!courseToBeDeleted) {
+      return next(new ApiError(404, 'Course not found'));
+    }
+
+    const filteredCourses = user.createdCourses.filter(
+      (course) => !course.equals(courseId)
     );
+    user.set('createdCourses', filteredCourses);
+
     await user.save();
+
     await courseModel.findByIdAndDelete(courseId);
 
     await enrollmentModel.deleteMany({ course: courseId });
-    await orderModel.deleteMany({ course: courseId });
 
     return res.status(200).json({ message: 'Course Deleted Successfully' });
   } catch (error) {
@@ -350,6 +363,58 @@ const updateCourse = async function (req, res, next) {
   }
 };
 
+const rateCourse = async function (req, res, next) {
+  try {
+    let { courseId } = req.params;
+    let { value } = req.body;
+
+    // Validate rating value
+    if (value < 1 || value > 5) {
+      return next(new ApiError(400, 'Rating must be between 1 and 5'));
+    }
+
+    // Find user
+    let user = await userModel.findOne({ email: req.user.email });
+    if (!user) {
+      return next(new ApiError(404, 'User not found'));
+    }
+
+    // Find course
+    let course = await courseModel.findById(courseId);
+    if (!course) {
+      return next(new ApiError(404, 'Course with this ID not found'));
+    }
+
+    // Check if user has already rated this course
+    let existingRatingIndex = course.ratings.findIndex((r) =>
+      r.user.equals(user._id)
+    );
+
+    if (existingRatingIndex !== -1) {
+      // Update existing rating
+
+      course.ratings[existingRatingIndex].value = value;
+    } else {
+      course.ratings.push({ user: user._id, value });
+    }
+
+    // Save course
+    await course.save();
+
+    return res
+      .status(200)
+      .json({ message: 'Thanks for your feedback', rating: course.rating });
+  } catch (error) {
+    console.error('Error in rateCourse:', error);
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error rating the course'
+      )
+    );
+  }
+};
+
 export {
   createCourse,
   getAllCourses,
@@ -361,4 +426,5 @@ export {
   deleteCourse,
   updateCourse,
   getPublishedCourses,
+  rateCourse,
 };
