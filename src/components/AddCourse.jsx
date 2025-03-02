@@ -99,9 +99,9 @@ const AddCourse = ({
     formdata.append("price", addCourseData.price);
     formdata.append("thumbnail", thumbnail);
     formdata.append("duration", addCourseData.duration);
-    addCourseData.courseOutcome.forEach(function(outcome) {
-      formdata.append("courseOutcome[]",outcome)
-    })
+    addCourseData.courseOutcome.forEach(function (outcome) {
+      formdata.append("courseOutcome[]", outcome);
+    });
 
     try {
       await courseService.createCourse(formdata);
@@ -166,16 +166,39 @@ const AddCourse = ({
 
           {/* Category & Level */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormFieldWithoutIcon
-              label="Category"
-              type="text"
-              placeholder="e.g., Programming"
-              name="category"
-              value={addCourseData.category}
-              handleChange={handleAddCourseChange}
-              error={errors.category}
-              inputStyles={inputStyles}
-            />
+            <div>
+              <label className="block text-sm font-medium mb-1">Category</label>
+              <select
+                name="category"
+                value={addCourseData.category}
+                onChange={handleAddCourseChange}
+                className="w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                style={inputStyles}
+              >
+                <option value="">Select Category</option>
+                <option value="programming">Programming</option>
+                <option value="data science">Data Science</option>
+                <option value="web development">Web Development</option>
+                <option value="mobile development">Mobile Development</option>
+                <option value="ui/ux design">UI/UX Design</option>
+                <option value="cybersecurity">Cybersecurity</option>
+                <option value="cloud computing">Cloud Computing</option>
+                <option value="artificial intelligence & machine learning">
+                  Artificial Intelligence & Machine Learning
+                </option>
+                <option value="business & entrepreneurship">
+                  Business & Entrepreneurship
+                </option>
+                <option value="digital marketing">Digital Marketing</option>
+                <option value="graphic design">Graphic Design</option>
+                <option value="photography & video editing">
+                  Photography & Video Editing
+                </option>
+              </select>
+              {errors.category && (
+                <p className="text-red-500 mt-2">{errors.category}</p>
+              )}
+            </div>
 
             <div>
               <label className="block text-sm font-medium mb-1">Level</label>

@@ -95,7 +95,7 @@ const CourseDisplay = () => {
                 value={searchVal}
                 onChange={(e) => setsearchVal(e.target.value)}
                 type="text"
-                placeholder="Search courses..."
+                placeholder="Search courses by title..."
                 className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 ${
                   darkMode
                     ? "border-gray-700 bg-gray-800 text-white"

@@ -6,9 +6,10 @@ import {
   CheckCircle,
   Users,
   Star,
+  Plus,
 } from "lucide-react";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import courseService from "../services/Course";
 import { toast } from "react-toastify";
 import { ThemeDataContext } from "../context/ThemeContext";
@@ -118,7 +119,7 @@ const CoursePreview = () => {
           >
             <h2 className="text-2xl font-bold mb-6">Course Content</h2>
             <div className="space-y-4">
-              {specificCourse?.lessons?.map((chapter, index) => (
+              {/* {specificCourse?.lessons?.map((chapter, index) => (
                 <div
                   key={index}
                   className={`border rounded-xl p-4 ${
@@ -145,7 +146,14 @@ const CoursePreview = () => {
                     ))}
                   </ul>
                 </div>
-              ))}
+              ))} */}
+              <Link
+                to={`/add-lesson/${courseId}`}
+                className="flex w-fit items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                <Plus className="h-5 w-5" />
+                <span>Add Lesson</span>
+              </Link>
             </div>
           </div>
         </div>
@@ -162,7 +170,7 @@ const CoursePreview = () => {
                 darkMode={darkMode}
                 icon={Clock}
                 label="Duration"
-                value={specificCourse?.duration}
+                value={`${specificCourse?.duration} weeks`}
               />
               <InfoRow
                 darkMode={darkMode}

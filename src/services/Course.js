@@ -46,6 +46,18 @@ class CourseService {
     }
   }
 
+  async rateCourse(courseId, value) {
+    try {
+      return await this.api.post(
+        `${this.baseUrl}/rate/${courseId}`,
+        { value },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getSingleCourse(courseId) {
     try {
       return await this.api.get(`${this.baseUrl}/course/${courseId}`, {

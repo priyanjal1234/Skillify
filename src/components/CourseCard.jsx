@@ -13,8 +13,19 @@ const CourseCard = ({ course }) => {
     <div
       className={`${
         darkMode ? "bg-gray-800" : "bg-white"
-      } rounded-2xl  shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300`}
+      } w-[400px] rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300`}
     >
+      {/* Course Thumbnail */}
+      {course?.thumbnail !== "" && (
+        <div className="w-full h-48 overflow-hidden">
+          <img
+            src={course?.thumbnail}
+            alt={course?.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
       <div className="p-6">
         <div className="flex items-center gap-4 justify-between mb-2">
           <span
@@ -103,9 +114,7 @@ const CourseCard = ({ course }) => {
         {course?.studentsEnrolled?.includes(currentUser?._id) ? (
           <Link
             to={`/classroom/${course?._id}`}
-            className={`w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl ${
-              currentUser?.enrolledCourses?.includes(course?._id) ? "mb-4" : ""
-            } flex items-center justify-center`}
+            className={`w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center`}
           >
             Go to Classroom
           </Link>

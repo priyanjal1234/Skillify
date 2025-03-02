@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import courseService from "../services/Course";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,7 +29,14 @@ const CourseDescription = () => {
 
   // State for user rating and submission status
   const [userRating, setUserRating] = useState(0);
-  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const [ratingSubmitted, setRatingSubmitted] = useState(() => {
+    let saveRatingSubmitted = localStorage.getItem("ratingSubmitted");
+    return saveRatingSubmitted ? JSON.parse(saveRatingSubmitted) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("ratingSubmitted",JSON.stringify(ratingSubmitted))
+  },[ratingSubmitted])
 
   useQuery({
     queryKey: ["fetchsinglecourse"],
@@ -58,6 +65,16 @@ const CourseDescription = () => {
 
   function handleStarClick(value) {
     setUserRating(value);
+  }
+
+  async function handleSubmitRating() {
+    try {
+      await courseService.rateCourse(courseId, userRating);
+      toast.success("Thanks for your feedback");
+      setRatingSubmitted(true);
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
   }
 
   return (
@@ -101,6 +118,11 @@ const CourseDescription = () => {
                   <BookOpen className="h-5 w-5 text-gray-300" />
                   <span className="ml-1">{currentCourse?.category}</span>
                 </div>
+                <div>
+                  <span className="ml-1 text-lg font-semibold">
+                    Created By: {currentCourse?.instructor?.name}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -133,36 +155,39 @@ const CourseDescription = () => {
                 </div>
               </div>
               {/* Interactive Star Rating Component */}
-              <div
-                className="mt-8 p-4 rounded-xl shadow-sm"
-                style={{ backgroundColor: darkMode ? "#2d3748" : "#f7fafc" }}
-              >
-                <h3 className="text-xl font-bold mb-4">Rate this course</h3>
-                <div className="flex items-center">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      onClick={() => handleStarClick(star)}
-                      className="focus:outline-none mr-3 mb-4"
-                    >
-                      <Star
-                        fill={star <= userRating ? "currentColor" : "none"}
-                        className={`h-6 w-6 ${
-                          star <= userRating
-                            ? "text-yellow-400"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    </button>
-                  ))}
-                </div>
-                <button
-                  disabled={userRating === 0 || ratingSubmitted}
-                  className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
+              {!ratingSubmitted && (
+                <div
+                  className="mt-8 p-4 rounded-xl shadow-sm"
+                  style={{ backgroundColor: darkMode ? "#2d3748" : "#f7fafc" }}
                 >
-                  {ratingSubmitted ? "Rated" : "Submit Rating"}
-                </button>
-              </div>
+                  <h3 className="text-xl font-bold mb-4">Rate this course</h3>
+                  <div className="flex items-center">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        onClick={() => handleStarClick(star)}
+                        className="focus:outline-none mr-3 mb-4"
+                      >
+                        <Star
+                          fill={star <= userRating ? "currentColor" : "none"}
+                          className={`h-6 w-6 ${
+                            star <= userRating
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={handleSubmitRating}
+                    disabled={userRating === 0 || ratingSubmitted}
+                    className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
+                  >
+                    {ratingSubmitted ? "Rated" : "Submit Rating"}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
