@@ -7,7 +7,8 @@ const getInstructorAnalytics = async function (req, res, next) {
   try {
     let { instructorId } = req.params;
     const totalCourses = await courseModel.find({ instructor: instructorId });
-    const totalStudents = await enrollmentModel.find({
+
+    let totalStudents = await enrollmentModel.find({
       instructor: instructorId,
     });
 

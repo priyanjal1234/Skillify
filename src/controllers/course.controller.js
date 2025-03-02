@@ -1,5 +1,6 @@
 import courseModel from '../models/course.model.js';
 import enrollmentModel from '../models/enrollment.model.js';
+import orderModel from '../models/order.model.js';
 import userModel from '../models/user.model.js';
 import ApiError from '../utils/ApiError.js';
 
@@ -193,7 +194,7 @@ const enrollInCourse = async function (req, res, next) {
 const unenrollFromCourse = async function (req, res, next) {
   try {
     let { courseId } = req.params;
-    
+
     let student = await userModel.findOne({ email: req.user.email });
     let course = await courseModel.findOne({ _id: courseId });
     if (!course) {
@@ -212,7 +213,9 @@ const unenrollFromCourse = async function (req, res, next) {
       );
       await student.save();
       await course.save();
-      return res.status(200).json({ message: 'Student successfully unenrolled from the course' });
+      return res
+        .status(200)
+        .json({ message: 'Student successfully unenrolled from the course' });
     } else {
       return next(
         new ApiError(401, 'Student is already unenrolled from the course')
@@ -222,7 +225,9 @@ const unenrollFromCourse = async function (req, res, next) {
     return next(
       new ApiError(
         500,
-        error instanceof Error ? error.message : 'Error in student unenrollment from course'
+        error instanceof Error
+          ? error.message
+          : 'Error in student unenrollment from course'
       )
     );
   }
@@ -264,6 +269,9 @@ const deleteCourse = async function (req, res, next) {
     );
     await user.save();
     await courseModel.findByIdAndDelete(courseId);
+
+    await enrollmentModel.deleteMany({ course: courseId });
+    await orderModel.deleteMany({ course: courseId });
 
     return res.status(200).json({ message: 'Course Deleted Successfully' });
   } catch (error) {

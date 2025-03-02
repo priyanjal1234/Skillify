@@ -13,7 +13,7 @@ const razorpay = new Razorpay({
 
 const createOrder = async function (req, res, next) {
   try {
-    let { amount, courseId,instructor } = req.body;
+    let { amount, courseId, instructor } = req.body;
 
     let student = await userModel.findOne({ email: req.user.email });
 
@@ -49,8 +49,12 @@ const createOrder = async function (req, res, next) {
 
 const verifyPayment = async function (req, res, next) {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-      req.body;
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      instructor,
+    } = req.body;
     let { courseId } = req.params;
 
     let student = await userModel.findOne({ email: req.user.email });
@@ -77,6 +81,7 @@ const verifyPayment = async function (req, res, next) {
 
       await enrollmentModel.create({
         student: student._id,
+        instructor: instructor,
         course: courseId,
       });
 
@@ -84,7 +89,6 @@ const verifyPayment = async function (req, res, next) {
         .status(200)
         .json({ success: true, message: 'Payment verified successfully' });
     } else {
-     
       order.paymentStatus = 'Failed';
       await order.save();
       return next(new ApiError(400, 'Payment Verification Failed'));
