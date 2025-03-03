@@ -17,6 +17,8 @@ import AddLessonResource from "../components/AddLessonResource";
 import AddLessonQuiz from "../components/AddLessonQuiz";
 import AddLessonPreviewSidebar from "./AddLessonPreviewSidebar";
 import truncateText from "../utils/truncateText";
+import lessonService from "../services/Lesson";
+import { toast } from "react-toastify";
 
 const AddLesson = () => {
   const { courseId } = useParams();
@@ -37,6 +39,7 @@ const AddLesson = () => {
   });
   const [lessonVideo, setlessonVideo] = useState(null);
   const [thumbnail, setthumbnail] = useState(null);
+  const [loading, setloading] = useState(false);
   let canvasRef = useRef(null);
 
   function handleAddLessonChange(e) {
@@ -92,6 +95,32 @@ const AddLesson = () => {
     };
   }
 
+  async function handleSaveLesson() {
+    setloading(true);
+    let formdata = new FormData();
+    formdata.append("title", lessonData.title);
+    formdata.append("content", lessonData.content);
+    formdata.append("duration", lessonData.duration);
+    formdata.append("lessonVideo", lessonVideo);
+
+    try {
+      await lessonService.createLesson(formdata, courseId);
+      toast.success("Lesson Created Successfully");
+      setloading(false);
+      navigate(`/dashboard/instructor`)
+      setlessonData((prev) => ({
+        ...prev,
+        title: "",
+        content: "",
+        duration: "",
+      }));
+      setlessonVideo(null);
+    } catch (error) {
+      setloading(false)
+      toast.error(error?.response?.data?.message);
+    }
+  }
+
   return (
     <div className={`${darkMode ? "bg-gray-900" : "bg-gray-50"} min-h-screen`}>
       {/* Header */}
@@ -117,9 +146,13 @@ const AddLesson = () => {
                 Add New Lesson
               </h1>
             </div>
-            <button className="px-6 py-2 rounded-lg text-white font-medium flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700">
+            <button
+              onClick={handleSaveLesson}
+              className="px-6 py-2 rounded-lg text-white font-medium flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700"
+            >
               <Save className="h-5 w-5" />
-              <span>Save Lesson</span>
+              <span>Create Lesson</span>
+              {loading && <span className="loader"></span>}
             </button>
           </div>
         </div>

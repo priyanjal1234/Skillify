@@ -71,10 +71,14 @@ const CoursePreview = () => {
 
           <div className="flex items-center space-x-4">
             <button
-              disabled={courseStatus === "Published"}
+              disabled={
+                courseStatus === "Published" ||
+                specificCourse?.lessons?.length === 0
+              }
               onClick={handlePublishCourse}
               className={`px-6 py-2 rounded-lg transition-colors flex items-center space-x-2 ${
-                courseStatus === "Published"
+                courseStatus === "Published" ||
+                specificCourse?.lessons?.length === 0
                   ? "bg-gray-400 cursor-not-allowed"
                   : " bg-green-600 hover:bg-green-700 text-white"
               }`}
@@ -119,34 +123,24 @@ const CoursePreview = () => {
           >
             <h2 className="text-2xl font-bold mb-6">Course Content</h2>
             <div className="space-y-4">
-              {/* {specificCourse?.lessons?.map((chapter, index) => (
-                <div
-                  key={index}
-                  className={`border rounded-xl p-4 ${
-                    darkMode ? "border-gray-700" : "border-gray-200"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold">{chapter.title}</h3>
-                    <span className="text-sm flex items-center">
-                      <Clock className="h-4 w-4 mr-1" />
-                      {chapter?.duration}
-                    </span>
+              {Array.isArray(specificCourse?.lessons) &&
+                specificCourse?.lessons?.map((chapter, index) => (
+                  <div
+                    key={index}
+                    className={`border rounded-xl p-4 ${
+                      darkMode ? "border-gray-700" : "border-gray-200"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-lg font-semibold">{chapter.title}</h3>
+                      <span className="text-sm flex items-center">
+                        <Clock className="h-4 w-4 mr-1" />
+                        {chapter?.duration} minutes
+                      </span>
+                    </div>
+                    
                   </div>
-                  <ul className="space-y-2">
-                    {chapter.topics.map((topic, topicIndex) => (
-                      <li key={topicIndex} className="flex items-center">
-                        <div
-                          className={`h-2 w-2 rounded-full mr-2 ${
-                            darkMode ? "bg-indigo-400" : "bg-indigo-600"
-                          }`}
-                        />
-                        {topic}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))} */}
+                ))}
             </div>
           </div>
         </div>
