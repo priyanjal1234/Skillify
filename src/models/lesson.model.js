@@ -18,10 +18,22 @@ const lessonSchema = mongoose.Schema(
       ref: 'course',
       required: true,
     },
+    resources: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'resource',
+      },
+    ],
+    quizzes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'quiz',
+      },
+    ],
   },
   { timestamps: true }
 );
 
 const lessonModel = mongoose.model('lesson', lessonSchema);
 
-export default lessonModel
+export default lessonModel;

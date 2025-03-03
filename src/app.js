@@ -16,6 +16,7 @@ import userRouter from './routes/user.router.js';
 import courseRouter from './routes/course.router.js'
 import orderRouter from './routes/order.router.js'
 import analyticsRouter from './routes/analytics.router.js'
+import lessonRouter from './routes/lesson.router.js'
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -45,6 +46,8 @@ app.use("/api/courses",courseRouter)
 app.use("/api/orders",orderRouter)
 
 app.use("/api/analytics",analyticsRouter)
+
+app.use("/api/lessons",lessonRouter)
 
 app.use(errorHandler);
 
