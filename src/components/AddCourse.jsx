@@ -4,6 +4,8 @@ import { ThemeDataContext } from "../context/ThemeContext";
 import courseSchema from "../schemas/courseSchema";
 import { toast } from "react-toastify";
 import courseService from "../services/Course";
+import { Editor, EditorState, convertToRaw } from "draft-js";
+import "draft-js/dist/Draft.css";
 
 const AddCourse = ({
   addCourseData,

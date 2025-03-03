@@ -29,17 +29,18 @@ const CourseDescription = () => {
 
   // State for user rating and submission status
   const [userRating, setUserRating] = useState(0);
-  const [ratingSubmitted, setRatingSubmitted] = useState(false)
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
 
   useEffect(() => {
-    let ratingPresent = currentCourse?.ratings?.find(r => r.user === currentUser?._id)
-    if(ratingPresent) {
-      setRatingSubmitted(true)
+    if (currentCourse?.ratings && currentUser?._id) {
+      const ratingPresent = currentCourse.ratings.find(
+        (r) => r.user.toString() === currentUser._id.toString()
+      );
+      setRatingSubmitted(!!ratingPresent); 
+    } else {
+      setRatingSubmitted(false);
     }
-    else {
-      setRatingSubmitted(false)
-    }
-  },[])
+  }, [currentCourse, currentUser]);
 
   useQuery({
     queryKey: ["fetchsinglecourse"],
