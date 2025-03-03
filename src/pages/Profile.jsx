@@ -23,7 +23,7 @@ const Profile = () => {
         let { address } = await getAddressFromCoordinates(latitude, longitude);
         setlocation(address);
       } catch (error) {
-        setlocation({ street: "Unknown", city: "Unknown", state: "Unknown" });
+        setlocation("No Location");
       }
     }
 
