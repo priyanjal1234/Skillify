@@ -1,6 +1,7 @@
 import express from 'express';
 import isLoggedin from '../middlewares/isLoggedin.js';
 import isInstructor from '../middlewares/isInstructor.js';
+import multer from 'multer';
 import {
   createLesson,
   getCourseLessons,
@@ -10,9 +11,17 @@ import {
 import upload from '../config/multerConfig.js';
 const router = express.Router();
 
+const storage = multer.memoryStorage();
+const imageKitUpload = multer({ storage });
+
 router
-  .route('/create-lesson')
-  .post(isLoggedin, isInstructor, upload.single('lessonVideo'), createLesson);
+  .route('/create-lesson/:courseId')
+  .post(
+    isLoggedin,
+    isInstructor,
+    imageKitUpload.single('lessonVideo'),
+    createLesson
+  );
 
 router.route('/course/:courseId').get(isLoggedin, getCourseLessons);
 

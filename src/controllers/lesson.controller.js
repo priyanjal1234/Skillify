@@ -1,10 +1,12 @@
 import courseModel from '../models/course.model.js';
 import lessonModel from '../models/lesson.model.js';
 import ApiError from '../utils/ApiError.js';
+import imageKit from '../config/imageKitConfig.js';
 
 const createLesson = async function (req, res, next) {
   try {
-    let { title, content, courseId } = req.body;
+    let { courseId } = req.params;
+    let { title, content,duration } = req.body;
 
     let course = await courseModel.findOne({ _id: courseId });
 
@@ -12,19 +14,30 @@ const createLesson = async function (req, res, next) {
       return next(new ApiError(404, 'Course with this id not found'));
     }
 
-    if (!title || !content) {
-      return next(new ApiError(400, 'Title and Content are required'));
+    if (!title || !content || !duration) {
+      return next(new ApiError(400, 'Title,Content and Duration are required'));
     }
 
     if (!req.file) {
       return next(new ApiError(400, 'Lesson Video is required'));
     }
 
+    const fileBuffer = req.file.buffer;
+    const fileName = req.file.originalname;
+
+    const uploadResponse = await imageKit.upload({
+      file: fileBuffer,
+      fileName: fileName,
+      folder: '/videos',
+      resourceType: 'video',
+    });
+
     let lesson = await lessonModel.create({
       title,
       content,
-      videoUrl: req.file.path,
+      videoUrl: uploadResponse.url,
       course: course._id,
+      duration
     });
 
     course.lessons.push(lesson._id);

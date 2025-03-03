@@ -1,5 +1,6 @@
 import courseModel from '../models/course.model.js';
 import enrollmentModel from '../models/enrollment.model.js';
+import lessonModel from '../models/lesson.model.js';
 import orderModel from '../models/order.model.js';
 import userModel from '../models/user.model.js';
 import ApiError from '../utils/ApiError.js';
@@ -115,7 +116,7 @@ const getInstructorCourses = async function (req, res, next) {
       .find({
         instructor: instructorId,
       })
-      .populate('instructor');
+      .populate([{ path: 'instructor' }, { path: 'lessons' }]);
     if (Array.isArray(instructorCourses) && instructorCourses.length === 0) {
       return next(new ApiError(404, 'No Courses to display for you'));
     }
@@ -285,6 +286,8 @@ const deleteCourse = async function (req, res, next) {
     await courseModel.findByIdAndDelete(courseId);
 
     await enrollmentModel.deleteMany({ course: courseId });
+
+    await lessonModel.deleteMany({course: courseId})
 
     return res.status(200).json({ message: 'Course Deleted Successfully' });
   } catch (error) {
