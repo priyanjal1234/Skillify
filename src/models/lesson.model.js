@@ -8,6 +8,7 @@ const lessonSchema = mongoose.Schema(
     },
     content: {
       type: String,
+      required: [true,"Lesson Description is required"]
     },
     videoUrl: {
       type: String,
@@ -17,6 +18,9 @@ const lessonSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'course',
       required: true,
+    },
+    duration: {
+      type: Number
     },
     resources: [
       {
