@@ -85,6 +85,12 @@ const AddCourse = ({
 
     setLoading(true);
 
+    if (!thumbnail) {
+      setLoading(false)
+      toast.error("Thumbnail is required");
+      return;
+    }
+
     const parsedData = courseSchema.safeParse(addCourseData);
     if (!parsedData.success) {
       setLoading(false);

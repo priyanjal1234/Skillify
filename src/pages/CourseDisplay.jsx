@@ -153,7 +153,7 @@ const CourseDisplay = () => {
         </div>
 
         {/* Course Grid */}
-        <div className="grid grid-cols-2 items-start">
+        <div className="flex flex-wrap gap-5">
           {filteredCourses?.length > 0 ? (
             filteredCourses?.map((course) => (
               <CourseCard key={course?._id} course={course} />

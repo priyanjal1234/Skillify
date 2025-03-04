@@ -110,7 +110,6 @@ const ClassRoom = () => {
                   )}
                   {/* Overlay title on the video */}
                 </div>
-                
               </div>
             ) : (
               <div className="w-full h-[500px] flex items-center justify-center">
@@ -139,7 +138,7 @@ const ClassRoom = () => {
         {/* Sidebar: Lectures List */}
         <div className="space-y-6">
           <h2 className="text-2xl font-bold mb-4">Lectures</h2>
-          <div className="space-y-2">
+          <div className="space-y-2 overflow-auto">
             {course?.lessons?.map((lesson, index) => (
               <div
                 onClick={() => handleSelectedLecture(lesson?._id)}
@@ -148,20 +147,27 @@ const ClassRoom = () => {
                   darkMode
                     ? "border-gray-700 hover:bg-gray-700"
                     : "border-gray-200 hover:bg-gray-50"
-                } `}
+                }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="w-[30%] h-full overflow-hidden ">
-                    <img src={thumbnails[lesson?._id]} alt="" />
+                <div className="flex items-center p-2">
+                  {/* Fixed-size thumbnail container */}
+                  <div className="w-[120px] h-[90px] overflow-hidden flex-shrink-0 mr-4">
+                    {/* Force the image to fill this container */}
+                    <img
+                      src={thumbnails[lesson?._id]}
+                      alt=""
+                      className="object-cover w-full h-full"
+                    />
                   </div>
-                  <div className="flex flex-col pr-10">
+
+                  {/* Lecture text */}
+                  <div className="flex-1">
                     <span className="text-sm font-semibold">
                       Lecture {index + 1}
                     </span>
                     <h3 className="text-lg font-semibold">{lesson?.title}</h3>
                   </div>
                 </div>
-                <canvas ref={canvasRef} className="hidden"></canvas>
               </div>
             ))}
           </div>

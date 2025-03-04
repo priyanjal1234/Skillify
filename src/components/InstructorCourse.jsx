@@ -9,6 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 import courseService from "../services/Course";
 import { toast } from "react-toastify";
 
+
 const InstructorCourse = ({ refetch }) => {
   const [showAddCourse, setShowAddCourse] = useState(false);
   const [errors, seterrors] = useState({});
@@ -46,12 +47,13 @@ const InstructorCourse = ({ refetch }) => {
   }
 
   function handleSeeLessons(courseId) {
-    navigate(`/lessons/${courseId}`)
+    navigate(`/lessons/${courseId}`);
   }
 
   return (
     <div>
       <div className="w-full flex items-center  justify-between">
+    
         <h1 className="text-3xl font-semibold">Courses</h1>
         <button
           onClick={() => setShowAddCourse(true)}
@@ -67,7 +69,6 @@ const InstructorCourse = ({ refetch }) => {
           darkMode ? "bg-gray-800" : "bg-white"
         }`}
       >
-
         {/* Table */}
         {Array.isArray(instructorCourses) && instructorCourses.length !== 0 ? (
           <div className="overflow-x-auto">
@@ -109,7 +110,6 @@ const InstructorCourse = ({ refetch }) => {
               >
                 {instructorCourses?.map((course) => (
                   <tr
-                    
                     key={course?._id}
                     className={
                       darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
@@ -126,7 +126,10 @@ const InstructorCourse = ({ refetch }) => {
                           className="h-10 w-16 object-cover rounded"
                         />
                         <div className="ml-4">
-                          <div onClick={() => handleSeeLessons(course?._id)} className="text-sm font-medium cursor-pointer hover:underline">
+                          <div
+                            onClick={() => handleSeeLessons(course?._id)}
+                            className="text-sm font-medium cursor-pointer hover:underline"
+                          >
                             {course?.title}
                           </div>
                         </div>

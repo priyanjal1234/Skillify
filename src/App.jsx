@@ -8,7 +8,6 @@ import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import EditProfile from "./pages/EditProfile";
-import InstructorPanel from "./pages/InstructorDashboard";
 import CoursePreview from "./pages/CoursePreview";
 import EditCourse from "./pages/EditCourse";
 import CourseDisplay from "./pages/CourseDisplay";
@@ -19,6 +18,8 @@ import ClassRoom from "./pages/ClassRoom";
 import AddLesson from "./pages/AddLesson";
 import CourseLessons from "./pages/CourseLessons";
 import EditLesson from "./pages/EditLesson";
+
+import InstructorDashboard from "./pages/InstructorDashboard";
 
 const App = () => {
   useEffect(() => {
@@ -38,7 +39,7 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="/dashboard/instructor" element={<InstructorPanel />} />
+        <Route path="/dashboard/instructor" element={<InstructorDashboard />} />
         <Route path="/course-preview/:courseId" element={<CoursePreview />} />
         <Route path="/edit-course/:courseId" element={<EditCourse />} />
         <Route path="/course-display" element={<CourseDisplay />} />
@@ -51,10 +52,13 @@ const App = () => {
           }
         />
         <Route path="/payment/:courseId" element={<PaymentPage />} />
-        <Route path="/classroom/:courseId" element = {<ClassRoom />}/>
-        <Route path="/add-lesson/:courseId" element = {<AddLesson />}/>
-        <Route path="/lessons/:courseId" element = {<CourseLessons />}/>
-        <Route path="/edit-lesson/:courseId/:lessonId" element = {<EditLesson />}/>
+        <Route path="/classroom/:courseId" element={<ClassRoom />} />
+        <Route path="/add-lesson/:courseId" element={<AddLesson />} />
+        <Route path="/lessons/:courseId" element={<CourseLessons />} />
+        <Route
+          path="/edit-lesson/:courseId/:lessonId"
+          element={<EditLesson />}
+        />
       </Routes>
     </>
   );

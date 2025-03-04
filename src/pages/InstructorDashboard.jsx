@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import {
+  Bell,
+  LogOut,
   Home,
   FileText,
   Users,
   MessageSquare,
   Settings,
-  Bell,
-  LogOut,
 } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import InstructorCourse from "../components/InstructorCourse";
@@ -14,16 +14,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import courseService from "../services/Course";
 import { setInstructorCourses } from "../redux/reducers/CourseReducer";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import InstructorAnalytics from "./InstructorAnalytics";
-
 
 const InstructorDashboard = () => {
   const [activeItem, setActiveItem] = useState("Dashboard");
   const { darkMode } = useContext(ThemeDataContext);
   let { currentUser, isLoggedin } = useSelector((state) => state.user);
   let dispatch = useDispatch();
-
 
   let { refetch } = useQuery({
     queryKey: ["getInstructorCourses"],
@@ -78,6 +76,7 @@ const InstructorDashboard = () => {
           <ul>
             {menuItems.map((item, index) => (
               <li
+                to={`/instructor/${item.name.toLowerCase()}`}
                 key={index}
                 className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                   activeItem === item.name
@@ -121,8 +120,10 @@ const InstructorDashboard = () => {
 
       {/* Main content */}
       <main className="flex-1 p-5">
+        {activeItem === "Dashboard" && (
+          <InstructorAnalytics instructorId={currentUser?._id} />
+        )}
         {activeItem === "Courses" && <InstructorCourse refetch={refetch} />}
-        {activeItem === "Dashboard" && <InstructorAnalytics instructorId = {currentUser?._id}/>}
       </main>
     </div>
   );

@@ -13,7 +13,7 @@ const CourseCard = ({ course }) => {
     <div
       className={`${
         darkMode ? "bg-gray-800" : "bg-white"
-      } w-[400px] rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300`}
+      } w-[400px] h-fit rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300`}
     >
       {/* Course Thumbnail */}
       {course?.thumbnail !== "" && (
