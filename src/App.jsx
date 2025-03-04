@@ -17,6 +17,8 @@ import ProtectedRoute from "./pages/ProtectedRoute";
 import PaymentPage from "./pages/PaymentPage";
 import ClassRoom from "./pages/ClassRoom";
 import AddLesson from "./pages/AddLesson";
+import CourseLessons from "./pages/CourseLessons";
+import EditLesson from "./pages/EditLesson";
 
 const App = () => {
   useEffect(() => {
@@ -51,6 +53,8 @@ const App = () => {
         <Route path="/payment/:courseId" element={<PaymentPage />} />
         <Route path="/classroom/:courseId" element = {<ClassRoom />}/>
         <Route path="/add-lesson/:courseId" element = {<AddLesson />}/>
+        <Route path="/lessons/:courseId" element = {<CourseLessons />}/>
+        <Route path="/edit-lesson/:courseId/:lessonId" element = {<EditLesson />}/>
       </Routes>
     </>
   );

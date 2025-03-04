@@ -7,6 +7,7 @@ import {
   Users,
   Star,
   Plus,
+  Edit,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -116,6 +117,7 @@ const CoursePreview = () => {
             <p>{specificCourse?.description}</p>
           </div>
 
+          {/* Course Content Section */}
           <div
             className={`rounded-2xl p-6 shadow-sm ${
               darkMode ? "bg-gray-800" : "bg-white"
@@ -127,18 +129,39 @@ const CoursePreview = () => {
                 specificCourse?.lessons?.map((chapter, index) => (
                   <div
                     key={index}
-                    className={`border rounded-xl p-4 ${
-                      darkMode ? "border-gray-700" : "border-gray-200"
+                    className={`border rounded-xl p-4 transition-colors duration-200 ${
+                      darkMode
+                        ? "border-gray-700 hover:bg-gray-700"
+                        : "border-gray-200 hover:bg-gray-50"
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-lg font-semibold">{chapter.title}</h3>
-                      <span className="text-sm flex items-center">
-                        <Clock className="h-4 w-4 mr-1" />
-                        {chapter?.duration} minutes
+                    <div className="flex items-center justify-between mb-2">
+                      {/* Lesson Title */}
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">
+                          Lesson {index + 1}
+                        </span>
+                        <h3 className="text-lg font-semibold">
+                          {chapter.title}
+                        </h3>
+                      </div>
+                      {/* Duration */}
+                      <span className="text-sm flex items-center gap-4">
+                        <div className="flex items-center">
+                          <Clock className="h-4 w-4 mr-1" />
+                          {chapter?.duration} minutes
+                        </div>
+
+                        <button></button>
                       </span>
                     </div>
-                    
+
+                    {/* Optional description if the lesson object has one */}
+                    {chapter.description && (
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+                        {chapter.description}
+                      </p>
+                    )}
                   </div>
                 ))}
             </div>

@@ -1,17 +1,6 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import {
-  ArrowLeft,
-  Save,
-  Plus,
-  Trash2,
-  Upload,
-  Video,
-  FileText,
-  Link as LinkIcon,
-  Clock,
-  CheckSquare,
-} from "lucide-react";
+import { ArrowLeft, Save, Upload, Video, Clock } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import AddLessonResource from "../components/AddLessonResource";
 import AddLessonQuiz from "../components/AddLessonQuiz";
@@ -19,46 +8,86 @@ import AddLessonPreviewSidebar from "../components/AddLessonPreviewSidebar";
 import truncateText from "../utils/truncateText";
 import lessonService from "../services/Lesson";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import courseService from "../services/Course";
 
-const AddLesson = () => {
-  const { courseId } = useParams();
+const EditLesson = () => {
+  const { courseId, lessonId } = useParams();
   const navigate = useNavigate();
   const { darkMode } = useContext(ThemeDataContext);
 
-  let videoRef = useRef(null);
+  // Refs
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
-  const [previewTitle, setpreviewTitle] = useState("No Title Yet");
-  const [previewDescription, setpreviewDescription] =
-    useState("No Description Yet");
-  const [previewDuration, setpreviewDuration] = useState("No Duration Yet");
-
-  const [lessonData, setlessonData] = useState({
+  // Data states
+  const [lessonData, setLessonData] = useState({
     title: "",
     content: "",
     duration: "",
   });
-  const [lessonVideo, setlessonVideo] = useState(null);
-  const [thumbnail, setthumbnail] = useState(null);
-  const [loading, setloading] = useState(false);
-  let canvasRef = useRef(null);
+  const [existingLesson, setexistingLesson] = useState({});
 
-  function handleAddLessonChange(e) {
-    let { name, value } = e.target;
-    setlessonData((prev) => ({ ...prev, [name]: value }));
+  let { instructorCourses } = useSelector((state) => state.course);
+
+  // Preview states
+  const [previewTitle, setPreviewTitle] = useState("No Title Yet");
+  const [previewDescription, setPreviewDescription] =
+    useState("No Description Yet");
+  const [previewDuration, setPreviewDuration] = useState("No Duration Yet");
+  const [thumbnail, setThumbnail] = useState(null);
+
+  // Holds the new video file if user uploads one
+  const [lessonVideo, setLessonVideo] = useState(null);
+
+  // -----------------------------
+  // Fetch existing lesson on mount
+  // -----------------------------
+  useEffect(() => {
+    async function fetchLesson() {
+      try {
+        let getOneLessonRes = await lessonService.getOneLesson(lessonId);
+        setexistingLesson(getOneLessonRes.data);
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+      }
+    }
+
+    fetchLesson();
+  }, [courseId, lessonId]);
+
+  useEffect(() => {
+    setLessonData((prev) => ({
+      ...prev,
+      title: existingLesson?.title,
+      content: existingLesson?.content,
+      duration: existingLesson?.duration,
+    }));
+  }, [existingLesson]);
+
+  // -----------------------------
+  // Handle Form Changes
+  // -----------------------------
+  function handleEditLessonChange(e) {
+    const { name, value } = e.target;
+    setLessonData((prev) => ({ ...prev, [name]: value }));
 
     if (name === "title") {
-      setpreviewTitle(value === "" ? "No Title Yet" : value);
+      setPreviewTitle(value === "" ? "No Title Yet" : value);
     }
     if (name === "content") {
-      setpreviewDescription(
+      setPreviewDescription(
         value === "" ? "No Description Yet" : truncateText(value, 30)
       );
     }
     if (name === "duration") {
-      setpreviewDuration(value === "" ? "No Duration Yet" : `${value} minutes`);
+      setPreviewDuration(value === "" ? "No Duration Yet" : `${value} minutes`);
     }
   }
 
+  // -----------------------------
+  // Handle Video Upload
+  // -----------------------------
   function handleLessonVideoChange(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -68,10 +97,9 @@ const AddLesson = () => {
       return;
     }
 
-    setlessonVideo(file);
+    setLessonVideo(file);
 
     const videoUrl = URL.createObjectURL(file);
-
     const videoElement = document.createElement("video");
     videoElement.src = videoUrl;
 
@@ -91,32 +119,24 @@ const AddLesson = () => {
 
       ctx.drawImage(videoElement, 0, 0, thumbnailWidth, thumbnailHeight);
       const thumbnailUrl = canvas.toDataURL("image/jpeg");
-      setthumbnail(thumbnailUrl);
+      setThumbnail(thumbnailUrl);
     };
   }
 
-  async function handleSaveLesson() {
-    setloading(true);
+  async function handleUpdateLesson() {
     let formdata = new FormData();
+
     formdata.append("title", lessonData.title);
     formdata.append("content", lessonData.content);
     formdata.append("duration", lessonData.duration);
-    formdata.append("lessonVideo", lessonVideo);
-
+    if (lessonVideo) {
+      formdata.append("lessonVideo", lessonVideo);
+    }
     try {
-      await lessonService.createLesson(formdata, courseId);
-      toast.success("Lesson Created Successfully");
-      setloading(false);
-      navigate(`/dashboard/instructor`)
-      setlessonData((prev) => ({
-        ...prev,
-        title: "",
-        content: "",
-        duration: "",
-      }));
-      setlessonVideo(null);
+      await lessonService.updateLesson(lessonId, formdata);
+      toast.success("Lesson Updated Successfully")
+      navigate(`/lessons/${courseId}`)
     } catch (error) {
-      setloading(false)
       toast.error(error?.response?.data?.message);
     }
   }
@@ -143,25 +163,26 @@ const AddLesson = () => {
                   darkMode ? "text-white" : "text-gray-900"
                 }`}
               >
-                Add New Lesson
+                Edit Lesson
               </h1>
             </div>
             <button
-              onClick={handleSaveLesson}
+              onClick={handleUpdateLesson}
               className="px-6 py-2 rounded-lg text-white font-medium flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700"
             >
               <Save className="h-5 w-5" />
-              <span>Create Lesson</span>
-              {loading && <span className="loader"></span>}
+              <span>Save Changes</span>
             </button>
           </div>
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Lesson Information */}
             <div
               className={`${
                 darkMode ? "bg-gray-800" : "bg-white"
@@ -175,6 +196,7 @@ const AddLesson = () => {
                 Lesson Information
               </h2>
               <div className="space-y-4">
+                {/* Title */}
                 <div>
                   <label
                     htmlFor="title"
@@ -189,7 +211,7 @@ const AddLesson = () => {
                     id="title"
                     name="title"
                     value={lessonData.title}
-                    onChange={handleAddLessonChange}
+                    onChange={handleEditLessonChange}
                     placeholder="Enter lesson title"
                     className={`w-full px-4 py-2 border-2 ${
                       darkMode
@@ -198,6 +220,8 @@ const AddLesson = () => {
                     } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
                   />
                 </div>
+
+                {/* Content */}
                 <div>
                   <label
                     htmlFor="content"
@@ -211,7 +235,6 @@ const AddLesson = () => {
                     id="content"
                     name="content"
                     value={lessonData.content}
-                    onChange={handleAddLessonChange}
                     rows={4}
                     placeholder="Describe what students will learn in this lesson"
                     className={`w-full px-4 py-2 border-2 ${
@@ -221,6 +244,8 @@ const AddLesson = () => {
                     } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
                   />
                 </div>
+
+                {/* Video URL & Upload */}
                 <div>
                   <label
                     htmlFor="videoUrl"
@@ -250,13 +275,12 @@ const AddLesson = () => {
                     <input
                       id="lessonVideo"
                       name="lessonVideo"
-                      onChange={handleLessonVideoChange}
                       ref={videoRef}
+                      onChange={handleLessonVideoChange}
                       type="file"
                       className="hidden"
                       accept="video/*"
                     />
-
                     <button
                       onClick={() => videoRef.current.click()}
                       type="button"
@@ -266,6 +290,8 @@ const AddLesson = () => {
                     </button>
                   </div>
                 </div>
+
+                {/* Duration */}
                 <div>
                   <label
                     htmlFor="duration"
@@ -284,7 +310,6 @@ const AddLesson = () => {
                       id="duration"
                       name="duration"
                       value={lessonData.duration}
-                      onChange={handleAddLessonChange}
                       placeholder="15"
                       min="1"
                       className={`pl-10 w-full px-4 py-2 border-2 ${
@@ -297,17 +322,18 @@ const AddLesson = () => {
                 </div>
               </div>
 
-              {/* Hidden Canvas */}
+              {/* Hidden Canvas for Thumbnail Generation */}
               <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
             </div>
 
-            {/* Resources Section */}
+            {/* Resources Section (optional) */}
             <AddLessonResource />
-            {/* Quiz Section */}
+
+            {/* Quiz Section (optional) */}
             <AddLessonQuiz />
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar Preview */}
           <AddLessonPreviewSidebar
             previewTitle={previewTitle}
             previewDescription={previewDescription}
@@ -320,4 +346,4 @@ const AddLesson = () => {
   );
 };
 
-export default AddLesson;
+export default EditLesson;

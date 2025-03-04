@@ -186,13 +186,7 @@ const EditCourse = () => {
               Update Course
               {loading && <span className="loader"></span>}
             </button>
-            <Link
-              to={`/add-lesson/${courseId}`}
-              className="px-4 py-2 rounded-lg flex gap-3 items-center justify-center text-white bg-green-600 hover:bg-green-700"
-            >
-              <Plus className="h-5 w-5" />
-              Add Lesson
-            </Link>
+            
           </div>
         </form>
       </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import orderService from "../services/Order";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
@@ -26,7 +26,7 @@ const PaymentButton = ({ courseId, amount, instructor }) => {
         order_id: data.order.id,
         handler: async function (response) {
           let newResponse = { ...response };
-          newResponse.instructor = currentCourse?.instructor
+          newResponse.instructor = currentCourse?.instructor;
           try {
             const verifyRes = await orderService.verifyPayment(
               newResponse,

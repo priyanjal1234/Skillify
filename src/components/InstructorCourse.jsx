@@ -45,6 +45,10 @@ const InstructorCourse = ({ refetch }) => {
     }
   }
 
+  function handleSeeLessons(courseId) {
+    navigate(`/lessons/${courseId}`)
+  }
+
   return (
     <div>
       <div className="w-full flex items-center  justify-between">
@@ -63,32 +67,6 @@ const InstructorCourse = ({ refetch }) => {
           darkMode ? "bg-gray-800" : "bg-white"
         }`}
       >
-        {/* Search Bar */}
-        <div
-          className={`p-6 border-b ${
-            darkMode ? "border-gray-700" : "border-gray-200"
-          }`}
-        >
-          <div className="flex items-center">
-            <div className="relative flex-1">
-              <Search
-                className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${
-                  darkMode ? "text-gray-300" : "text-gray-400"
-                }`}
-              />
-              <input
-                type="text"
-                placeholder="Search courses..."
-                className={`w-full pl-10 pr-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-                ${
-                  darkMode
-                    ? "border-gray-600 bg-gray-700 text-white"
-                    : "border-gray-200 bg-gray-50 text-gray-900"
-                }`}
-              />
-            </div>
-          </div>
-        </div>
 
         {/* Table */}
         {Array.isArray(instructorCourses) && instructorCourses.length !== 0 ? (
@@ -131,6 +109,7 @@ const InstructorCourse = ({ refetch }) => {
               >
                 {instructorCourses?.map((course) => (
                   <tr
+                    
                     key={course?._id}
                     className={
                       darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
@@ -147,7 +126,7 @@ const InstructorCourse = ({ refetch }) => {
                           className="h-10 w-16 object-cover rounded"
                         />
                         <div className="ml-4">
-                          <div className="text-sm font-medium">
+                          <div onClick={() => handleSeeLessons(course?._id)} className="text-sm font-medium cursor-pointer hover:underline">
                             {course?.title}
                           </div>
                         </div>
