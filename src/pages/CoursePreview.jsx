@@ -49,6 +49,14 @@ const CoursePreview = () => {
         darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
       }`}
     >
+      {specificCourse?.lessons?.length === 0 && (
+        <div className="w-full flex justify-center py-3">
+          <p>
+            In Order to Publish the course you need to put some lessons in it
+          </p>
+        </div>
+      )}
+
       {/* Header */}
       <div
         className={`shadow ${
