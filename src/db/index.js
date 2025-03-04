@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import { mongodbUri } from "../constants.js";
 
+
+//databse function (commit checking)
 async function db() {
     try {
         let conn = await mongoose.connect(mongodbUri)
