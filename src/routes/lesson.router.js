@@ -4,6 +4,7 @@ import isInstructor from '../middlewares/isInstructor.js';
 import multer from 'multer';
 import {
   createLesson,
+  deleteLesson,
   getCourseLessons,
   getOneLesson,
   updateLesson,
@@ -29,6 +30,8 @@ router.route('/:lessonId').get(isLoggedin, getOneLesson);
 
 router
   .route('/update/:lessonId')
-  .put(isLoggedin, isInstructor, upload.single('lessonVideo'), updateLesson);
+  .put(isLoggedin, isInstructor, imageKitUpload.single('lessonVideo'), updateLesson);
+
+router.route("/delete/:lessonId/:courseId").delete(isLoggedin,isInstructor,deleteLesson)
 
 export default router;

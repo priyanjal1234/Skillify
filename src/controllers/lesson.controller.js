@@ -6,7 +6,7 @@ import imageKit from '../config/imageKitConfig.js';
 const createLesson = async function (req, res, next) {
   try {
     let { courseId } = req.params;
-    let { title, content,duration } = req.body;
+    let { title, content, duration } = req.body;
 
     let course = await courseModel.findOne({ _id: courseId });
 
@@ -37,7 +37,7 @@ const createLesson = async function (req, res, next) {
       content,
       videoUrl: uploadResponse.url,
       course: course._id,
-      duration
+      duration,
     });
 
     course.lessons.push(lesson._id);
@@ -108,7 +108,16 @@ const updateLesson = async function (req, res, next) {
 
     // If a file is uploaded, update the video URL
     if (req.file) {
-      updatedData.videoUrl = req.file.path;
+      const fileBuffer = req.file.buffer;
+      const fileName = req.file.originalname;
+
+      const uploadResponse = await imageKit.upload({
+        file: fileBuffer,
+        fileName: fileName,
+        folder: '/videos',
+        resourceType: 'video',
+      });
+      updatedData.videoUrl = uploadResponse.url;
     }
 
     let updatedLesson = await lessonModel.findByIdAndUpdate(
@@ -130,4 +139,45 @@ const updateLesson = async function (req, res, next) {
   }
 };
 
-export { createLesson, getCourseLessons, getOneLesson, updateLesson };
+const deleteLesson = async function (req, res, next) {
+  try {
+    let { lessonId,courseId } = req.params;
+    let lesson = await lessonModel.findOne({ _id: lessonId });
+    let course = await courseModel.findOne({ _id: courseId });
+
+
+    if (!lesson) {
+      return next(new ApiError(404, 'Lesson with this id not found'));
+    }
+
+    if (!course) {
+      return next(new ApiError(404, 'Course with this id not found'));
+    }
+
+    await lessonModel.findByIdAndDelete(lessonId);
+
+    let filteredLessons = course.lessons.filter(
+      (lesson) => lesson.toString() !== lessonId.toString()
+    );
+  
+    course.lessons = filteredLessons
+    await course.save();
+
+    return res.status(200).json({ message: 'Lesson Deleted Successfully' });
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error Deleting Lesson'
+      )
+    );
+  }
+};
+
+export {
+  createLesson,
+  getCourseLessons,
+  getOneLesson,
+  updateLesson,
+  deleteLesson,
+};
