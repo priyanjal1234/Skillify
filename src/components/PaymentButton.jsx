@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import orderService from "../services/Order";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setDiscountValue, setDiscountVisible } from "../redux/reducers/CouponReducer";
 
 const PaymentButton = ({ courseId, amount, instructor }) => {
   let { currentUser } = useSelector((state) => state.user);
   let { currentCourse } = useSelector((state) => state.course);
+
+  let dispatch = useDispatch()
 
   let navigate = useNavigate();
   async function handlePayment() {
@@ -34,7 +37,8 @@ const PaymentButton = ({ courseId, amount, instructor }) => {
             );
 
             toast.success("Payment Successfull");
-
+            dispatch(setDiscountValue(0))
+            dispatch(setDiscountVisible(false))
             navigate(`/course/${courseId}`);
           } catch (error) {
             toast.error("Payment verification failed!");

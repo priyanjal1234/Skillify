@@ -15,6 +15,9 @@ const EditCourse = () => {
     category: "",
     level: "Beginner",
     price: "",
+    couponCode: "",
+    discountValue: "",
+    discountType: "Percentage",
   });
   const [thumbnail, setthumbnail] = useState();
   const [loading, setloading] = useState(false);
@@ -49,6 +52,10 @@ const EditCourse = () => {
     if (edit.level) formData.append("level", edit.level);
     if (edit.price) formData.append("price", edit.price);
     if (thumbnail) formData.append("thumbnail", thumbnail);
+    if (edit.couponCode) formData.append("couponCode", edit.couponCode);
+    if (edit.discountValue)
+      formData.append("discountValue", edit.discountValue);
+    if (edit.discountType) formData.append("discountType", edit.discountType);
 
     try {
       let editCourseRes = await courseService.updateCourse(courseId, formData);
@@ -98,15 +105,36 @@ const EditCourse = () => {
 
           {/* Category & Level */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormFieldWithoutIcon
-              label="Category"
-              type="text"
-              placeholder="e.g., Programming"
-              name="category"
-              value={edit.category}
-              handleChange={handleEditCourseChange}
-              inputStyles={inputStyles}
-            />
+            <div>
+              <label className="block text-sm font-medium mb-1">Category</label>
+              <select
+                name="category"
+                value={edit.category}
+                onChange={handleEditCourse}
+                className="w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                style={inputStyles}
+              >
+                <option value="">Select Category</option>
+                <option value="programming">Programming</option>
+                <option value="data science">Data Science</option>
+                <option value="web development">Web Development</option>
+                <option value="mobile development">Mobile Development</option>
+                <option value="ui/ux design">UI/UX Design</option>
+                <option value="cybersecurity">Cybersecurity</option>
+                <option value="cloud computing">Cloud Computing</option>
+                <option value="artificial intelligence & machine learning">
+                  Artificial Intelligence & Machine Learning
+                </option>
+                <option value="business & entrepreneurship">
+                  Business & Entrepreneurship
+                </option>
+                <option value="digital marketing">Digital Marketing</option>
+                <option value="graphic design">Graphic Design</option>
+                <option value="photography & video editing">
+                  Photography & Video Editing
+                </option>
+              </select>
+            </div>
 
             <div>
               <label className="block text-sm font-medium mb-1">Level</label>
@@ -142,6 +170,57 @@ const EditCourse = () => {
               />
             </div>
           </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Coupon Code (if any)
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                name="couponCode"
+                placeholder="Add Coupon Code (if any)"
+                className="w-full px-4 pr-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                style={inputStyles}
+                onChange={handleEditCourseChange}
+                value={edit.couponCode}
+              />
+            </div>
+          </div>
+          {edit.couponCode.trim() !== "" && (
+            <>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Discount Type
+                </label>
+                <select
+                  name="discountType"
+                  value={edit.discountType}
+                  onChange={handleEditCourseChange}
+                  className="w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  style={inputStyles}
+                >
+                  <option value="Percentage">Percentage</option>
+                  <option value="Fixed">Fixed</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Add Discount associated with Coupon Code
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    name="discountValue"
+                    placeholder="eg. 15% (percentage) or 2000 (fixed)"
+                    className="w-full px-4 pr-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    style={inputStyles}
+                    onChange={handleEditCourseChange}
+                    value={edit.discountValue}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Course Thumbnail Upload */}
           <div>
@@ -186,7 +265,6 @@ const EditCourse = () => {
               Update Course
               {loading && <span className="loader"></span>}
             </button>
-            
           </div>
         </form>
       </div>

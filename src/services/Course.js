@@ -125,6 +125,18 @@ class CourseService {
       throw error;
     }
   }
+
+  async applyCouponCode(code, courseId) {
+    try {
+      return await this.api.post(
+        `${this.baseUrl}/validate-couponCode/${courseId}`,
+        { code },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
 let courseService = new CourseService();

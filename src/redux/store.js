@@ -5,6 +5,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import UserReducer from './reducers/UserReducer'
 import CourseReducer from './reducers/CourseReducer'
 import InstructorReducer from './reducers/InstructorReducer'
+import CouponReducer from './reducers/CouponReducer'
 
 const persistConfig = {
   key: "root",
@@ -14,7 +15,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
   user: UserReducer,
   course: CourseReducer,
-  instructor: InstructorReducer
+  instructor: InstructorReducer,
+  coupon: CouponReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
