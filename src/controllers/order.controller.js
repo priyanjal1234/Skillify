@@ -36,6 +36,7 @@ const createOrder = async function (req, res, next) {
 
     return res.status(200).json({ success: true, order });
   } catch (error) {
+    console.log(error)
     return next(
       new ApiError(
         500,

@@ -91,10 +91,7 @@ const getOneCourse = async function (req, res, next) {
     let { id } = req.params;
     let singleCourse = await courseModel
       .findOne({ _id: id })
-      .populate([
-        {path: 'instructor'},
-        {path: 'lessons'}
-      ]);
+      .populate([{ path: 'instructor' }, { path: 'lessons' }]);
     if (!singleCourse) {
       return next(new ApiError(404, 'Course with the given id is not found'));
     }
@@ -282,7 +279,11 @@ const deleteCourse = async function (req, res, next) {
     const filteredCourses = user.createdCourses.filter(
       (course) => !course.equals(courseId)
     );
+    const filtered2Courses = user.enrolledCourses.filter(
+      (course) => !course.equals(courseId)
+    );
     user.set('createdCourses', filteredCourses);
+    user.set('enrolledCourses', filtered2Courses);
 
     await user.save();
 
@@ -290,7 +291,7 @@ const deleteCourse = async function (req, res, next) {
 
     await enrollmentModel.deleteMany({ course: courseId });
 
-    await lessonModel.deleteMany({course: courseId})
+    await lessonModel.deleteMany({ course: courseId });
 
     return res.status(200).json({ message: 'Course Deleted Successfully' });
   } catch (error) {
@@ -305,8 +306,26 @@ const deleteCourse = async function (req, res, next) {
 
 const updateCourse = async function (req, res, next) {
   try {
-    let { title, description, category, level, price } = req.body;
+    let {
+      title,
+      description,
+      category,
+      level,
+      price,
+      couponCode,
+      discountType,
+      discountValue,
+    } = req.body;
     let { courseId } = req.params;
+
+    if (couponCode && (!discountType || !discountValue)) {
+      return next(
+        new ApiError(
+          400,
+          'Discount Type and Discount value are required if coupon code is provided'
+        )
+      );
+    }
 
     let user = await userModel.findOne({
       email: req.user.email,
@@ -321,37 +340,38 @@ const updateCourse = async function (req, res, next) {
       _id: courseId,
       instructor: user._id,
     });
-
     if (!course) return next(new ApiError(404, 'Course not found'));
 
-    let updatedCourse;
+    let updateData = {
+      title: title || course.title,
+      description: description || course.description,
+      category: category || course.category,
+      level: level || course.level,
+      price: price || course.price,
+    };
 
     if (req.file) {
-      updatedCourse = await courseModel.findOneAndUpdate(
-        { _id: courseId },
-        {
-          title: title || course.title,
-          description: description || course.description,
-          category: category || course.category,
-          level: level || course.level,
-          price: price || course.price,
-          thumbnail: req.file.path,
-        },
-        { new: true }
-      );
-    } else {
-      updatedCourse = await courseModel.findOneAndUpdate(
-        { _id: courseId },
-        {
-          title: title || course.title,
-          description: description || course.description,
-          category: category || course.category,
-          level: level || course.level,
-          price: price || course.price,
-        },
-        { new: true }
-      );
+      updateData.thumbnail = req.file.path;
     }
+
+    if (couponCode) {
+      updateData.couponCode = couponCode;
+      updateData.discountType = discountType;
+      updateData.discountValue =
+        discountType === 'Percentage' ? `${discountValue}%` : discountValue;
+      updateData.couponExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    } else {
+      updateData.couponCode = undefined;
+      updateData.discountType = undefined;
+      updateData.discountValue = undefined;
+      updateData.couponExpiry = undefined;
+    }
+
+    let updatedCourse = await courseModel.findOneAndUpdate(
+      { _id: courseId },
+      updateData,
+      { new: true }
+    );
 
     if (!updatedCourse)
       return next(new ApiError(403, 'Unauthorized or Course Not Found'));
@@ -421,6 +441,61 @@ const rateCourse = async function (req, res, next) {
   }
 };
 
+const validateCouponCode = async function (req, res, next) {
+  try {
+    let { code } = req.body;
+    let { courseId } = req.params;
+
+    if (!code) {
+      return next(new ApiError(400, 'Coupon code is required'));
+    }
+    let course = await courseModel.findOne({ _id: courseId });
+    if (!course) {
+      return next(new ApiError(404, 'Course with this id not found'));
+    }
+
+    if (String(code) === String(course.couponCode)) {
+      if (course.couponExpiry && course.couponExpiry < new Date()) {
+        return next(new ApiError(403, 'Coupon code is expired'));
+      }
+
+      let discountedPrice;
+      let originalPrice = course.price;
+      let discountValue
+      if (course.discountType === 'Percentage') {
+        discountValue =
+          (course.discountValue.replace('%', '') / 100) * originalPrice;
+        discountedPrice = originalPrice - discountValue;
+        return res.status(200).json({
+          message: 'Discount Applied Successfully',
+          discountedPrice,
+          discountValue,
+        });
+      } else {
+        discountValue = Number(course.discountValue)
+        discountedPrice = Number(originalPrice) - Number(course.discountValue);
+
+        return res
+          .status(200)
+          .json({
+            message: 'Discount Applied Successfully',
+            discountValue,
+            discountedPrice,
+          });
+      }
+    } else {
+      return next(new ApiError(403, 'Invalid or expired coupon code'));
+    }
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error Validating Coupon code'
+      )
+    );
+  }
+};
+
 export {
   createCourse,
   getAllCourses,
@@ -433,4 +508,5 @@ export {
   updateCourse,
   getPublishedCourses,
   rateCourse,
+  validateCouponCode,
 };

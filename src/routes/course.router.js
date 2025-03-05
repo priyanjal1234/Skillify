@@ -13,6 +13,7 @@ import {
   rateCourse,
   unenrollFromCourse,
   updateCourse,
+  validateCouponCode,
 } from '../controllers/course.controller.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import upload from '../config/multerConfig.js';
@@ -34,18 +35,30 @@ router.route('/course/:id').get(isLoggedin, asyncHandler(getOneCourse));
 
 router.route('/:id/enroll').post(isLoggedin, enrollInCourse);
 
-router.route('/:instructorId/courses').get(isLoggedin,isInstructor, getInstructorCourses);
+router
+  .route('/:instructorId/courses')
+  .get(isLoggedin, isInstructor, getInstructorCourses);
 
-router.route("/change-course-status/:courseId").post(isLoggedin,isInstructor,changeCourseStatus)
+router
+  .route('/change-course-status/:courseId')
+  .post(isLoggedin, isInstructor, changeCourseStatus);
 
-router.route("/delete-course/:courseId").delete(isLoggedin,isInstructor,deleteCourse)
+router
+  .route('/delete-course/:courseId')
+  .delete(isLoggedin, isInstructor, deleteCourse);
 
-router.route("/edit-course/:courseId").put(isLoggedin,isInstructor,upload.single("thumbnail"),updateCourse)
+router
+  .route('/edit-course/:courseId')
+  .put(isLoggedin, isInstructor, upload.single('thumbnail'), updateCourse);
 
-router.route("/published/all").get(getPublishedCourses)
+router.route('/published/all').get(getPublishedCourses);
 
-router.route("/:courseId/unenroll").put(isLoggedin,unenrollFromCourse)
+router.route('/:courseId/unenroll').put(isLoggedin, unenrollFromCourse);
 
-router.route("/rate/:courseId").post(isLoggedin,rateCourse)
+router.route('/rate/:courseId').post(isLoggedin, rateCourse);
+
+router
+  .route('/validate-couponCode/:courseId')
+  .post(isLoggedin, validateCouponCode);
 
 export default router;

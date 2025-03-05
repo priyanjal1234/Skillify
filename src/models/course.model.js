@@ -64,6 +64,19 @@ const courseSchema = mongoose.Schema(
       enum: ['Published', 'Review', 'Draft'],
       default: 'Draft',
     },
+    couponCode: {
+      type: String,
+    },
+    discountType: {
+      type: String,
+      enum: ['Percentage', 'Fixed'],
+    },
+    discountValue: {
+      type: String,
+    },
+    couponExpiry: {
+      type: Date
+    }
   },
   { timestamps: true }
 );
