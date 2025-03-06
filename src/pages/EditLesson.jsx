@@ -330,7 +330,7 @@ const EditLesson = () => {
             <AddLessonResource />
 
             {/* Quiz Section (optional) */}
-            <AddLessonQuiz />
+            <AddLessonQuiz lessonId = {lessonId} />
           </div>
 
           {/* Sidebar Preview */}

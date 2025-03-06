@@ -301,10 +301,7 @@ const AddLesson = () => {
               <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
             </div>
 
-            {/* Resources Section */}
-            <AddLessonResource />
-            {/* Quiz Section */}
-            <AddLessonQuiz />
+            
           </div>
 
           {/* Sidebar */}
