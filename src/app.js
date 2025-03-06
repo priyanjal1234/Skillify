@@ -13,11 +13,12 @@ import { corsOrigin } from './constants.js';
 
 // Route Imports
 import userRouter from './routes/user.router.js';
-import courseRouter from './routes/course.router.js'
-import orderRouter from './routes/order.router.js'
-import analyticsRouter from './routes/analytics.router.js'
-import lessonRouter from './routes/lesson.router.js'
-import enrollmentRouter from './routes/enrollment.router.js'
+import courseRouter from './routes/course.router.js';
+import orderRouter from './routes/order.router.js';
+import analyticsRouter from './routes/analytics.router.js';
+import lessonRouter from './routes/lesson.router.js';
+import enrollmentRouter from './routes/enrollment.router.js';
+import quizRouter from './routes/quiz.router.js';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,15 +43,17 @@ app.use(passport.session());
 
 app.use('/api/users', userRouter);
 
-app.use("/api/courses",courseRouter)
+app.use('/api/courses', courseRouter);
 
-app.use("/api/orders",orderRouter)
+app.use('/api/orders', orderRouter);
 
-app.use("/api/analytics",analyticsRouter)
+app.use('/api/analytics', analyticsRouter);
 
-app.use("/api/lessons",lessonRouter)
+app.use('/api/lessons', lessonRouter);
 
-app.use("/api/enrollments",enrollmentRouter)
+app.use('/api/enrollments', enrollmentRouter);
+
+app.use('/api/quiz', quizRouter);
 
 app.use(errorHandler);
 
