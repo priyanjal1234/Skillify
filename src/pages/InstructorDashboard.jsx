@@ -16,6 +16,7 @@ import courseService from "../services/Course";
 import { setInstructorCourses } from "../redux/reducers/CourseReducer";
 import { Link, NavLink } from "react-router-dom";
 import InstructorAnalytics from "./InstructorAnalytics";
+import InstructorStudents from "../components/InstructorStudents";
 
 const InstructorDashboard = () => {
   const [activeItem, setActiveItem] = useState("Dashboard");
@@ -55,7 +56,6 @@ const InstructorDashboard = () => {
     { name: "Dashboard", icon: Home },
     { name: "Courses", icon: FileText },
     { name: "Students", icon: Users },
-    { name: "Messages", icon: MessageSquare },
     { name: "Settings", icon: Settings },
   ];
 
@@ -104,14 +104,7 @@ const InstructorDashboard = () => {
             <Bell size={20} />
             Notifications
           </div>
-          <div
-            className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
-              darkMode ? "hover:bg-gray-700" : "hover:bg-gray-200"
-            }`}
-          >
-            <LogOut size={20} />
-            Logout
-          </div>
+          
           <Link className="block text-blue-600 mt-3" to={"/"}>
             Go back to home
           </Link>
@@ -124,6 +117,7 @@ const InstructorDashboard = () => {
           <InstructorAnalytics instructorId={currentUser?._id} />
         )}
         {activeItem === "Courses" && <InstructorCourse refetch={refetch} />}
+        {activeItem === "Students" && <InstructorStudents />}
       </main>
     </div>
   );
