@@ -55,6 +55,7 @@ const CourseLessons = () => {
   async function handleDeleteLesson(lessonId, courseId) {
     try {
       await lessonService.deleteLesson(lessonId, courseId);
+      await courseService.changeCourseStatus(courseId, "Review");
       toast.success("Lesson Deleted Successfully");
       refetch();
     } catch (error) {
