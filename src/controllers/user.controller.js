@@ -6,6 +6,7 @@ import generateVerificationCode from '../utils/generateVerificationCode.js';
 import generateToken from '../utils/generateToken.js';
 import crypto from 'crypto';
 import sendMail from '../utils/sendEmail.js';
+import { instance } from 'three/examples/jsm/nodes/Nodes.js';
 
 const registerUser = async function (req, res, next) {
   try {
@@ -310,6 +311,37 @@ const resetPassword = async function (req, res, next) {
   }
 };
 
+const completeLessons = async function (req, res, next) {
+  try {
+    let { lessonId } = req.body;
+
+    let student = await userModel.findOne({ email: req.user.email });
+    if (!student.completedLessons.includes(lessonId)) {
+      student.completedLessons.push(lessonId);
+      await student.save();
+    }
+    return res.status(200).json({ message: 'Lesson is completed' });
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error
+          ? error.message
+          : 'Error in changing the lesson complete status'
+      )
+    );
+  }
+};
+
+const getCompletedLessons = async function(req,res,next) {
+  try {
+    let student = await userModel.findOne({email: req.user.email}).select("completedLessons")
+    return res.status(200).json(student.completedLessons)
+  } catch (error) {
+    return next(new ApiError(500,error instanceof Error ? error.message : "Error fetching completed lessons"))
+  }
+}
+
 export {
   registerUser,
   verifyEmail,
@@ -320,4 +352,6 @@ export {
   forgotPassword,
   resetPassword,
   updateLoggedinUser,
+  completeLessons,
+  getCompletedLessons
 };

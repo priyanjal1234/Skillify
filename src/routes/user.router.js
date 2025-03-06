@@ -1,6 +1,8 @@
 import express from 'express';
 import {
+  completeLessons,
   forgotPassword,
+  getCompletedLessons,
   getLoggedinUser,
   loginUser,
   logoutUser,
@@ -108,5 +110,9 @@ router.route('/me').get(isLoggedin, function (req, res) {
     });
   }
 });
+
+router.route("/complete").post(isLoggedin,completeLessons)
+
+router.route("/completed-lessons").get(isLoggedin,getCompletedLessons)
 
 export default router;

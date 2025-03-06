@@ -173,28 +173,6 @@ const deleteLesson = async function (req, res, next) {
   }
 };
 
-const changeLessonStatus = async function (req, res, next) {
-  try {
-    let { lessonId } = req.params;
-    let lesson = await lessonModel.findOne({ _id: lessonId });
-    if (!lesson) {
-      return next(new ApiError(404, 'Lesson with this id not found'));
-    }
-
-    lesson.isCompleted = true;
-    await lesson.save();
-    return res.status(200).json({ message: 'Lesson is completed' });
-  } catch (error) {
-    return next(
-      new ApiError(
-        500,
-        error instanceof Error
-          ? error.message
-          : 'Error Setting the Lesson status'
-      )
-    );
-  }
-};
 
 export {
   createLesson,
@@ -202,5 +180,4 @@ export {
   getOneLesson,
   updateLesson,
   deleteLesson,
-  changeLessonStatus,
 };

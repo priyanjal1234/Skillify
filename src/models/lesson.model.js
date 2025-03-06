@@ -34,10 +34,7 @@ const lessonSchema = mongoose.Schema(
         ref: 'quiz',
       },
     ],
-    isCompleted: {
-      type: Boolean,
-      default: false
-    }
+    
   },
   { timestamps: true }
 );

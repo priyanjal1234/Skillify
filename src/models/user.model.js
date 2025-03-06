@@ -58,6 +58,12 @@ const userSchema = mongoose.Schema(
       unique: true,
       sparse: true,
     },
+    completedLessons: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "lesson"
+      }
+    ]
   },
   { timestamps: true }
 );
