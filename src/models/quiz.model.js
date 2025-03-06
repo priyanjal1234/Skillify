@@ -4,23 +4,14 @@ const quizSchema = mongoose.Schema(
   {
     lesson: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "lesson",
-      required: true
+      ref: 'lesson',
+      required: true,
     },
     questions: [
       {
-        type: String,
-        required: [true, 'Quiz question is required'],
-      },
-    ],
-    options: {
-      type: [String],
-      required: [true, 'Quiz options are required'],
-    },
-    correctOptions: [
-      {
-        type: Number,
-        required: [true, 'Correct option index is required'],
+        questionText: { type: String, required: true },
+        options: [String],
+        correctOption: { type: Number, required: true },
       },
     ],
   },

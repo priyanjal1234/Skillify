@@ -4,9 +4,10 @@ import ApiError from '../utils/ApiError.js';
 const createQuiz = async function (req, res, next) {
   try {
     let { lessonId } = req.params;
-    let { questions, options, correctOptions } = req.body;
+    let { questions } = req.body;
 
-    if (!questions || !options || !correctOptions) {
+
+    if (!questions) {
       return next(
         new ApiError(
           400,
@@ -18,8 +19,6 @@ const createQuiz = async function (req, res, next) {
     await quizModel.create({
       lesson: lessonId,
       questions,
-      options,
-      correctOptions,
     });
 
     return res.status(200).json({ message: 'Quiz Created Successfully' });
