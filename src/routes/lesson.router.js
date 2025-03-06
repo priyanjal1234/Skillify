@@ -3,6 +3,7 @@ import isLoggedin from '../middlewares/isLoggedin.js';
 import isInstructor from '../middlewares/isInstructor.js';
 import multer from 'multer';
 import {
+  changeLessonStatus,
   createLesson,
   deleteLesson,
   getCourseLessons,
@@ -33,5 +34,7 @@ router
   .put(isLoggedin, isInstructor, imageKitUpload.single('lessonVideo'), updateLesson);
 
 router.route("/delete/:lessonId/:courseId").delete(isLoggedin,isInstructor,deleteLesson)
+
+router.route("/change-status/:lessonId").put(isLoggedin,changeLessonStatus)
 
 export default router;
