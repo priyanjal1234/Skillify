@@ -8,6 +8,7 @@ import ReactPlayer from "react-player";
 import lessonService from "../services/Lesson";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
+import userService from "../services/User";
 
 const ClassRoom = () => {
   let { courseId } = useParams();
@@ -70,16 +71,29 @@ const ClassRoom = () => {
     }
   }
 
+  let { data: completedLessons,refetch } = useQuery({
+    queryKey: ["getCompletedLessons"],
+    queryFn: async function () {
+      try {
+        let response = await userService.getCompletedLessons();
+        return response.data
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+        return []
+      }
+    },
+  });
+
   async function handleEndVideo() {
     try {
-      let completeLessonRes = await lessonService.setCompleteLesson(
-        selectedLecture?._id
-      );
-      
+      await userService.setCompleteLesson(selectedLecture?._id);
+      refetch()
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
   }
+
+  
 
   return (
     <div
@@ -183,7 +197,7 @@ const ClassRoom = () => {
                     </span>
                     <h3 className="text-lg font-semibold">{lesson?.title}</h3>
                   </div>
-                  {lesson.isCompleted && <CheckCircle color="green" />}
+                  {completedLessons?.includes(lesson?._id) && <CheckCircle color="green" />}
                 </div>
               </div>
             ))}

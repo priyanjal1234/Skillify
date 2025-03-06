@@ -107,6 +107,28 @@ class UserService {
       throw error;
     }
   }
+
+  async setCompleteLesson(lessonId) {
+    try {
+      return await this.api.post(
+        `${this.baseUrl}/complete`,
+        { lessonId },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCompletedLessons() {
+    try {
+      return this.api.get(`${this.baseUrl}/completed-lessons`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 let userService = new UserService();
