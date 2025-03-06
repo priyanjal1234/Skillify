@@ -58,6 +58,18 @@ class LessonService {
       throw error;
     }
   }
+
+  async setCompleteLesson(lessonId) {
+    try {
+      return await this.api.put(
+        `${this.baseUrl}/change-status/${lessonId}`,
+        {},
+        { withCredentials: true }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 let lessonService = new LessonService();

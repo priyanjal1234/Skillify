@@ -1,10 +1,13 @@
-import { ArrowLeft, Clock, PlayCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, Clock, PlayCircle } from "lucide-react";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import courseService from "../services/Course";
 import ReactPlayer from "react-player";
+import lessonService from "../services/Lesson";
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
 
 const ClassRoom = () => {
   let { courseId } = useParams();
@@ -13,6 +16,7 @@ const ClassRoom = () => {
   const [thumbnails, setThumbnails] = useState({});
   const [selectedLecture, setselectedLecture] = useState(null);
   const canvasRef = useRef(null);
+  let dispatch = useDispatch();
 
   useQuery({
     queryKey: ["getSingleCourse"],
@@ -66,6 +70,17 @@ const ClassRoom = () => {
     }
   }
 
+  async function handleEndVideo() {
+    try {
+      let completeLessonRes = await lessonService.setCompleteLesson(
+        selectedLecture?._id
+      );
+      
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
+  }
+
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
@@ -102,6 +117,7 @@ const ClassRoom = () => {
                       width="100%"
                       height="500px"
                       style={{ objectFit: "cover" }}
+                      onEnded={handleEndVideo}
                     />
                   ) : (
                     <div className="w-full h-[500px] flex items-center justify-center bg-gray-300 dark:bg-gray-700">
@@ -167,6 +183,7 @@ const ClassRoom = () => {
                     </span>
                     <h3 className="text-lg font-semibold">{lesson?.title}</h3>
                   </div>
+                  {lesson.isCompleted && <CheckCircle color="green" />}
                 </div>
               </div>
             ))}

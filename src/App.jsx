@@ -52,7 +52,14 @@ const App = () => {
           }
         />
         <Route path="/payment/:courseId" element={<PaymentPage />} />
-        <Route path="/classroom/:courseId" element={<ClassRoom />} />
+        <Route
+          path="/classroom/:courseId"
+          element={
+            <ProtectedRoute>
+              <ClassRoom />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/add-lesson/:courseId" element={<AddLesson />} />
         <Route path="/lessons/:courseId" element={<CourseLessons />} />
         <Route

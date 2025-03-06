@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 
 const CourseCard = ({ course }) => {
   let { darkMode } = useContext(ThemeDataContext);
-  let { currentUser } = useSelector((state) => state.user);
+  let { currentUser,isLoggedin } = useSelector((state) => state.user);
 
   return (
     <div
@@ -69,7 +69,7 @@ const CourseCard = ({ course }) => {
                 darkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
-              {course?.duration} weeks
+              {course?.duration === 1 ? `${course?.duration} week` : `${course?.duration} weeks` } 
             </span>
           </div>
           <div className="flex items-center space-x-2">
@@ -111,7 +111,7 @@ const CourseCard = ({ course }) => {
           </Link>
         </div>
 
-        {course?.studentsEnrolled?.includes(currentUser?._id) ? (
+        {course?.studentsEnrolled?.includes(currentUser?._id) && isLoggedin ? (
           <Link
             to={`/classroom/${course?._id}`}
             className={`w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center`}
