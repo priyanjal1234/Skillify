@@ -134,7 +134,17 @@ class CourseService {
         { withCredentials: true }
       );
     } catch (error) {
-      throw error
+      throw error;
+    }
+  }
+
+  async getCourseRating(courseId) {
+    try {
+      return await this.api.get(`${this.baseUrl}/get-rating/${courseId}`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error;
     }
   }
 }

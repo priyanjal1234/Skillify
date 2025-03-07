@@ -19,6 +19,7 @@ import AddLessonPreviewSidebar from "../components/AddLessonPreviewSidebar";
 import truncateText from "../utils/truncateText";
 import lessonService from "../services/Lesson";
 import { toast } from "react-toastify";
+import courseService from "../services/Course";
 
 const AddLesson = () => {
   const { courseId } = useParams();
@@ -105,6 +106,7 @@ const AddLesson = () => {
 
     try {
       await lessonService.createLesson(formdata, courseId);
+      await courseService.changeCourseStatus(courseId,"Draft")
       toast.success("Lesson Created Successfully");
       setloading(false);
       navigate(`/dashboard/instructor`)

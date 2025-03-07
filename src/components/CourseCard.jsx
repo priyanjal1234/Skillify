@@ -1,13 +1,35 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import { Clock, Star, Users, ChevronRight } from "lucide-react";
 import truncateText from "../utils/truncateText";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import courseService from "../services/Course";
 
 const CourseCard = ({ course }) => {
   let { darkMode } = useContext(ThemeDataContext);
-  let { currentUser,isLoggedin } = useSelector((state) => state.user);
+  let { currentUser, isLoggedin } = useSelector((state) => state.user);
+  const [rating, setrating] = useState(0);
+
+  useQuery({
+    queryKey: ["fetchCourseRating",course?._id],
+    queryFn: async function () {
+      try {
+        let getRatingRes = await courseService.getCourseRating(course?._id);
+
+        if (getRatingRes.status === 200) {
+          setrating(Number(getRatingRes.data));
+        }
+
+        return getRatingRes.data;
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+
+        return false;
+      }
+    },
+  });
 
   return (
     <div
@@ -69,7 +91,9 @@ const CourseCard = ({ course }) => {
                 darkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
-              {course?.duration === 1 ? `${course?.duration} week` : `${course?.duration} weeks` } 
+              {course?.duration === 1
+                ? `${course?.duration} week`
+                : `${course?.duration} weeks`}
             </span>
           </div>
           <div className="flex items-center space-x-2">
@@ -90,6 +114,13 @@ const CourseCard = ({ course }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-1">
             <Star className="h-5 w-5 text-yellow-400 fill-current" />
+            <span
+              className={`text-sm ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
+              {rating}
+            </span>
             <span
               className={`font-medium ${
                 darkMode ? "text-white" : "text-gray-900"

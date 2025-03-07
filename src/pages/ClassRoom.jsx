@@ -18,8 +18,12 @@ const ClassRoom = () => {
   const [course, setCourse] = useState(null);
   const [thumbnails, setThumbnails] = useState({});
   const [selectedLecture, setselectedLecture] = useState(null);
-  const [showModal, setshowModal] = useState(false);
+
   const [progress, setprogress] = useState(0);
+
+  const [showModal, setshowModal] = useState(false);
+
+  const [activeQuizLessonId, setActiveQuizLessonId] = useState(null);
 
   let navigate = useNavigate();
   let dispatch = useDispatch();
@@ -42,11 +46,14 @@ const ClassRoom = () => {
     },
   });
 
-  useQuery({
+  let { refetch: refetchProgress } = useQuery({
     queryKey: ["fetchCourseProgress"],
     queryFn: async function () {
       try {
-        let progressRes = await userService.getUserProgress(courseId);
+        let progressRes = await userService.getUserProgress(
+          courseId,
+          selectedLecture?._id
+        );
 
         setprogress(progressRes.data);
         return progressRes.data;
@@ -96,7 +103,7 @@ const ClassRoom = () => {
     }
   }
 
-  let { data: completedLessons, refetch } = useQuery({
+  let { data: completedLessons, refetch: refetchCompletedLessons } = useQuery({
     queryKey: ["getCompletedLessons"],
     queryFn: async function () {
       try {
@@ -112,9 +119,12 @@ const ClassRoom = () => {
   async function handleEndVideo() {
     try {
       await userService.setCompleteLesson(selectedLecture?._id);
+      refetchCompletedLessons();
+      refetchProgress();
       let getQuizRes = await quizService.getQuiz(selectedLecture?._id);
-      refetch();
+
       if (getQuizRes.status === 200) {
+        setActiveQuizLessonId(selectedLecture?._id);
         setshowModal(true);
         dispatch(setCurrentQuiz(getQuizRes.data));
       }
@@ -213,52 +223,54 @@ const ClassRoom = () => {
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
-            <div className="text-right text-xs mt-1">{progress}%</div>
+            <div className="text-right text-lg mt-1">
+              {Number(progress).toFixed(2)}%
+            </div>
           </div>
           <h2 className="text-2xl font-bold mb-4">Lectures</h2>
           <div className="space-y-2 overflow-auto">
             {course?.lessons?.map((lesson, index) => (
-              <div
-                onClick={() => handleSelectedLecture(lesson?._id)}
-                key={index}
-                className={`cursor-pointer relative ${
-                  showModal && " pb-4"
-                } overflow-hidden border rounded-xl transition-colors duration-200 ${
-                  darkMode
-                    ? "border-gray-700 hover:bg-gray-700"
-                    : "border-gray-200 hover:bg-gray-50"
-                }`}
-              >
-                <div className="flex items-center p-2">
-                  {/* Fixed-size thumbnail container */}
-                  <div className="w-[120px] h-[90px] overflow-hidden flex-shrink-0 mr-4">
-                    {/* Force the image to fill this container */}
-                    <img
-                      src={thumbnails[lesson?._id]}
-                      alt=""
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
+              <>
+                <div
+                  onClick={() => handleSelectedLecture(lesson?._id)}
+                  key={index}
+                  className={`cursor-pointer relative ${showModal && 'pb-4'} overflow-hidden border rounded-xl transition-colors duration-200 ${
+                    darkMode
+                      ? "border-gray-700 hover:bg-gray-700"
+                      : "border-gray-200 hover:bg-gray-50"
+                  }`}
+                >
+                  <div className="flex items-center p-2">
+                    {/* Fixed-size thumbnail container */}
+                    <div className="w-[120px] h-[90px] overflow-hidden flex-shrink-0 mr-4">
+                      {/* Force the image to fill this container */}
+                      <img
+                        src={thumbnails[lesson?._id]}
+                        alt=""
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
 
-                  {/* Lecture text */}
-                  <div className="flex-1">
-                    <span className="text-sm font-semibold">
-                      Lecture {index + 1}
-                    </span>
-                    <h3 className="text-lg font-semibold">{lesson?.title}</h3>
+                    {/* Lecture text */}
+                    <div className="flex-1">
+                      <span className="text-sm font-semibold">
+                        Lecture {index + 1}
+                      </span>
+                      <h3 className="text-lg font-semibold">{lesson?.title}</h3>
+                    </div>
+                    {completedLessons?.includes(lesson?._id) && (
+                      <CheckCircle color="green" />
+                    )}
                   </div>
-                  {completedLessons?.includes(lesson?._id) && (
-                    <CheckCircle color="green" />
+                  {showModal && activeQuizLessonId === lesson?._id && (
+                    <QuizModal
+                      showModal={showModal}
+                      setShowModal={setshowModal}
+                      handleTakeQuiz={handleTakeQuiz}
+                    />
                   )}
                 </div>
-                {showModal && (
-                  <QuizModal
-                    showModal={showModal}
-                    setShowModal={setshowModal}
-                    handleTakeQuiz={() => handleTakeQuiz(lesson?._id)}
-                  />
-                )}
-              </div>
+              </>
             ))}
           </div>
         </div>

@@ -45,7 +45,7 @@ const CourseLessons = () => {
 
   async function handleEditLesson(lessonId) {
     try {
-      await courseService.changeCourseStatus(courseId, "Review");
+      await courseService.changeCourseStatus(courseId, "Draft");
       navigate(`/edit-lesson/${courseId}/${lessonId}`);
     } catch (error) {
       toast.error(error?.response?.data?.message);

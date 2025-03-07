@@ -4,6 +4,7 @@ const initialState = {
   allCourses: [],
   instructorCourses: [],
   currentCourse: {},
+ 
 };
 
 export const CourseSlice = createSlice({
@@ -19,6 +20,7 @@ export const CourseSlice = createSlice({
     setcurrentCourse: function (state, action) {
       state.currentCourse = action.payload;
     },
+    
   },
 });
 

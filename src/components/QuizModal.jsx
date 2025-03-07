@@ -1,17 +1,8 @@
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
-const QuizModal = ({ showModal, setShowModal, handleTakeQuiz }) => {
-  useEffect(() => {
-    if (showModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [showModal]);
-
-  if (!showModal) return null;
-
+const QuizModal = ({ showModal, setShowModal, handleTakeQuiz,lecIndex }) => {
+  
   return (
     <div className=" inset-0  bg-opacity-50 flex items-center justify-center z-50">
       <motion.div

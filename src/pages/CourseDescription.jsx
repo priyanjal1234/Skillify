@@ -104,10 +104,10 @@ const CourseDescription = () => {
               </h1>
               <div className="flex flex-wrap items-center gap-4 text-white">
                 <div className="flex items-center">
-                  <Star className="h-5 w-5 text-yellow-400 fill-current" />
+                
                   <span className="ml-1">
-                    {currentCourse?.rating?.average} Rating (
-                    {currentCourse?.studentsEnrolled?.length} Students)
+                     
+                    {currentCourse?.studentsEnrolled?.length === 1 ? `1 Student` : `${currentCourse?.studentsEnrolled?.length} Students`} 
                   </span>
                 </div>
                 <div className="flex items-center">
