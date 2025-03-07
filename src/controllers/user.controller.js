@@ -7,6 +7,7 @@ import generateToken from '../utils/generateToken.js';
 import crypto from 'crypto';
 import sendMail from '../utils/sendEmail.js';
 import { instance } from 'three/examples/jsm/nodes/Nodes.js';
+import courseModel from '../models/course.model.js';
 
 const registerUser = async function (req, res, next) {
   try {
@@ -333,14 +334,50 @@ const completeLessons = async function (req, res, next) {
   }
 };
 
-const getCompletedLessons = async function(req,res,next) {
+const getCompletedLessons = async function (req, res, next) {
   try {
-    let student = await userModel.findOne({email: req.user.email}).select("completedLessons")
-    return res.status(200).json(student.completedLessons)
+    let student = await userModel
+      .findOne({ email: req.user.email })
+      .select('completedLessons');
+    return res.status(200).json(student.completedLessons);
   } catch (error) {
-    return next(new ApiError(500,error instanceof Error ? error.message : "Error fetching completed lessons"))
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error
+          ? error.message
+          : 'Error fetching completed lessons'
+      )
+    );
   }
-}
+};
+
+const calculateProgress = async function (req, res, next) {
+  try {
+    let { courseId } = req.params;
+    let student = await userModel.findOne({ email: req.user.email });
+    let course = await courseModel.findOne({ _id: courseId });
+
+    if (!course) {
+      return next(new ApiError(404, 'Course with this id not found'));
+    }
+
+    let completedLessons = student.completedLessons.length;
+    let totalLessons = course.lessons.length;
+    let percentageCompletion = (completedLessons / totalLessons) * 100;
+
+    return res.status(200).json(percentageCompletion);
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error
+          ? error.message
+          : 'Error occurred while calculating the percentage completion of the course'
+      )
+    );
+  }
+};
 
 export {
   registerUser,
@@ -353,5 +390,6 @@ export {
   resetPassword,
   updateLoggedinUser,
   completeLessons,
-  getCompletedLessons
+  getCompletedLessons,
+  calculateProgress,
 };

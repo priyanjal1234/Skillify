@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+  calculateProgress,
   completeLessons,
   forgotPassword,
   getCompletedLessons,
@@ -114,5 +115,7 @@ router.route('/me').get(isLoggedin, function (req, res) {
 router.route("/complete").post(isLoggedin,completeLessons)
 
 router.route("/completed-lessons").get(isLoggedin,getCompletedLessons)
+
+router.route("/progress/:courseId").get(isLoggedin,calculateProgress)
 
 export default router;
