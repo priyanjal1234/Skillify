@@ -20,6 +20,7 @@ import CourseLessons from "./pages/CourseLessons";
 import EditLesson from "./pages/EditLesson";
 
 import InstructorDashboard from "./pages/InstructorDashboard";
+import LessonQuiz from "./pages/LessonQuiz";
 
 const App = () => {
   useEffect(() => {
@@ -66,6 +67,7 @@ const App = () => {
           path="/edit-lesson/:courseId/:lessonId"
           element={<EditLesson />}
         />
+        <Route path="/quiz/:courseId/:lessonId" element = {<LessonQuiz />}/>
       </Routes>
     </>
   );

@@ -17,6 +17,16 @@ class QuizService {
       throw error;
     }
   }
+
+  async getQuiz(lessonId) {
+    try {
+      return this.api.get(`${this.baseUrl}/${lessonId}`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 let quizService = new QuizService();

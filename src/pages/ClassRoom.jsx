@@ -1,14 +1,16 @@
 import { ArrowLeft, CheckCircle, Clock, PlayCircle } from "lucide-react";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { ThemeDataContext } from "../context/ThemeContext";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import courseService from "../services/Course";
 import ReactPlayer from "react-player";
-import lessonService from "../services/Lesson";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
 import userService from "../services/User";
+import quizService from "../services/Quiz";
+import QuizModal from "../components/QuizModal";
+import { useDispatch } from "react-redux";
+import { setCurrentQuiz } from "../redux/reducers/QuizReducer";
 
 const ClassRoom = () => {
   let { courseId } = useParams();
@@ -16,8 +18,14 @@ const ClassRoom = () => {
   const [course, setCourse] = useState(null);
   const [thumbnails, setThumbnails] = useState({});
   const [selectedLecture, setselectedLecture] = useState(null);
-  const canvasRef = useRef(null);
+  const [showModal, setshowModal] = useState(false);
+
+  let navigate = useNavigate();
   let dispatch = useDispatch();
+
+  useEffect(() => {
+    localStorage.removeItem("quizCompleted")
+  },[])
 
   useQuery({
     queryKey: ["getSingleCourse"],
@@ -71,15 +79,15 @@ const ClassRoom = () => {
     }
   }
 
-  let { data: completedLessons,refetch } = useQuery({
+  let { data: completedLessons, refetch } = useQuery({
     queryKey: ["getCompletedLessons"],
     queryFn: async function () {
       try {
         let response = await userService.getCompletedLessons();
-        return response.data
+        return response.data;
       } catch (error) {
         console.log(error?.response?.data?.message);
-        return []
+        return [];
       }
     },
   });
@@ -87,13 +95,24 @@ const ClassRoom = () => {
   async function handleEndVideo() {
     try {
       await userService.setCompleteLesson(selectedLecture?._id);
-      refetch()
+      let getQuizRes = await quizService.getQuiz(selectedLecture?._id);
+      refetch();
+      if (getQuizRes.status === 200) {
+        setshowModal(true);
+        dispatch(setCurrentQuiz(getQuizRes.data));
+      }
     } catch (error) {
-      toast.error(error?.response?.data?.message);
+      if (error?.response?.data?.message === "Quiz not found for this lesson") {
+        return;
+      } else {
+        toast.error(error?.response?.data?.message);
+      }
     }
   }
 
-  
+  function handleTakeQuiz(lessonId) {
+    navigate(`/quiz/${courseId}/${lessonId}`);
+  }
 
   return (
     <div
@@ -125,14 +144,16 @@ const ClassRoom = () => {
                 <div>
                   {/* If a video URL exists, render the video player */}
                   {selectedLecture.videoUrl ? (
-                    <ReactPlayer
-                      url={selectedLecture?.videoUrl}
-                      controls
-                      width="100%"
-                      height="500px"
-                      style={{ objectFit: "cover" }}
-                      onEnded={handleEndVideo}
-                    />
+                    <>
+                      <ReactPlayer
+                        url={selectedLecture?.videoUrl}
+                        controls
+                        width="100%"
+                        height="500px"
+                        style={{ objectFit: "cover" }}
+                        onEnded={handleEndVideo}
+                      />
+                    </>
                   ) : (
                     <div className="w-full h-[500px] flex items-center justify-center bg-gray-300 dark:bg-gray-700">
                       <PlayCircle className="h-20 w-20 text-gray-600 dark:text-gray-300" />
@@ -173,7 +194,9 @@ const ClassRoom = () => {
               <div
                 onClick={() => handleSelectedLecture(lesson?._id)}
                 key={index}
-                className={`cursor-pointer overflow-hidden border rounded-xl transition-colors duration-200 ${
+                className={`cursor-pointer relative ${
+                  showModal && " pb-4"
+                } overflow-hidden border rounded-xl transition-colors duration-200 ${
                   darkMode
                     ? "border-gray-700 hover:bg-gray-700"
                     : "border-gray-200 hover:bg-gray-50"
@@ -197,8 +220,18 @@ const ClassRoom = () => {
                     </span>
                     <h3 className="text-lg font-semibold">{lesson?.title}</h3>
                   </div>
-                  {completedLessons?.includes(lesson?._id) && <CheckCircle color="green" />}
+                  {completedLessons?.includes(lesson?._id) && (
+                    <CheckCircle color="green" />
+                  )}
                 </div>
+                {showModal && (
+                  <QuizModal
+                    showModal={showModal}
+                    setShowModal={setshowModal}
+                    handleTakeQuiz={() => handleTakeQuiz(lesson?._id)}
+                    
+                  />
+                )}
               </div>
             ))}
           </div>
