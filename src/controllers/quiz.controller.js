@@ -6,7 +6,6 @@ const createQuiz = async function (req, res, next) {
     let { lessonId } = req.params;
     let { questions } = req.body;
 
-
     if (!questions) {
       return next(
         new ApiError(
@@ -32,4 +31,23 @@ const createQuiz = async function (req, res, next) {
   }
 };
 
-export { createQuiz };
+const getLessonQuiz = async function (req, res, next) {
+  try {
+    let { lessonId } = req.params;
+    let quiz = await quizModel.findOne({ lesson: lessonId });
+    if (!quiz) {
+      return next(new ApiError(404, 'Quiz not found for this lesson'));
+    }
+
+    return res.status(200).json(quiz);
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error fetching lesson quiz'
+      )
+    );
+  }
+};
+
+export { createQuiz, getLessonQuiz };
