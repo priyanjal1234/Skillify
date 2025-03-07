@@ -354,17 +354,19 @@ const getCompletedLessons = async function (req, res, next) {
 
 const calculateProgress = async function (req, res, next) {
   try {
-    let { courseId } = req.params;
+    let { courseId, lessonId } = req.params;
     let student = await userModel.findOne({ email: req.user.email });
     let course = await courseModel.findOne({ _id: courseId });
 
     if (!course) {
       return next(new ApiError(404, 'Course with this id not found'));
     }
+    let lessonsCompleted = course.lessons.filter((lesson) =>
+      student.completedLessons.includes(lesson.toString())
+    ).length;
 
-    let completedLessons = student.completedLessons.length;
     let totalLessons = course.lessons.length;
-    let percentageCompletion = (completedLessons / totalLessons) * 100;
+    let percentageCompletion = (lessonsCompleted / totalLessons) * 100;
 
     return res.status(200).json(percentageCompletion);
   } catch (error) {

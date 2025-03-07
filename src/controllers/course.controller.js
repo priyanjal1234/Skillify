@@ -461,7 +461,7 @@ const validateCouponCode = async function (req, res, next) {
 
       let discountedPrice;
       let originalPrice = course.price;
-      let discountValue
+      let discountValue;
       if (course.discountType === 'Percentage') {
         discountValue =
           (course.discountValue.replace('%', '') / 100) * originalPrice;
@@ -472,16 +472,14 @@ const validateCouponCode = async function (req, res, next) {
           discountValue,
         });
       } else {
-        discountValue = Number(course.discountValue)
+        discountValue = Number(course.discountValue);
         discountedPrice = Number(originalPrice) - Number(course.discountValue);
 
-        return res
-          .status(200)
-          .json({
-            message: 'Discount Applied Successfully',
-            discountValue,
-            discountedPrice,
-          });
+        return res.status(200).json({
+          message: 'Discount Applied Successfully',
+          discountValue,
+          discountedPrice,
+        });
       }
     } else {
       return next(new ApiError(403, 'Invalid or expired coupon code'));
@@ -491,6 +489,35 @@ const validateCouponCode = async function (req, res, next) {
       new ApiError(
         500,
         error instanceof Error ? error.message : 'Error Validating Coupon code'
+      )
+    );
+  }
+};
+
+const getAverageRating = async function (req, res, next) {
+  try {
+    let { courseId } = req.params;
+
+    let course = await courseModel.findOne({ _id: courseId });
+    if (!course) {
+      return next(new ApiError(404, 'Course with this id not found'));
+    }
+
+    let totalRatings = course.ratings.length;
+    let totalValueofRating = course.ratings.reduce(function (acc, current) {
+      return acc + Number(current.value);
+    }, 0);
+
+    let averageRating = (totalValueofRating / totalRatings);
+    
+    return res.status(200).json(averageRating);
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error
+          ? error.message
+          : 'Error occurred in getting rating'
       )
     );
   }
@@ -509,4 +536,5 @@ export {
   getPublishedCourses,
   rateCourse,
   validateCouponCode,
+  getAverageRating
 };

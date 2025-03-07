@@ -62,7 +62,6 @@ router.route('/auth/google/callback').get(
         );
       }
 
-      
       const token = jwt.sign(
         { id: req.user._id, name: req.user.name, email: req.user.email },
         process.env.JWT_KEY,
@@ -77,7 +76,6 @@ router.route('/auth/google/callback').get(
     } catch (error) {
       console.error('Google Auth Error:', error);
 
-      
       if (error.code === 11000) {
         return res.redirect(
           'http://localhost:5173/login/student?error=account_exists'
@@ -112,10 +110,12 @@ router.route('/me').get(isLoggedin, function (req, res) {
   }
 });
 
-router.route("/complete").post(isLoggedin,completeLessons)
+router.route('/complete').post(isLoggedin, completeLessons);
 
-router.route("/completed-lessons").get(isLoggedin,getCompletedLessons)
+router.route('/completed-lessons').get(isLoggedin, getCompletedLessons);
 
-router.route("/progress/:courseId").get(isLoggedin,calculateProgress)
+router
+  .route('/progress/:courseId/:lessonId')
+  .get(isLoggedin, calculateProgress);
 
 export default router;

@@ -7,6 +7,7 @@ import {
   deleteCourse,
   enrollInCourse,
   getAllCourses,
+  getAverageRating,
   getInstructorCourses,
   getOneCourse,
   getPublishedCourses,
@@ -60,5 +61,7 @@ router.route('/rate/:courseId').post(isLoggedin, rateCourse);
 router
   .route('/validate-couponCode/:courseId')
   .post(isLoggedin, validateCouponCode);
+
+router.route("/get-rating/:courseId").get(getAverageRating)
 
 export default router;
