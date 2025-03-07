@@ -19,13 +19,14 @@ const ClassRoom = () => {
   const [thumbnails, setThumbnails] = useState({});
   const [selectedLecture, setselectedLecture] = useState(null);
   const [showModal, setshowModal] = useState(false);
+  const [progress, setprogress] = useState(0);
 
   let navigate = useNavigate();
   let dispatch = useDispatch();
 
   useEffect(() => {
-    localStorage.removeItem("quizCompleted")
-  },[])
+    localStorage.removeItem("quizCompleted");
+  }, []);
 
   useQuery({
     queryKey: ["getSingleCourse"],
@@ -37,6 +38,22 @@ const ClassRoom = () => {
       } catch (error) {
         console.log(error?.response?.data?.message);
         return {};
+      }
+    },
+  });
+
+  useQuery({
+    queryKey: ["fetchCourseProgress"],
+    queryFn: async function () {
+      try {
+        let progressRes = await userService.getUserProgress(courseId);
+
+        setprogress(progressRes.data);
+        return progressRes.data;
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+
+        return false;
       }
     },
   });
@@ -188,6 +205,16 @@ const ClassRoom = () => {
 
         {/* Sidebar: Lectures List */}
         <div className="space-y-6">
+          <div className="mb-4">
+            <div className="text-sm font-semibold mb-1">Course Progress</div>
+            <div className="w-full bg-gray-200 rounded-full h-4">
+              <div
+                className="bg-blue-600 h-4 rounded-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+            <div className="text-right text-xs mt-1">{progress}%</div>
+          </div>
           <h2 className="text-2xl font-bold mb-4">Lectures</h2>
           <div className="space-y-2 overflow-auto">
             {course?.lessons?.map((lesson, index) => (
@@ -229,7 +256,6 @@ const ClassRoom = () => {
                     showModal={showModal}
                     setShowModal={setshowModal}
                     handleTakeQuiz={() => handleTakeQuiz(lesson?._id)}
-                    
                   />
                 )}
               </div>

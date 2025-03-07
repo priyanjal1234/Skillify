@@ -129,6 +129,16 @@ class UserService {
       throw error;
     }
   }
+
+  async getUserProgress(courseId) {
+    try {
+      return this.api.get(`${this.baseUrl}/progress/${courseId}`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 let userService = new UserService();
