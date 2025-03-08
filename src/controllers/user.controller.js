@@ -381,6 +381,42 @@ const calculateProgress = async function (req, res, next) {
   }
 };
 
+const getInstructors = async function (req, res, next) {
+  try {
+    let user = await userModel.findOne({ email: req.user.email });
+    let enrolledCourseIds = user.enrolledCourses;
+
+    if (!enrolledCourseIds || enrolledCourseIds.length === 0) {
+      return next(
+        new ApiError(404, 'You are not enrolled in any of the course')
+      );
+    }
+
+    let courses = await courseModel
+      .find({ _id: { $in: enrolledCourseIds } })
+      .select('instructor')
+      .populate('instructor', 'name');
+
+    const instructorMap = new Map();
+    courses.forEach(function (course) {
+      const instructor = course.instructor;
+      if (instructor && !instructorMap.has(instructor._id.toString())) {
+        instructorMap.set(instructor._id.toString(), instructor);
+      }
+    });
+
+    const instructors = Array.from(instructorMap.values());
+    return res.status(200).json(instructors);
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error fetching instructor'
+      )
+    );
+  }
+};
+
 export {
   registerUser,
   verifyEmail,
@@ -394,4 +430,5 @@ export {
   completeLessons,
   getCompletedLessons,
   calculateProgress,
+  getInstructors
 };

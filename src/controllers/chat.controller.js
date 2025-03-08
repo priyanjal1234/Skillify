@@ -4,10 +4,10 @@ import ApiError from '../utils/ApiError.js';
 
 const getSenderChats = async function (req, res, next) {
   try {
-    let { senderId,receiverId } = req.params;
-  
+    let { senderId, receiverId } = req.params;
+
     let sender = await userModel.findOne({ _id: senderId });
-    let receiver = await userModel.findOne({_id: receiverId})
+    let receiver = await userModel.findOne({ _id: receiverId });
     if (!sender) {
       return next(new ApiError(404, 'Sender with this id not found'));
     }
@@ -15,7 +15,10 @@ const getSenderChats = async function (req, res, next) {
       return next(new ApiError(404, 'Receiver with this id not found'));
     }
 
-    let senderChats = await chatModel.find({ sender: senderId,receiver: receiverId });
+    let senderChats = await chatModel.find({
+      sender: senderId,
+      receiver: receiverId,
+    });
     return res.status(200).json(senderChats);
   } catch (error) {
     return next(
@@ -27,16 +30,17 @@ const getSenderChats = async function (req, res, next) {
   }
 };
 
-const getReceiverChats = async function (req, res, next) {
+const getUnreadChats = async function (req, res, next) {
   try {
-    let { receiverId } = req.params;
-    let receiver = await userModel.findOne({ _id: receiverId });
-    if (!receiver) {
-      return next(new ApiError(404, 'Receiver not found with this id'));
-    }
+    let user = await userModel.findOne({ email: req.user.email });
 
-    let receiverChats = await chatModel.find({ receiver: receiverId });
-    return res.status(200).json(receiverChats);
+    console.log(user)
+
+    let unreadChats = await chatModel.find({
+      receiver: user._id,
+      'message.isRead': false
+    });
+    return res.status(200).json(unreadChats);
   } catch (error) {
     return next(
       new ApiError(
@@ -47,4 +51,4 @@ const getReceiverChats = async function (req, res, next) {
   }
 };
 
-export { getSenderChats, getReceiverChats };
+export { getSenderChats, getUnreadChats };

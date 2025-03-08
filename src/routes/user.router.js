@@ -4,6 +4,7 @@ import {
   completeLessons,
   forgotPassword,
   getCompletedLessons,
+  getInstructors,
   getLoggedinUser,
   loginUser,
   logoutUser,
@@ -110,12 +111,17 @@ router.route('/me').get(isLoggedin, function (req, res) {
   }
 });
 
-router.route('/complete').post(isLoggedin, completeLessons);
+router.route('/complete').post(isLoggedin, asyncHandler(completeLessons));
 
-router.route('/completed-lessons').get(isLoggedin, getCompletedLessons);
+router
+  .route('/completed-lessons')
+  .get(isLoggedin, asyncHandler(getCompletedLessons));
 
 router
   .route('/progress/:courseId/:lessonId')
-  .get(isLoggedin, calculateProgress);
+  .get(isLoggedin, asyncHandler(calculateProgress));
+
+
+router.route("/enrolled-course-instructors").get(isLoggedin,getInstructors)
 
 export default router;

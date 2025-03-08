@@ -23,7 +23,6 @@ import errorHandler from './utils/errorHandler.js';
 import { corsOrigin } from './constants.js';
 import chatModel from './models/chat.model.js';
 
-
 // Route Imports
 import userRouter from './routes/user.router.js';
 import courseRouter from './routes/course.router.js';
@@ -32,7 +31,7 @@ import analyticsRouter from './routes/analytics.router.js';
 import lessonRouter from './routes/lesson.router.js';
 import enrollmentRouter from './routes/enrollment.router.js';
 import quizRouter from './routes/quiz.router.js';
-import chatRouter from './routes/chat.router.js'
+import chatRouter from './routes/chat.router.js';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -66,12 +65,13 @@ io.on('connection', function (socket) {
 
   socket.on('send-message', async function (data) {
     try {
-      await chatModel.create({
+      let message = await chatModel.create({
         room: data.room,
         sender: data.senderId,
         receiver: data.receiverId,
-        message: data.message,
       });
+      message.message.content = data.message 
+      await message.save()
     } catch (error) {
       socket.emit(
         'error',
@@ -99,7 +99,7 @@ app.use('/api/enrollments', enrollmentRouter);
 
 app.use('/api/quiz', quizRouter);
 
-app.use("/api/chats",chatRouter)
+app.use('/api/chats', chatRouter);
 
 app.use(errorHandler);
 
