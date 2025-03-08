@@ -21,6 +21,8 @@ const io = new Server(server, {
 
 import errorHandler from './utils/errorHandler.js';
 import { corsOrigin } from './constants.js';
+import chatModel from './models/chat.model.js';
+
 
 // Route Imports
 import userRouter from './routes/user.router.js';
@@ -30,7 +32,7 @@ import analyticsRouter from './routes/analytics.router.js';
 import lessonRouter from './routes/lesson.router.js';
 import enrollmentRouter from './routes/enrollment.router.js';
 import quizRouter from './routes/quiz.router.js';
-import chatModel from './models/chat.model.js';
+import chatRouter from './routes/chat.router.js'
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -96,6 +98,8 @@ app.use('/api/lessons', lessonRouter);
 app.use('/api/enrollments', enrollmentRouter);
 
 app.use('/api/quiz', quizRouter);
+
+app.use("/api/chats",chatRouter)
 
 app.use(errorHandler);
 

@@ -10,6 +10,7 @@ import {
   updateLesson,
 } from '../controllers/lesson.controller.js';
 import upload from '../config/multerConfig.js';
+import asyncHandler from '../utils/asyncHandler.js';
 const router = express.Router();
 
 const storage = multer.memoryStorage();
@@ -21,18 +22,26 @@ router
     isLoggedin,
     isInstructor,
     imageKitUpload.single('lessonVideo'),
-    createLesson
+    asyncHandler(createLesson)
   );
 
-router.route('/course/:courseId').get(isLoggedin, getCourseLessons);
+router
+  .route('/course/:courseId')
+  .get(isLoggedin, asyncHandler(getCourseLessons));
 
-router.route('/:lessonId').get(isLoggedin, getOneLesson);
+router.route('/:lessonId').get(isLoggedin, asyncHandler(getOneLesson));
 
 router
   .route('/update/:lessonId')
-  .put(isLoggedin, isInstructor, imageKitUpload.single('lessonVideo'), updateLesson);
+  .put(
+    isLoggedin,
+    isInstructor,
+    imageKitUpload.single('lessonVideo'),
+    asyncHandler(updateLesson)
+  );
 
-router.route("/delete/:lessonId/:courseId").delete(isLoggedin,isInstructor,deleteLesson)
-
+router
+  .route('/delete/:lessonId/:courseId')
+  .delete(isLoggedin, isInstructor, asyncHandler(deleteLesson));
 
 export default router;

@@ -34,34 +34,41 @@ router.route('/all').get(asyncHandler(getAllCourses));
 
 router.route('/course/:id').get(isLoggedin, asyncHandler(getOneCourse));
 
-router.route('/:id/enroll').post(isLoggedin, enrollInCourse);
+router.route('/:id/enroll').post(isLoggedin, asyncHandler(enrollInCourse));
 
 router
   .route('/:instructorId/courses')
-  .get(isLoggedin, isInstructor, getInstructorCourses);
+  .get(isLoggedin, isInstructor, asyncHandler(getInstructorCourses));
 
 router
   .route('/change-course-status/:courseId')
-  .post(isLoggedin, isInstructor, changeCourseStatus);
+  .post(isLoggedin, isInstructor, asyncHandler(changeCourseStatus));
 
 router
   .route('/delete-course/:courseId')
-  .delete(isLoggedin, isInstructor, deleteCourse);
+  .delete(isLoggedin, isInstructor, asyncHandler(deleteCourse));
 
 router
   .route('/edit-course/:courseId')
-  .put(isLoggedin, isInstructor, upload.single('thumbnail'), updateCourse);
+  .put(
+    isLoggedin,
+    isInstructor,
+    upload.single('thumbnail'),
+    asyncHandler(updateCourse)
+  );
 
-router.route('/published/all').get(getPublishedCourses);
+router.route('/published/all').get(asyncHandler(getPublishedCourses));
 
-router.route('/:courseId/unenroll').put(isLoggedin, unenrollFromCourse);
+router
+  .route('/:courseId/unenroll')
+  .put(isLoggedin, asyncHandler(unenrollFromCourse));
 
-router.route('/rate/:courseId').post(isLoggedin, rateCourse);
+router.route('/rate/:courseId').post(isLoggedin, asyncHandler(rateCourse));
 
 router
   .route('/validate-couponCode/:courseId')
-  .post(isLoggedin, validateCouponCode);
+  .post(isLoggedin, asyncHandler(validateCouponCode));
 
-router.route("/get-rating/:courseId").get(getAverageRating)
+router.route('/get-rating/:courseId').get(asyncHandler(getAverageRating));
 
 export default router;
