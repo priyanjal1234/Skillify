@@ -31,7 +31,7 @@ const Navbar = () => {
               }`}
             />
             <Link
-              to={'/'}
+              to={"/"}
               className={`ml-2 text-xl font-bold ${
                 darkMode ? "text-white" : "text-gray-800"
               }`}
@@ -103,18 +103,18 @@ const Navbar = () => {
                 </Link>
               </>
             ) : (
-              <Link
-                to={'/profile'}
-                style={{ backgroundColor: color }}
-                className="w-[40px] h-[40px] cursor-pointer  text-lg flex items-center justify-center rounded-full"
-              >
-                {String(currentUser?.name).split("")[0]}
-              </Link>
+              <>
+                <Link
+                  to={"/profile"}
+                  style={{ backgroundColor: color }}
+                  className="w-[40px] h-[40px] cursor-pointer  text-lg flex items-center justify-center rounded-full"
+                >
+                  {String(currentUser?.name).split("")[0]}
+                </Link>
+              </>
             )}
           </div>
-          
         </div>
-        
       </div>
     </nav>
   );
