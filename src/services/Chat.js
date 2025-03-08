@@ -16,9 +16,9 @@ class ChatService {
     }
   }
 
-  async getReceiverChats(receiverId) {
+  async getReceiverChats(instructorId) {
     try {
-      return await this.api.get(`${this.baseUrl}/${receiverId}`, {
+      return await this.api.get(`${this.baseUrl}/${instructorId}`, {
         withCredentials: true,
       });
     } catch (error) {

@@ -4,59 +4,94 @@ import socket, { connectSocket } from "../socket/socket.js";
 import { useQuery } from "@tanstack/react-query";
 import chatService from "../services/Chat.js";
 // Assume you have a Redux action to set the receiver chats
-import { setReceiverChats } from "../redux/reducers/ChatReducer.js";
+import {
+  setReceiverChats,
+  setSenderChats,
+} from "../redux/reducers/ChatReducer.js";
 import userService from "../services/User.js";
 
 const StudentMessages = () => {
-  const { instructors } = useSelector((state) => state.enrollment);
   const { currentUser } = useSelector((state) => state.user);
-
-  const { receiverChats } = useSelector((state) => state.chat);
   const [selectedInstructor, setSelectedInstructor] = useState(null);
+  const { receiverChats } = useSelector((state) => state.chat);
+
   const [message, setMessage] = useState("");
   const [room, setRoom] = useState(null);
   const dispatch = useDispatch();
 
-  const { refetch: refetchReceiverChats } = useQuery({
-    queryKey: ["fetchReceiverChats", selectedInstructor?._id],
-    enabled: !!selectedInstructor,
+  useEffect(() => {
+    connectSocket();
+
+    socket.on("room-joined", (room) => {
+      setRoom(room);
+    });
+
+    socket.on("error", function (errorMessage) {
+      console.log(errorMessage);
+    });
+  }, []);
+
+  const { data: receiverChatMessages, refetch: refetchReceiverChats } =
+    useQuery({
+      queryKey: ["fetchReceiverChats", selectedInstructor?._id],
+      enabled: !!selectedInstructor,
+      queryFn: async function () {
+        try {
+          let fetchReceiverChatsRes = await chatService.getReceiverChats(
+            selectedInstructor?._id
+          );
+
+          if (fetchReceiverChatsRes.status === 200) {
+            dispatch(setReceiverChats(fetchReceiverChatsRes.data));
+          }
+          return true;
+        } catch (error) {
+          console.log(error?.response?.data?.message);
+          return false;
+        }
+      },
+    });
+
+  let { data: senderChats, refetch: refetchSenderChats } = useQuery({
+    queryKey: ["fetchSenderChats", selectedInstructor?._id],
+    enabled: !!selectedInstructor, // Only run the query when an instructor is selected
     queryFn: async function () {
       try {
-        let fetchReceiverChatsRes = await chatService.getReceiverChats(
+        let getSenderChatsRes = await chatService.getSenderChats(
           currentUser?._id,
-          selectedInstructor?._id
+          selectedInstructor._id
         );
-        if (fetchReceiverChatsRes.status === 200) {
-          dispatch(setReceiverChats(fetchReceiverChatsRes.data));
+        if (getSenderChatsRes.status === 200) {
+          dispatch(setSenderChats(getSenderChatsRes.data));
         }
-        return true;
+        return getSenderChatsRes.data;
       } catch (error) {
-        if (error?.response?.status === 404) {
-          return;
-        }
+        console.log(error?.response?.data?.message);
         return false;
       }
     },
   });
 
-  let {data: courseInstructors} = useQuery({
+  let { data: courseInstructors } = useQuery({
     queryKey: ["fetchCourseInstructors"],
-    queryFn: async function() {
-        try {
-            let getCourseInstructorsRes = await userService.getCourseInstructors()
-            console.log(getCourseInstructorsRes)
-            return getCourseInstructorsRes.data
-        } catch (error) {
-            console.log(error?.response?.data?.message)
-            return false
-        }
-    }
-  })
+    queryFn: async function () {
+      try {
+        let getCourseInstructorsRes = await userService.getCourseInstructors();
+
+        return getCourseInstructorsRes.data;
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+        return false;
+      }
+    },
+  });
 
   function handleSelectInstructor(instructor) {
-    if (instructor) {
+    if (instructor && instructor._id) {
       setSelectedInstructor(instructor);
-      socket.emit("join-room", instructor?._id);
+      socket.emit("join-room", instructor._id);
+    } else {
+      console.error("Invalid instructor object:", instructor);
     }
   }
 
@@ -70,8 +105,12 @@ const StudentMessages = () => {
       });
     }
     setMessage("");
-    refetchReceiverChats();
+    refetchSenderChats();
   }
+
+  const allChats = [...(senderChats || []), ...(receiverChats || [])];
+
+  allChats.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
   return (
     <div className="flex flex-col h-screen bg-[#121826] text-white">
@@ -113,8 +152,8 @@ const StudentMessages = () => {
               </h2>
             </div>
             <div className="flex-1 p-4 overflow-y-auto flex flex-col">
-              {receiverChats && receiverChats?.length > 0 ? (
-                receiverChats.map((msg, index) => (
+              {allChats.length > 0 ? (
+                allChats.map((msg, index) => (
                   <div
                     key={msg._id || index}
                     className={`max-w-[60%] mb-4 p-3 rounded-md ${

@@ -146,7 +146,7 @@ class UserService {
         withCredentials: true,
       });
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 }
