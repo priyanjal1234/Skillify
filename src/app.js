@@ -59,6 +59,7 @@ io.on('connection', function (socket) {
   console.log(`Connected ${socket.id}`);
 
   socket.on('join-room', function (roomId) {
+    console.log(roomId)
     socket.join(roomId);
     io.to(roomId).emit('room-joined', roomId);
   });

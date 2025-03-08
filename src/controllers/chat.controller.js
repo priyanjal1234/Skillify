@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import chatModel from '../models/chat.model.js';
 import userModel from '../models/user.model.js';
 import ApiError from '../utils/ApiError.js';
@@ -34,11 +35,9 @@ const getUnreadChats = async function (req, res, next) {
   try {
     let user = await userModel.findOne({ email: req.user.email });
 
-    console.log(user)
-
     let unreadChats = await chatModel.find({
       receiver: user._id,
-      'message.isRead': false
+      'message.isRead': false,
     });
     return res.status(200).json(unreadChats);
   } catch (error) {
@@ -51,4 +50,24 @@ const getUnreadChats = async function (req, res, next) {
   }
 };
 
-export { getSenderChats, getUnreadChats };
+const getReceiverChats = async function (req, res, next) {
+  try {
+    let user = await userModel.findOne({ email: req.user.email });
+    let { instructor } = req.params;
+    let receiverChats = await chatModel.find({
+      sender: instructor,
+      receiver: user._id,
+    });
+
+    return res.status(200).json(receiverChats);
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error Fetching Receiver Chats'
+      )
+    );
+  }
+};
+
+export { getSenderChats, getUnreadChats, getReceiverChats };

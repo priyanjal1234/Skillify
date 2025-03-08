@@ -401,7 +401,7 @@ const getInstructors = async function (req, res, next) {
     courses.forEach(function (course) {
       const instructor = course.instructor;
       if (instructor && !instructorMap.has(instructor._id.toString())) {
-        instructorMap.set(instructor._id.toString(), instructor);
+        instructorMap.set(instructor._id, instructor);
       }
     });
 
