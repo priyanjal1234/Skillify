@@ -130,13 +130,23 @@ class UserService {
     }
   }
 
-  async getUserProgress(courseId,lessonId) {
+  async getUserProgress(courseId, lessonId) {
     try {
       return this.api.get(`${this.baseUrl}/progress/${courseId}/${lessonId}`, {
         withCredentials: true,
       });
     } catch (error) {
       throw error;
+    }
+  }
+
+  async getCourseInstructors() {
+    try {
+      return await this.api.get(`${this.baseUrl}/enrolled-course-instructors`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error
     }
   }
 }

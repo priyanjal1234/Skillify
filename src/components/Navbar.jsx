@@ -4,6 +4,8 @@ import { ThemeDataContext } from "../context/ThemeContext";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getRandomColor, hslToRgb } from "../utils/generateRandomColor";
+import { useQuery } from "@tanstack/react-query";
+import chatService from "../services/Chat";
 
 const Navbar = () => {
   const { darkMode, setDarkMode } = useContext(ThemeDataContext);
@@ -19,6 +21,23 @@ const Navbar = () => {
     );
     setcolor(rgbColor);
   }, []);
+
+  let { data: unreadMessages } = useQuery({
+    queryKey: ["fetchLoggedinUserUnreadChats"],
+    queryFn: async function () {
+      try {
+        let getUnreadChatsRes = await chatService.getUnreadChats();
+
+        return getUnreadChatsRes.data;
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+        return false;
+      }
+    },
+    enabled: isLoggedin,
+  });
+
+  
 
   return (
     <nav className={`shadow-lg ${darkMode ? "bg-gray-800" : "bg-white"}`}>
@@ -111,6 +130,20 @@ const Navbar = () => {
                 >
                   {String(currentUser?.name).split("")[0]}
                 </Link>
+                <Link
+                  to={"/student-messages"}
+                  className={`text-sm font-medium flex items-center gap-2 ${
+                    darkMode
+                      ? "text-white hover:text-indigo-400"
+                      : "text-indigo-600 hover:text-indigo-800"
+                  }`}
+                >
+                  Messages{" "}
+                </Link>
+
+                <span className="w-[25px] h-[25px] flex items-center justify-center  bg-blue-600 rounded-full">
+                  {unreadMessages?.length}
+                </span>
               </>
             )}
           </div>

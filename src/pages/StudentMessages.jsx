@@ -3,41 +3,31 @@ import { useDispatch, useSelector } from "react-redux";
 import socket, { connectSocket } from "../socket/socket.js";
 import { useQuery } from "@tanstack/react-query";
 import chatService from "../services/Chat.js";
-import { setSenderChats } from "../redux/reducers/ChatReducer.js";
+// Assume you have a Redux action to set the receiver chats
+import { setReceiverChats } from "../redux/reducers/ChatReducer.js";
+import userService from "../services/User.js";
 
-const InstructorMessages = () => {
-  const { enrolledStudents } = useSelector((state) => state.enrollment);
+const StudentMessages = () => {
+  const { instructors } = useSelector((state) => state.enrollment);
   const { currentUser } = useSelector((state) => state.user);
-  const { senderChats } = useSelector((state) => state.chat);
-  const [selectedStudent, setselectedStudent] = useState(null);
-  const [message, setmessage] = useState("");
-  const [room, setroom] = useState(null);
+
+  const { receiverChats } = useSelector((state) => state.chat);
+  const [selectedInstructor, setSelectedInstructor] = useState(null);
+  const [message, setMessage] = useState("");
+  const [room, setRoom] = useState(null);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    connectSocket();
-
-    socket.on("room-joined", function (room) {
-      setroom(room);
-    });
-
-    socket.on("error", function (errorMessage) {
-      console.log(errorMessage);
-    });
-  }, []);
-
-  let { refetch: refetchSenderChats } = useQuery({
-    queryKey: ["fetchSenderChats", selectedStudent?._id],
-    enabled: !!selectedStudent, // only run when a student is selected
+  const { refetch: refetchReceiverChats } = useQuery({
+    queryKey: ["fetchReceiverChats", selectedInstructor?._id],
+    enabled: !!selectedInstructor,
     queryFn: async function () {
       try {
-        let fetchSenderChatsRes = await chatService.getSenderChats(
+        let fetchReceiverChatsRes = await chatService.getReceiverChats(
           currentUser?._id,
-          selectedStudent?._id
+          selectedInstructor?._id
         );
-
-        if (fetchSenderChatsRes.status === 200) {
-          dispatch(setSenderChats(fetchSenderChatsRes.data));
+        if (fetchReceiverChatsRes.status === 200) {
+          dispatch(setReceiverChats(fetchReceiverChatsRes.data));
         }
         return true;
       } catch (error) {
@@ -49,10 +39,24 @@ const InstructorMessages = () => {
     },
   });
 
-  function handleSelectStudent(student) {
-    if (student) {
-      setselectedStudent(student);
-      socket.emit("join-room", student?._id);
+  let {data: courseInstructors} = useQuery({
+    queryKey: ["fetchCourseInstructors"],
+    queryFn: async function() {
+        try {
+            let getCourseInstructorsRes = await userService.getCourseInstructors()
+            console.log(getCourseInstructorsRes)
+            return getCourseInstructorsRes.data
+        } catch (error) {
+            console.log(error?.response?.data?.message)
+            return false
+        }
+    }
+  })
+
+  function handleSelectInstructor(instructor) {
+    if (instructor) {
+      setSelectedInstructor(instructor);
+      socket.emit("join-room", instructor?._id);
     }
   }
 
@@ -65,8 +69,8 @@ const InstructorMessages = () => {
         message,
       });
     }
-    setmessage("");
-    refetchSenderChats();
+    setMessage("");
+    refetchReceiverChats();
   }
 
   return (
@@ -84,36 +88,41 @@ const InstructorMessages = () => {
             <h2 className="text-lg">Chats</h2>
           </div>
           <ul className="flex-grow overflow-y-auto">
-            {enrolledStudents?.map((student) => (
+            {courseInstructors?.map((instructor) => (
               <li
-                onClick={() => handleSelectStudent(student?.student)}
-                key={student?._id}
+                onClick={() => handleSelectInstructor(instructor)}
+                key={instructor?._id}
                 className={`p-4 border-b ${
-                  student?.student?._id === selectedStudent?._id
+                  instructor?._id === selectedInstructor?._id
                     ? "bg-[#2f3342]"
                     : "hover:bg-[#2f3342]"
                 } border-[#2f3342] cursor-pointer transition-colors`}
               >
-                <div className="font-bold mb-1">{student?.student?.name}</div>
+                <div className="font-bold mb-1">{instructor?.name}</div>
               </li>
             ))}
           </ul>
         </div>
 
         {/* Right Panel: Conversation Area */}
-        {selectedStudent !== null && (
+        {selectedInstructor !== null && (
           <div className="flex-1 flex flex-col bg-[#0e1118]">
             <div className="p-4 border-b border-[#2f3342]">
               <h2 className="text-lg">
-                {selectedStudent?.name || "Select a Chat"}
+                {selectedInstructor?.name || "Select a Chat"}
               </h2>
             </div>
             <div className="flex-1 p-4 overflow-y-auto flex flex-col">
-              {senderChats && senderChats?.length > 0 ? (
-                senderChats.map((msg, index) => (
+              {receiverChats && receiverChats?.length > 0 ? (
+                receiverChats.map((msg, index) => (
                   <div
                     key={msg._id || index}
-                    className="max-w-[60%] mb-4 p-3 rounded-md bg-[#48506b] self-end"
+                    className={`max-w-[60%] mb-4 p-3 rounded-md ${
+                      // Align messages from the instructor to the left and any student replies to the right.
+                      msg.sender === selectedInstructor?._id
+                        ? "bg-[#2f3342] self-start"
+                        : "bg-[#48506b] self-end"
+                    }`}
                   >
                     <p>{msg.message.content}</p>
                     <span className="block mt-1 text-xs opacity-70 text-right">
@@ -135,11 +144,11 @@ const InstructorMessages = () => {
                   placeholder="Type your message..."
                   className="flex-1 p-2 mr-2 rounded bg-[#2f3342] text-white focus:outline-none"
                   value={message}
-                  onChange={(e) => setmessage(e.target.value)}
+                  onChange={(e) => setMessage(e.target.value)}
                 />
                 <button
                   onClick={() =>
-                    handleSendMessage(currentUser?._id, selectedStudent?._id)
+                    handleSendMessage(currentUser?._id, selectedInstructor?._id)
                   }
                   className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 transition-colors"
                 >
@@ -154,4 +163,4 @@ const InstructorMessages = () => {
   );
 };
 
-export default InstructorMessages;
+export default StudentMessages;

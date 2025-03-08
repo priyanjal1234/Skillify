@@ -6,7 +6,7 @@ class ChatService {
     this.baseUrl = "http://localhost:3000/api/chats";
   }
 
-  async getSenderChats(senderId,receiverId) {
+  async getSenderChats(senderId, receiverId) {
     try {
       return await this.api.get(`${this.baseUrl}/${senderId}/${receiverId}`, {
         withCredentials: true,
@@ -19,6 +19,16 @@ class ChatService {
   async getReceiverChats(receiverId) {
     try {
       return await this.api.get(`${this.baseUrl}/${receiverId}`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUnreadChats() {
+    try {
+      return await this.api.get(`${this.baseUrl}/unread`, {
         withCredentials: true,
       });
     } catch (error) {
