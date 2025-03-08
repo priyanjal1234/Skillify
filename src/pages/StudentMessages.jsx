@@ -3,18 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import socket, { connectSocket } from "../socket/socket.js";
 import { useQuery } from "@tanstack/react-query";
 import chatService from "../services/Chat.js";
-// Assume you have a Redux action to set the receiver chats
-import {
-  setReceiverChats,
-  setSenderChats,
-} from "../redux/reducers/ChatReducer.js";
+import { setReceiverChats, setSenderChats } from "../redux/reducers/ChatReducer.js";
 import userService from "../services/User.js";
 
 const StudentMessages = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [selectedInstructor, setSelectedInstructor] = useState(null);
-  const { receiverChats } = useSelector((state) => state.chat);
-
+  // We'll now use both senderChats and receiverChats from Redux.
+  const { senderChats, receiverChats } = useSelector((state) => state.chat);
   const [message, setMessage] = useState("");
   const [room, setRoom] = useState(null);
   const dispatch = useDispatch();
@@ -26,45 +22,22 @@ const StudentMessages = () => {
       setRoom(room);
     });
 
-    socket.on("error", function (errorMessage) {
+    socket.on("error", (errorMessage) => {
       console.log(errorMessage);
     });
   }, []);
 
-  const { data: receiverChatMessages, refetch: refetchReceiverChats } =
-    useQuery({
-      queryKey: ["fetchReceiverChats", selectedInstructor?._id],
-      enabled: !!selectedInstructor,
-      queryFn: async function () {
-        try {
-          let fetchReceiverChatsRes = await chatService.getReceiverChats(
-            selectedInstructor?._id
-          );
-
-          if (fetchReceiverChatsRes.status === 200) {
-            dispatch(setReceiverChats(fetchReceiverChatsRes.data));
-          }
-          return true;
-        } catch (error) {
-          console.log(error?.response?.data?.message);
-          return false;
-        }
-      },
-    });
-
-  let { data: senderChats, refetch: refetchSenderChats } = useQuery({
-    queryKey: ["fetchSenderChats", selectedInstructor?._id],
-    enabled: !!selectedInstructor, // Only run the query when an instructor is selected
+  // Fetch incoming messages (from instructor to student)
+  const { refetch: refetchReceiverChats } = useQuery({
+    queryKey: ["fetchReceiverChats", selectedInstructor?._id],
+    enabled: !!selectedInstructor,
     queryFn: async function () {
       try {
-        let getSenderChatsRes = await chatService.getSenderChats(
-          currentUser?._id,
-          selectedInstructor._id
-        );
-        if (getSenderChatsRes.status === 200) {
-          dispatch(setSenderChats(getSenderChatsRes.data));
+        let res = await chatService.getReceiverChats(selectedInstructor?._id);
+        if (res.status === 200) {
+          dispatch(setReceiverChats(res.data));
         }
-        return getSenderChatsRes.data;
+        return res.data;
       } catch (error) {
         console.log(error?.response?.data?.message);
         return false;
@@ -72,13 +45,33 @@ const StudentMessages = () => {
     },
   });
 
-  let { data: courseInstructors } = useQuery({
+  // Fetch outgoing messages (from student to instructor)
+  const { refetch: refetchSenderChats } = useQuery({
+    queryKey: ["fetchSenderChats", selectedInstructor?._id],
+    enabled: !!selectedInstructor,
+    queryFn: async function () {
+      try {
+        let res = await chatService.getSenderChats(
+          currentUser?._id,
+          selectedInstructor._id
+        );
+        if (res.status === 200) {
+          dispatch(setSenderChats(res.data));
+        }
+        return res.data;
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+        return false;
+      }
+    },
+  });
+
+  const { data: courseInstructors } = useQuery({
     queryKey: ["fetchCourseInstructors"],
     queryFn: async function () {
       try {
-        let getCourseInstructorsRes = await userService.getCourseInstructors();
-
-        return getCourseInstructorsRes.data;
+        let res = await userService.getCourseInstructors();
+        return res.data;
       } catch (error) {
         console.log(error?.response?.data?.message);
         return false;
@@ -90,6 +83,9 @@ const StudentMessages = () => {
     if (instructor && instructor._id) {
       setSelectedInstructor(instructor);
       socket.emit("join-room", instructor._id);
+      // Refetch both incoming and outgoing chats when an instructor is selected.
+      refetchReceiverChats();
+      refetchSenderChats();
     } else {
       console.error("Invalid instructor object:", instructor);
     }
@@ -108,8 +104,29 @@ const StudentMessages = () => {
     refetchSenderChats();
   }
 
-  const allChats = [...(senderChats || []), ...(receiverChats || [])];
+  // Helper function to flatten messages from conversation objects.
+  const flattenMessages = (chatsArray) => {
+    if (!chatsArray) return [];
+    return chatsArray.reduce((acc, conversation) => {
+      if (conversation.messages && conversation.messages.length > 0) {
+        // Attach the conversation's sender so each message knows who sent it.
+        const msgs = conversation.messages.map((m) => ({
+          ...m,
+          sender: conversation.sender, // The sender for all messages in this conversation
+          // Use each message's createdAt if available; otherwise fall back to conversation.createdAt
+          createdAt: m.createdAt || conversation.createdAt,
+        }));
+        return [...acc, ...msgs];
+      }
+      return acc;
+    }, []);
+  };
 
+  const flattenedSenderMessages = flattenMessages(senderChats);
+  const flattenedReceiverMessages = flattenMessages(receiverChats);
+  // Merge the two arrays into one conversation
+  const allChats = [...flattenedSenderMessages, ...flattenedReceiverMessages];
+  // Sort messages by creation time (oldest first)
   allChats.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
   return (
@@ -157,13 +174,14 @@ const StudentMessages = () => {
                   <div
                     key={msg._id || index}
                     className={`max-w-[60%] mb-4 p-3 rounded-md ${
-                      // Align messages from the instructor to the left and any student replies to the right.
-                      msg.sender === selectedInstructor?._id
-                        ? "bg-[#2f3342] self-start"
-                        : "bg-[#48506b] self-end"
+                      // Outgoing messages (sent by the student) align right;
+                      // incoming messages (sent by the instructor) align left.
+                      msg.sender === currentUser._id
+                        ? "bg-[#48506b] self-end"
+                        : "bg-[#2f3342] self-start"
                     }`}
                   >
-                    <p>{msg.message.content}</p>
+                    <p>{msg.content}</p>
                     <span className="block mt-1 text-xs opacity-70 text-right">
                       {new Date(msg.createdAt).toLocaleTimeString([], {
                         hour: "2-digit",
@@ -176,6 +194,7 @@ const StudentMessages = () => {
                 <p className="text-gray-400">No Messages Yet</p>
               )}
             </div>
+
             <div className="p-4">
               <div className="flex p-4 border-t border-[#2f3342] bg-[#1d2231]">
                 <input
@@ -187,7 +206,10 @@ const StudentMessages = () => {
                 />
                 <button
                   onClick={() =>
-                    handleSendMessage(currentUser?._id, selectedInstructor?._id)
+                    handleSendMessage(
+                      currentUser?._id,
+                      selectedInstructor?._id
+                    )
                   }
                   className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 transition-colors"
                 >

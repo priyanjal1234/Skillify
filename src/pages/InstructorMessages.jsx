@@ -3,56 +3,78 @@ import { useDispatch, useSelector } from "react-redux";
 import socket, { connectSocket } from "../socket/socket.js";
 import { useQuery } from "@tanstack/react-query";
 import chatService from "../services/Chat.js";
-import { setSenderChats } from "../redux/reducers/ChatReducer.js";
+import {
+  setReceiverChats,
+  setSenderChats,
+} from "../redux/reducers/ChatReducer.js";
 
 const InstructorMessages = () => {
   const { enrolledStudents } = useSelector((state) => state.enrollment);
   const { currentUser } = useSelector((state) => state.user);
-  const { senderChats } = useSelector((state) => state.chat);
-  const [selectedStudent, setselectedStudent] = useState(null);
-  const [message, setmessage] = useState("");
-  const [room, setroom] = useState(null);
+  const { senderChats, receiverChats } = useSelector((state) => state.chat);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [message, setMessage] = useState("");
+  const [room, setRoom] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
     connectSocket();
 
-    socket.on("room-joined", function (room) {
-      setroom(room);
+    socket.on("room-joined", (room) => {
+      setRoom(room);
     });
 
-    socket.on("error", function (errorMessage) {
+    socket.on("error", (errorMessage) => {
       console.log(errorMessage);
     });
   }, []);
 
+  // Fetch outgoing messages (sent by currentUser)
   let { refetch: refetchSenderChats } = useQuery({
     queryKey: ["fetchSenderChats", selectedStudent?._id],
-    enabled: !!selectedStudent, // only run when a student is selected
+    enabled: !!selectedStudent,
     queryFn: async function () {
       try {
-        let fetchSenderChatsRes = await chatService.getSenderChats(
+        let res = await chatService.getSenderChats(
           currentUser?._id,
           selectedStudent?._id
         );
-
-        if (fetchSenderChatsRes.status === 200) {
-          dispatch(setSenderChats(fetchSenderChatsRes.data));
+        console.log("Sender Chats:", res);
+        if (res.status === 200) {
+          dispatch(setSenderChats(res.data));
         }
-        return true;
+        return res.data;
       } catch (error) {
-        if (error?.response?.status === 404) {
-          return;
+        console.log(error?.response?.data?.message);
+        return false;
+      }
+    },
+  });
+
+  // Fetch incoming messages (received from the student’s counterpart)
+  useQuery({
+    queryKey: ["fetchReceiverChats", selectedStudent?._id],
+    enabled: !!selectedStudent,
+    queryFn: async function () {
+      try {
+        let res = await chatService.getReceiverChats(selectedStudent?._id);
+        console.log("Receiver Chats:", res);
+        if (res.status === 200) {
+          // Dispatching to Redux so that receiverChats state is updated.
+          dispatch(setReceiverChats(res.data));
         }
+        return res.data;
+      } catch (error) {
+        console.log(error?.response?.data?.message);
         return false;
       }
     },
   });
 
   function handleSelectStudent(student) {
-    if (student) {
-      setselectedStudent(student);
-      socket.emit("join-room", student?._id);
+    if (student && student._id) {
+      setSelectedStudent(student);
+      socket.emit("join-room", student._id);
     }
   }
 
@@ -65,9 +87,34 @@ const InstructorMessages = () => {
         message,
       });
     }
-    setmessage("");
+    setMessage("");
     refetchSenderChats();
   }
+
+  // Helper function to flatten an array of conversation documents into a single messages array.
+  const flattenChats = (chats) => {
+    if (!chats || !Array.isArray(chats)) return [];
+    return chats.reduce((acc, conversation) => {
+      if (conversation.messages && Array.isArray(conversation.messages)) {
+        const flattened = conversation.messages.map((msg) => ({
+          ...msg,
+          sender: conversation.sender, // Attach the conversation's sender
+          createdAt: msg.createdAt || conversation.createdAt,
+        }));
+        return acc.concat(flattened);
+      }
+      return acc;
+    }, []);
+  };
+
+  // Flatten the outgoing and incoming messages.
+  const outgoingMessages = flattenChats(senderChats);
+  const incomingMessages = flattenChats(receiverChats);
+
+  // Merge all messages into one array and sort by creation time.
+  const allMessages = [...outgoingMessages, ...incomingMessages].sort(
+    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+  );
 
   return (
     <div className="flex flex-col h-screen bg-[#121826] text-white">
@@ -94,7 +141,9 @@ const InstructorMessages = () => {
                     : "hover:bg-[#2f3342]"
                 } border-[#2f3342] cursor-pointer transition-colors`}
               >
-                <div className="font-bold mb-1">{student?.student?.name}</div>
+                <div className="font-bold mb-1">
+                  {student?.student?.name}
+                </div>
               </li>
             ))}
           </ul>
@@ -109,18 +158,25 @@ const InstructorMessages = () => {
               </h2>
             </div>
             <div className="flex-1 p-4 overflow-y-auto flex flex-col">
-              {senderChats && senderChats?.length > 0 ? (
-                senderChats.map((msg, index) => (
+              {allMessages.length > 0 ? (
+                allMessages.map((msg, index) => (
                   <div
                     key={msg._id || index}
-                    className="max-w-[60%] mb-4 p-3 rounded-md bg-[#48506b] self-end"
+                    className={`max-w-[60%] mb-4 p-3 rounded-md ${
+                      // If the sender equals the current user's id, it’s outgoing (right-aligned)
+                      msg.sender === currentUser._id
+                        ? "bg-[#48506b] self-end"
+                        : "bg-[#2f3342] self-start"
+                    }`}
                   >
-                    <p>{msg.message.content}</p>
+                    <p>{msg.content}</p>
                     <span className="block mt-1 text-xs opacity-70 text-right">
-                      {new Date(msg.createdAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {msg.createdAt
+                        ? new Date(msg.createdAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : ""}
                     </span>
                   </div>
                 ))
@@ -135,7 +191,7 @@ const InstructorMessages = () => {
                   placeholder="Type your message..."
                   className="flex-1 p-2 mr-2 rounded bg-[#2f3342] text-white focus:outline-none"
                   value={message}
-                  onChange={(e) => setmessage(e.target.value)}
+                  onChange={(e) => setMessage(e.target.value)}
                 />
                 <button
                   onClick={() =>
