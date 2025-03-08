@@ -1,13 +1,13 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import app from './app.js';
+import server from './app.js';
 import db from './db/index.js';
 import { port } from "./constants.js";
 
 
 db()
   .then(function () {
-    app.listen(port, function () {
+    server.listen(port, function () {
       console.log(`Server is running on port ${port}`);
     });
   })
