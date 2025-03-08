@@ -8,6 +8,7 @@ import InstructorReducer from "./reducers/InstructorReducer";
 import CouponReducer from "./reducers/CouponReducer";
 import EnrollmentReducer from "./reducers/EnrollmentReducer";
 import QuizReducer from './reducers/QuizReducer'
+import ChatReducer from './reducers/ChatReducer'
 
 const persistConfig = {
   key: "root",
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
   instructor: InstructorReducer,
   coupon: CouponReducer,
   enrollment: EnrollmentReducer,
-  quiz: QuizReducer
+  quiz: QuizReducer,
+  chat: ChatReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

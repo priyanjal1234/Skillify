@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import {
   Bell,
-  LogOut,
   Home,
   FileText,
   Users,
@@ -17,6 +16,7 @@ import { setInstructorCourses } from "../redux/reducers/CourseReducer";
 import { Link, NavLink } from "react-router-dom";
 import InstructorAnalytics from "./InstructorAnalytics";
 import InstructorStudents from "../components/InstructorStudents";
+import InstructorMessages from "./InstructorMessages";
 
 const InstructorDashboard = () => {
   const [activeItem, setActiveItem] = useState("Dashboard");
@@ -57,15 +57,15 @@ const InstructorDashboard = () => {
     { name: "Courses", icon: FileText },
     { name: "Students", icon: Users },
     { name: "Settings", icon: Settings },
+    { name: "Messages", icon: MessageSquare },
   ];
 
   return (
     <div
-      className={`flex h-screen ${
+      className={`flex min-h-screen ${
         darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
       }`}
     >
-      {/* Sidebar */}
       <aside
         className={`w-64 p-5 shadow-lg ${
           darkMode ? "bg-gray-800" : "bg-white"
@@ -104,7 +104,7 @@ const InstructorDashboard = () => {
             <Bell size={20} />
             Notifications
           </div>
-          
+
           <Link className="block text-blue-600 mt-3" to={"/"}>
             Go back to home
           </Link>
@@ -118,6 +118,7 @@ const InstructorDashboard = () => {
         )}
         {activeItem === "Courses" && <InstructorCourse refetch={refetch} />}
         {activeItem === "Students" && <InstructorStudents />}
+        {activeItem === "Messages" && <InstructorMessages />}
       </main>
     </div>
   );

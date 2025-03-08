@@ -67,7 +67,7 @@ const App = () => {
           path="/edit-lesson/:courseId/:lessonId"
           element={<EditLesson />}
         />
-        <Route path="/quiz/:courseId/:lessonId" element = {<LessonQuiz />}/>
+        <Route path="/quiz/:courseId/:lessonId" element={<LessonQuiz />} />
       </Routes>
     </>
   );

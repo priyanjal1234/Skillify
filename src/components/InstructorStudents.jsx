@@ -3,15 +3,15 @@ import React, { useContext } from "react";
 import enrollmentService from "../services/Enrollment";
 import { useDispatch, useSelector } from "react-redux";
 import { setEnrolledStudents } from "../redux/reducers/EnrollmentReducer";
-
-// Import icons from lucide-react
-import { Eye, Mail, Trash2 } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
+import { useNavigate } from "react-router-dom";
 
 const InstructorStudents = () => {
   const dispatch = useDispatch();
   const { enrolledStudents } = useSelector((state) => state.enrollment);
+
   let { darkMode } = useContext(ThemeDataContext);
+  let navigate = useNavigate();
 
   useQuery({
     queryKey: ["fetchEnrolledStudents"],
@@ -58,9 +58,6 @@ const InstructorStudents = () => {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Date Joined
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
-                  Actions
                 </th>
               </tr>
             </thead>
@@ -116,18 +113,6 @@ const InstructorStudents = () => {
                     {new Date(
                       student?.student?.dateJoined
                     ).toLocaleDateString()}
-                  </td>
-
-                  {/* Actions */}
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center justify-end space-x-2">
-                      <button
-                        onClick={() => console.log("Message:", student._id)}
-                        className="p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-                      >
-                        <Mail className="h-5 w-5" />
-                      </button>
-                    </div>
                   </td>
                 </tr>
               ))}
