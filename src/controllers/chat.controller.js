@@ -35,11 +35,15 @@ const getUnreadChats = async function (req, res, next) {
   try {
     let user = await userModel.findOne({ email: req.user.email });
 
-    let unreadChats = await chatModel.find({
+    let chat = await chatModel.findOne({
       receiver: user._id,
-      'message.isRead': false,
     });
-    return res.status(200).json(unreadChats);
+
+    let allMessages = chat.messages;
+
+    let filteredMessages = allMessages.filter((msg) => msg.isRead === false);
+
+    return res.status(200).json(filteredMessages);
   } catch (error) {
     return next(
       new ApiError(
@@ -53,9 +57,9 @@ const getUnreadChats = async function (req, res, next) {
 const getReceiverChats = async function (req, res, next) {
   try {
     let user = await userModel.findOne({ email: req.user.email });
-    let { instructor } = req.params;
+    let { sender } = req.params;
     let receiverChats = await chatModel.find({
-      sender: instructor,
+      sender,
       receiver: user._id,
     });
 

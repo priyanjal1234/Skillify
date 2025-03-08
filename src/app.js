@@ -59,20 +59,30 @@ io.on('connection', function (socket) {
   console.log(`Connected ${socket.id}`);
 
   socket.on('join-room', function (roomId) {
-    console.log(roomId)
     socket.join(roomId);
     io.to(roomId).emit('room-joined', roomId);
   });
 
   socket.on('send-message', async function (data) {
     try {
-      let message = await chatModel.create({
-        room: data.room,
-        sender: data.senderId,
-        receiver: data.receiverId,
-      });
-      message.message.content = data.message 
-      await message.save()
+      let chat = await chatModel.findOne({ room: data.room });
+      if (!chat) {
+        chat = await chatModel.create({
+          room: data.room,
+          sender: data.senderId,
+          receiver: data.receiverId,
+        });
+
+        chat.messages.push({ content: data.message, isRead: false });
+        await chat.save();
+      } else {
+        chat.messages.push({
+          content: data.message,
+          isRead: false,
+          createdAt: new Date(),
+        });
+        await chat.save();
+      }
     } catch (error) {
       socket.emit(
         'error',

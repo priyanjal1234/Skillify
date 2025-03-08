@@ -1,6 +1,13 @@
+// chat.model.js
 import mongoose from 'mongoose';
 
-const chatSchema = mongoose.Schema(
+const messageSchema = new mongoose.Schema({
+  content: { type: String },
+  isRead: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const chatSchema = new mongoose.Schema(
   {
     room: {
       type: String,
@@ -16,14 +23,10 @@ const chatSchema = mongoose.Schema(
       ref: 'user',
       required: true,
     },
-    message: {
-      content: { type: String },
-      isRead: { type: Boolean, default: false },
-    },
+    messages: [messageSchema],
   },
   { timestamps: true }
 );
 
 const chatModel = mongoose.model('chat', chatSchema);
-
 export default chatModel;

@@ -8,6 +8,6 @@ router.route("/:senderId/:receiverId").get(isLoggedin,asyncHandler(getSenderChat
 
 router.route("/unread").get(isLoggedin,asyncHandler(getUnreadChats))
 
-router.route("/:instructor").get(isLoggedin,getReceiverChats)
+router.route("/:sender").get(isLoggedin,getReceiverChats)
 
 export default router
