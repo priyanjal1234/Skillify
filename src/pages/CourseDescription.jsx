@@ -29,16 +29,14 @@ const CourseDescription = () => {
 
   // State for user rating and submission status
   const [userRating, setUserRating] = useState(0);
-  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const [ratingSubmitted, setRatingSubmitted] = useState(null);
 
   useEffect(() => {
-    if (currentCourse?.ratings && currentUser?._id) {
+    if (currentCourse?._id && currentUser?._id) {
       const ratingPresent = currentCourse.ratings.find(
         (r) => r.user.toString() === currentUser._id.toString()
       );
-      setRatingSubmitted(!!ratingPresent); 
-    } else {
-      setRatingSubmitted(false);
+      setRatingSubmitted(!!ratingPresent);
     }
   }, [currentCourse, currentUser]);
 
@@ -104,10 +102,10 @@ const CourseDescription = () => {
               </h1>
               <div className="flex flex-wrap items-center gap-4 text-white">
                 <div className="flex items-center">
-                
                   <span className="ml-1">
-                     
-                    {currentCourse?.studentsEnrolled?.length === 1 ? `1 Student` : `${currentCourse?.studentsEnrolled?.length} Students`} 
+                    {currentCourse?.studentsEnrolled?.length === 1
+                      ? `1 Student`
+                      : `${currentCourse?.studentsEnrolled?.length} Students`}
                   </span>
                 </div>
                 <div className="flex items-center">
@@ -159,7 +157,7 @@ const CourseDescription = () => {
                 </div>
               </div>
               {/* Interactive Star Rating Component */}
-              {!ratingSubmitted && (
+              {currentCourse?._id && ratingSubmitted === false && (
                 <div
                   className="mt-8 p-4 rounded-xl shadow-sm"
                   style={{ backgroundColor: darkMode ? "#2d3748" : "#f7fafc" }}
