@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
@@ -22,6 +22,8 @@ import EditLesson from "./pages/EditLesson";
 import InstructorDashboard from "./pages/InstructorDashboard";
 import LessonQuiz from "./pages/LessonQuiz";
 import StudentMessages from "./pages/StudentMessages";
+import Bot from "./components/Bot";
+
 
 const App = () => {
   useEffect(() => {
@@ -70,6 +72,7 @@ const App = () => {
         />
         <Route path="/quiz/:courseId/:lessonId" element={<LessonQuiz />} />
         <Route path="/student-messages" element = {<StudentMessages />}/>
+        <Route path="/bot" element = {<Bot />} />
       </Routes>
     </>
   );

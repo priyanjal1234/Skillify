@@ -10,11 +10,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser, setLoggedin } from "../redux/reducers/UserReducer";
 import courseService from "../services/Course";
 import { setAllCourses } from "../redux/reducers/CourseReducer";
+import { useNavigate } from "react-router-dom";
+import { connectSocket } from "../socket/socket";
 
 const Home = () => {
   const { darkMode } = useContext(ThemeDataContext);
   const dispatch = useDispatch();
   const { isLoggedin } = useSelector((state) => state.user);
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    connectSocket();
+  }, []);
 
   useEffect(() => {
     const cookie = document.cookie;
@@ -77,6 +84,14 @@ const Home = () => {
         <Hero />
         <Features />
         <CalltoAction />
+
+        <button
+          onClick={() => navigate("/bot")}
+          className="fixed bottom-5 right-5 bg-blue-600 text-white py-3 px-6 
+                   rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+        >
+          Ask the Bot
+        </button>
       </div>
     </div>
   );
