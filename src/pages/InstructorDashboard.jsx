@@ -22,6 +22,7 @@ const InstructorDashboard = () => {
   const [activeItem, setActiveItem] = useState("Dashboard");
   const { darkMode } = useContext(ThemeDataContext);
   let { currentUser, isLoggedin } = useSelector((state) => state.user);
+
   let dispatch = useDispatch();
 
   let { refetch } = useQuery({

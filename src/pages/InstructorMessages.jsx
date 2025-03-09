@@ -17,6 +17,8 @@ const InstructorMessages = () => {
   const [room, setRoom] = useState(null);
   const dispatch = useDispatch();
 
+  console.log(enrolledStudents)
+
   useEffect(() => {
     connectSocket();
 

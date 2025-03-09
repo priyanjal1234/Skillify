@@ -10,6 +10,26 @@ import { setCurrentUser, setLoggedin } from "../redux/reducers/UserReducer";
 import { ThemeDataContext } from "../context/ThemeContext";
 import { getUserLocation } from "../utils/getUserLocation";
 import { getAddressFromCoordinates } from "../utils/convertToRealLocation";
+import {
+  setReceiverChats,
+  setSenderChats,
+} from "../redux/reducers/ChatReducer";
+import {
+  setDiscountValue,
+  setDiscountVisible,
+} from "../redux/reducers/CouponReducer";
+import {
+  setAllCourses,
+  setcurrentCourse,
+  setInstructorCourses,
+} from "../redux/reducers/CourseReducer";
+import { setEnrolledStudents } from "../redux/reducers/EnrollmentReducer";
+import {
+  setTotalCourses,
+  setTotalRevenue,
+  setTotalStudents,
+} from "../redux/reducers/InstructorReducer";
+import { setCurrentQuiz } from "../redux/reducers/QuizReducer";
 
 const Profile = () => {
   let { currentUser } = useSelector((state) => state.user);
@@ -39,6 +59,18 @@ const Profile = () => {
       toast.success("Logout Success");
       dispatch(setLoggedin(false));
       dispatch(setCurrentUser({}));
+      dispatch(setSenderChats([]));
+      dispatch(setReceiverChats([]));
+      dispatch(setDiscountVisible(false));
+      dispatch(setDiscountValue(0));
+      dispatch(setAllCourses([]));
+      dispatch(setInstructorCourses([]));
+      dispatch(setcurrentCourse({}));
+      dispatch(setEnrolledStudents([]));
+      dispatch(setTotalCourses([]));
+      dispatch(setTotalStudents(0));
+      dispatch(setTotalRevenue(0));
+      dispatch(setCurrentQuiz({}));
       navigate("/");
     } catch (error) {
       toast.error(error?.response?.data?.message);

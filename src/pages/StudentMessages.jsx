@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import socket, { connectSocket } from "../socket/socket.js";
 import { useQuery } from "@tanstack/react-query";
 import chatService from "../services/Chat.js";
-import { setReceiverChats, setSenderChats } from "../redux/reducers/ChatReducer.js";
+import {
+  setReceiverChats,
+  setSenderChats,
+} from "../redux/reducers/ChatReducer.js";
 import userService from "../services/User.js";
 
 const StudentMessages = () => {
@@ -144,19 +147,23 @@ const StudentMessages = () => {
             <h2 className="text-lg">Chats</h2>
           </div>
           <ul className="flex-grow overflow-y-auto">
-            {courseInstructors?.map((instructor) => (
-              <li
-                onClick={() => handleSelectInstructor(instructor)}
-                key={instructor?._id}
-                className={`p-4 border-b ${
-                  instructor?._id === selectedInstructor?._id
-                    ? "bg-[#2f3342]"
-                    : "hover:bg-[#2f3342]"
-                } border-[#2f3342] cursor-pointer transition-colors`}
-              >
-                <div className="font-bold mb-1">{instructor?.name}</div>
-              </li>
-            ))}
+            {courseInstructors?.length > 0 ? (
+              courseInstructors?.map((instructor) => (
+                <li
+                  onClick={() => handleSelectInstructor(instructor)}
+                  key={instructor?._id}
+                  className={`p-4 border-b ${
+                    instructor?._id === selectedInstructor?._id
+                      ? "bg-[#2f3342]"
+                      : "hover:bg-[#2f3342]"
+                  } border-[#2f3342] cursor-pointer transition-colors`}
+                >
+                  <div className="font-bold mb-1">{instructor?.name}</div>
+                </li>
+              ))
+            ) : (
+              <p className="p-4">No Course Instructors</p>
+            )}
           </ul>
         </div>
 
@@ -206,10 +213,7 @@ const StudentMessages = () => {
                 />
                 <button
                   onClick={() =>
-                    handleSendMessage(
-                      currentUser?._id,
-                      selectedInstructor?._id
-                    )
+                    handleSendMessage(currentUser?._id, selectedInstructor?._id)
                   }
                   className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 transition-colors"
                 >
