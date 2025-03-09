@@ -68,8 +68,8 @@ const Bot = () => {
           ))}
         </div>
 
-        {/* Input box & send button */}
-        <div className="mt-4 flex">
+        
+        <div className="mt-4 flex sticky bottom-0">
           <input
             type="text"
             className={`flex-grow px-4 py-2 rounded-l-md border focus:outline-none ${

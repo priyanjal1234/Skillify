@@ -161,7 +161,7 @@ const InstructorMessages = () => {
                 {selectedStudent?.name || "Select a Chat"}
               </h2>
             </div>
-            <div className="flex-1 p-4 overflow-y-auto flex flex-col">
+            <div className="flex-1 p-4 overflow-y-auto">
               {allMessages.length > 0 ? (
                 allMessages.map((msg, index) => (
                   <div
@@ -188,7 +188,7 @@ const InstructorMessages = () => {
               )}
             </div>
             {/* Input area fixed at bottom using flex-shrink-0 */}
-            <div className="sticky bottom-0 p-4 bg-[#1d2231]">
+            <div className="p-4 bg-[#1d2231] z-40">
               <div className="flex p-4 border-t border-[#2f3342] bg-[#1d2231]">
                 <input
                   type="text"
