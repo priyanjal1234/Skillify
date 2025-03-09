@@ -32,6 +32,7 @@ import lessonRouter from './routes/lesson.router.js';
 import enrollmentRouter from './routes/enrollment.router.js';
 import quizRouter from './routes/quiz.router.js';
 import chatRouter from './routes/chat.router.js';
+import getBotResponse from './utils/getBotResponse.js';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -95,6 +96,12 @@ io.on('connection', function (socket) {
         error instanceof Error ? error.message : 'Error creating chat'
       );
     }
+  });
+
+  socket.on('student-message', async function (data) {
+    const botResponse = await getBotResponse(data.message);
+
+    socket.emit('bot-reply', botResponse);
   });
 
   socket.on('disconnect', function () {

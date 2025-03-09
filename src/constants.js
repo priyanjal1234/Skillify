@@ -24,3 +24,5 @@ export const redisPassword = process.env.REDIS_PASSWORD
 export const razorpayKeyId = process.env.RAZORPAY_KEY_ID
 
 export const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET
+
+export const geminiApiKey = process.env.GEMINI_API_KEY
