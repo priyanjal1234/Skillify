@@ -33,6 +33,7 @@ import enrollmentRouter from './routes/enrollment.router.js';
 import quizRouter from './routes/quiz.router.js';
 import chatRouter from './routes/chat.router.js';
 import getBotResponse from './utils/getBotResponse.js';
+import codeRouter from './routes/code.router.js'
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -125,6 +126,8 @@ app.use('/api/enrollments', enrollmentRouter);
 app.use('/api/quiz', quizRouter);
 
 app.use('/api/chats', chatRouter);
+
+app.use("/api/code",codeRouter)
 
 app.use(errorHandler);
 
