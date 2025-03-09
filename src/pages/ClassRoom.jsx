@@ -180,6 +180,11 @@ const ClassRoom = () => {
                         style={{ objectFit: "cover" }}
                         onEnded={handleEndVideo}
                       />
+                      <div className="p-2">
+                        <button onClick={() => navigate("/do-code")} className="w-full mt-2 h-[40px] bg-blue-600 rounded-lg text-sm font-semibold">
+                          Code Yourself
+                        </button>
+                      </div>
                     </>
                   ) : (
                     <div className="w-full h-[500px] flex items-center justify-center bg-gray-300 dark:bg-gray-700">
@@ -234,7 +239,9 @@ const ClassRoom = () => {
                 <div
                   onClick={() => handleSelectedLecture(lesson?._id)}
                   key={index}
-                  className={`cursor-pointer relative ${showModal && 'pb-4'} overflow-hidden border rounded-xl transition-colors duration-200 ${
+                  className={`cursor-pointer relative ${
+                    showModal && "pb-4"
+                  } overflow-hidden border rounded-xl transition-colors duration-200 ${
                     darkMode
                       ? "border-gray-700 hover:bg-gray-700"
                       : "border-gray-200 hover:bg-gray-50"

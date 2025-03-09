@@ -23,6 +23,7 @@ import InstructorDashboard from "./pages/InstructorDashboard";
 import LessonQuiz from "./pages/LessonQuiz";
 import StudentMessages from "./pages/StudentMessages";
 import Bot from "./components/Bot";
+import DoCode from "./pages/DoCode";
 
 
 const App = () => {
@@ -73,6 +74,7 @@ const App = () => {
         <Route path="/quiz/:courseId/:lessonId" element={<LessonQuiz />} />
         <Route path="/student-messages" element = {<StudentMessages />}/>
         <Route path="/bot" element = {<Bot />} />
+        <Route path="/do-code" element = {<DoCode />}/>
       </Routes>
     </>
   );
