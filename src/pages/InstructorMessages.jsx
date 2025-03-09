@@ -29,7 +29,6 @@ const InstructorMessages = () => {
     });
   }, []);
 
-  // Fetch outgoing messages (sent by currentUser)
   let { refetch: refetchSenderChats } = useQuery({
     queryKey: ["fetchSenderChats", selectedStudent?._id],
     enabled: !!selectedStudent,
@@ -51,7 +50,6 @@ const InstructorMessages = () => {
     },
   });
 
-  // Fetch incoming messages (received from the student’s counterpart)
   useQuery({
     queryKey: ["fetchReceiverChats", selectedStudent?._id],
     enabled: !!selectedStudent,
@@ -60,7 +58,6 @@ const InstructorMessages = () => {
         let res = await chatService.getReceiverChats(selectedStudent?._id);
         console.log("Receiver Chats:", res);
         if (res.status === 200) {
-          // Dispatching to Redux so that receiverChats state is updated.
           dispatch(setReceiverChats(res.data));
         }
         return res.data;
@@ -86,12 +83,11 @@ const InstructorMessages = () => {
         receiverId,
         message,
       });
+      setMessage("");
+      refetchSenderChats();
     }
-    setMessage("");
-    refetchSenderChats();
   }
 
-  // Helper function to flatten an array of conversation documents into a single messages array.
   const flattenChats = (chats) => {
     if (!chats || !Array.isArray(chats)) return [];
     return chats.reduce((acc, conversation) => {
@@ -107,17 +103,15 @@ const InstructorMessages = () => {
     }, []);
   };
 
-  // Flatten the outgoing and incoming messages.
   const outgoingMessages = flattenChats(senderChats);
   const incomingMessages = flattenChats(receiverChats);
 
-  // Merge all messages into one array and sort by creation time.
   const allMessages = [...outgoingMessages, ...incomingMessages].sort(
     (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
   );
 
   return (
-    <div className="flex flex-col h-screen bg-[#121826] text-white">
+    <div className="flex flex-col min-h-screen bg-[#121826] text-white">
       {/* Navbar */}
       <nav className="flex items-center justify-between bg-[#1d2231] px-4 py-2">
         <div className="text-xl font-bold">Skillify</div>
@@ -141,15 +135,12 @@ const InstructorMessages = () => {
                     : "hover:bg-[#2f3342]"
                 } border-[#2f3342] cursor-pointer transition-colors`}
               >
-                <div className="font-bold mb-1">
-                  {student?.student?.name}
-                </div>
+                <div className="font-bold mb-1">{student?.student?.name}</div>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Right Panel: Conversation Area */}
         {selectedStudent !== null && (
           <div className="flex-1 flex flex-col bg-[#0e1118]">
             <div className="p-4 border-b border-[#2f3342]">
@@ -163,7 +154,6 @@ const InstructorMessages = () => {
                   <div
                     key={msg._id || index}
                     className={`max-w-[60%] mb-4 p-3 rounded-md ${
-                      // If the sender equals the current user's id, it’s outgoing (right-aligned)
                       msg.sender === currentUser._id
                         ? "bg-[#48506b] self-end"
                         : "bg-[#2f3342] self-start"
@@ -184,7 +174,8 @@ const InstructorMessages = () => {
                 <p className="text-gray-400">No Messages Yet</p>
               )}
             </div>
-            <div className="p-4">
+            {/* Input area fixed at bottom using flex-shrink-0 */}
+            <div className="sticky bottom-0 p-4 bg-[#1d2231]">
               <div className="flex p-4 border-t border-[#2f3342] bg-[#1d2231]">
                 <input
                   type="text"

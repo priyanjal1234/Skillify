@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { getRandomColor, hslToRgb } from "../utils/generateRandomColor";
 import { useQuery } from "@tanstack/react-query";
 import chatService from "../services/Chat";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const { darkMode, setDarkMode } = useContext(ThemeDataContext);
@@ -37,7 +38,21 @@ const Navbar = () => {
     enabled: isLoggedin,
   });
 
-  
+  async function handleMessageReadability() {
+    try {
+      let readMessagesRes = await chatService.readChats(unreadMessages);
+      console.log(readMessagesRes);
+    } catch (error) {
+      if (
+        error?.response?.data?.message ===
+        "There are no unread messages available"
+      ) {
+        return;
+      } else {
+        toast.error(error?.response?.data?.message);
+      }
+    }
+  }
 
   return (
     <nav className={`shadow-lg ${darkMode ? "bg-gray-800" : "bg-white"}`}>
@@ -130,20 +145,27 @@ const Navbar = () => {
                 >
                   {String(currentUser?.name).split("")[0]}
                 </Link>
-                <Link
-                  to={"/student-messages"}
-                  className={`text-sm font-medium flex items-center gap-2 ${
-                    darkMode
-                      ? "text-white hover:text-indigo-400"
-                      : "text-indigo-600 hover:text-indigo-800"
-                  }`}
-                >
-                  Messages{" "}
-                </Link>
+                {currentUser?.role !== "instructor" && (
+                  <>
+                    <Link
+                      onClick={handleMessageReadability}
+                      to={"/student-messages"}
+                      className={`text-sm font-medium flex items-center gap-2 ${
+                        darkMode
+                          ? "text-white hover:text-indigo-400"
+                          : "text-indigo-600 hover:text-indigo-800"
+                      }`}
+                    >
+                      Messages{" "}
+                    </Link>
 
-                <span className="w-[25px] h-[25px] flex items-center justify-center  bg-blue-600 rounded-full">
-                  {unreadMessages?.length}
-                </span>
+                    {unreadMessages?.length > 0 && (
+                      <span className="w-[25px] h-[25px] flex items-center justify-center  bg-blue-600 rounded-full">
+                        {unreadMessages?.length}
+                      </span>
+                    )}
+                  </>
+                )}
               </>
             )}
           </div>

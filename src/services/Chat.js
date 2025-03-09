@@ -35,6 +35,18 @@ class ChatService {
       throw error;
     }
   }
+
+  async readChats(unreadMessages) {
+    try {
+      return await this.api.post(
+        `${this.baseUrl}/read`,
+        { unreadMessages },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 let chatService = new ChatService();

@@ -195,7 +195,7 @@ const StudentMessages = () => {
               )}
             </div>
 
-            <div className="p-4">
+            <div className="sticky bottom-0 p-4 bg-[#1d2231]">
               <div className="flex p-4 border-t border-[#2f3342] bg-[#1d2231]">
                 <input
                   type="text"
