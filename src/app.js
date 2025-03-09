@@ -99,7 +99,8 @@ io.on('connection', function (socket) {
   });
 
   socket.on('student-message', async function (data) {
-    const botResponse = await getBotResponse(data.message);
+  
+    const botResponse = await getBotResponse(data);
 
     socket.emit('bot-reply', botResponse);
   });
