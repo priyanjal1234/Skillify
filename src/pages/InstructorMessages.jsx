@@ -17,7 +17,7 @@ const InstructorMessages = () => {
   const [room, setRoom] = useState(null);
   const dispatch = useDispatch();
 
-  console.log(enrolledStudents)
+  console.log(enrolledStudents);
 
   useEffect(() => {
     connectSocket();
@@ -52,7 +52,7 @@ const InstructorMessages = () => {
     },
   });
 
-  useQuery({
+  let { refetch: refetchReceiverChats } = useQuery({
     queryKey: ["fetchReceiverChats", selectedStudent?._id],
     enabled: !!selectedStudent,
     queryFn: async function () {
@@ -69,6 +69,17 @@ const InstructorMessages = () => {
       }
     },
   });
+
+  useEffect(() => {
+    function handleNewMsg(newMsg) {
+      console.log("New message received:", newMsg);
+
+      refetchSenderChats();
+      refetchReceiverChats();
+    }
+
+    socket.on("new-message", handleNewMsg);
+  },[refetchReceiverChats,refetchSenderChats]);
 
   function handleSelectStudent(student) {
     if (student && student._id) {

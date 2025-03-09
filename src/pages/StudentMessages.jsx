@@ -69,6 +69,17 @@ const StudentMessages = () => {
     },
   });
 
+  useEffect(() => {
+    function handleNewMessage(newMsg) {
+      console.log(newMsg);
+
+      refetchReceiverChats();
+      refetchSenderChats();
+    }
+
+    socket.on("new-message", handleNewMessage);
+  }, [refetchReceiverChats, refetchSenderChats]);
+
   const { data: courseInstructors } = useQuery({
     queryKey: ["fetchCourseInstructors"],
     queryFn: async function () {
@@ -102,9 +113,10 @@ const StudentMessages = () => {
         receiverId,
         message,
       });
+
+      setMessage("");
+      refetchSenderChats();
     }
-    setMessage("");
-    refetchSenderChats();
   }
 
   // Helper function to flatten messages from conversation objects.
