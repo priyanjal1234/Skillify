@@ -54,6 +54,30 @@ const getUnreadChats = async function (req, res, next) {
   }
 };
 
+const messagesRead = async function (req, res, next) {
+  try {
+    let { unreadMessages } = req.body;
+    if (!unreadMessages || unreadMessages?.length === 0) {
+      return next(new ApiError(400, 'There are no unread messages available'));
+    }
+    let unreadMessagesIds = unreadMessages.map((msg) => msg._id);
+
+    await chatModel.updateMany(
+      { 'messages._id': { $in: unreadMessagesIds } },
+      { $set: { 'messages.$[elem].isRead': true } },
+      { arrayFilters: [{ 'elem._id': { $in: unreadMessagesIds } }] }
+    );
+    return res.status(200).json({ message: 'All Messages are read' });
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error reading unread messages'
+      )
+    );
+  }
+};
+
 const getReceiverChats = async function (req, res, next) {
   try {
     let user = await userModel.findOne({ email: req.user.email });
@@ -74,4 +98,4 @@ const getReceiverChats = async function (req, res, next) {
   }
 };
 
-export { getSenderChats, getUnreadChats, getReceiverChats };
+export { getSenderChats, getUnreadChats, messagesRead, getReceiverChats };
