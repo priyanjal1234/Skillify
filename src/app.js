@@ -75,14 +75,20 @@ io.on('connection', function (socket) {
 
         chat.messages.push({ content: data.message, isRead: false });
         await chat.save();
-      } else {
-        chat.messages.push({
-          content: data.message,
-          isRead: false,
-          createdAt: new Date(),
-        });
-        await chat.save();
       }
+      const messageObj = {
+        content: data.message,
+        isRead: false,
+        createdAt: new Date(),
+      };
+
+      chat.messages.push(messageObj);
+      await chat.save();
+
+      io.emit('new-message', {
+        ...messageObj,
+        sender: data.senderId,
+      });
     } catch (error) {
       socket.emit(
         'error',
