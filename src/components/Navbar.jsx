@@ -146,7 +146,7 @@ const Navbar = () => {
                 >
                   {String(currentUser?.name).split("")[0]}
                 </Link>
-                {currentUser?.role !== "instructor" && (
+                {currentUser?.role !== "instructor" ? (
                   <>
                     <Link
                       onClick={handleMessageReadability}
@@ -166,6 +166,10 @@ const Navbar = () => {
                       </span>
                     )}
                   </>
+                ) : (
+                  <button className="px-3 py-2 bg-blue-600 rounded-lg">
+                    Go Live
+                  </button>
                 )}
               </>
             )}

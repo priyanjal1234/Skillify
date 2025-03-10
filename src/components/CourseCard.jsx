@@ -119,15 +119,9 @@ const CourseCard = ({ course }) => {
                 darkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
-              {rating}
+              {Number(rating).toFixed(2)}
             </span>
-            <span
-              className={`font-medium ${
-                darkMode ? "text-white" : "text-gray-900"
-              }`}
-            >
-              {course?.rating?.average}
-            </span>
+            
           </div>
           <Link
             to={`/course/${course?._id}`}

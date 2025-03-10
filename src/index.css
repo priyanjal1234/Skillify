@@ -25,3 +25,11 @@ input::-webkit-inner-spin-button {
     transform: rotate(360deg);
   }
 }
+
+
+@layer base {
+  :root {
+    --font-poppins: "Poppins", "sans-serif"; 
+    --font-jost: "Jost", "sans-serif";
+  }
+}
