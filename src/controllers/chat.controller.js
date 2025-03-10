@@ -43,7 +43,7 @@ const getUnreadChats = async function (req, res, next) {
 
     let filteredMessages = allMessages.filter((msg) => msg.isRead === false);
 
-    return res.status(200).json(filteredMessages);
+    return res.status(200).json({ filteredMessages, chat });
   } catch (error) {
     return next(
       new ApiError(

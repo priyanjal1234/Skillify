@@ -33,7 +33,7 @@ import enrollmentRouter from './routes/enrollment.router.js';
 import quizRouter from './routes/quiz.router.js';
 import chatRouter from './routes/chat.router.js';
 import getBotResponse from './utils/getBotResponse.js';
-import codeRouter from './routes/code.router.js'
+import codeRouter from './routes/code.router.js';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -74,10 +74,8 @@ io.on('connection', function (socket) {
           sender: data.senderId,
           receiver: data.receiverId,
         });
-
-        chat.messages.push({ content: data.message, isRead: false });
-        await chat.save();
       }
+
       const messageObj = {
         content: data.message,
         isRead: false,
@@ -100,7 +98,6 @@ io.on('connection', function (socket) {
   });
 
   socket.on('student-message', async function (data) {
-  
     const botResponse = await getBotResponse(data);
 
     socket.emit('bot-reply', botResponse);
@@ -127,7 +124,7 @@ app.use('/api/quiz', quizRouter);
 
 app.use('/api/chats', chatRouter);
 
-app.use("/api/code",codeRouter)
+app.use('/api/code', codeRouter);
 
 app.use(errorHandler);
 
