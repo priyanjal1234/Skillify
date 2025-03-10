@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
-import socket from "../socket/socket";
+import socket, { connectSocket, disconnectSocket } from "../socket/socket";
 
 const initialMessages = [
   { sender: "bot", text: "Hello, I'm Skillify Bot! How can I help you today?" },
@@ -19,16 +19,21 @@ const Bot = () => {
   const [inputVal, setinputVal] = useState("");
 
   useEffect(() => {
-    socket.on("bot-reply",function(msg) {
-        setMessages(prev => [...prev,{sender: "bot",text: msg}])
-    })
-  },[])
+    connectSocket();
+    socket.on("bot-reply", function (msg) {
+      setMessages((prev) => [...prev, { sender: "bot", text: msg }]);
+    });
+
+    return () => {
+      disconnectSocket()
+    }
+  }, []);
 
   function handleSendMessage() {
-    if(inputVal.trim() !== "") {
-        setMessages(prev => [...prev,{sender: "user",text: inputVal}])
-        socket.emit("student-message",inputVal)
-        setinputVal('')
+    if (inputVal.trim() !== "") {
+      setMessages((prev) => [...prev, { sender: "user", text: inputVal }]);
+      socket.emit("student-message", inputVal);
+      setinputVal("");
     }
   }
 
@@ -68,7 +73,6 @@ const Bot = () => {
           ))}
         </div>
 
-        
         <div className="mt-4 flex sticky bottom-0">
           <input
             type="text"
@@ -82,7 +86,10 @@ const Bot = () => {
             onChange={(e) => setinputVal(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
           />
-          <button onClick={handleSendMessage} className="bg-blue-600 text-white px-6 py-2 rounded-r-md hover:bg-blue-700 transition-colors">
+          <button
+            onClick={handleSendMessage}
+            className="bg-blue-600 text-white px-6 py-2 rounded-r-md hover:bg-blue-700 transition-colors"
+          >
             Send
           </button>
         </div>

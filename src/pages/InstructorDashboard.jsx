@@ -57,7 +57,7 @@ const InstructorDashboard = () => {
     { name: "Dashboard", icon: Home },
     { name: "Courses", icon: FileText },
     { name: "Students", icon: Users },
-    { name: "Settings", icon: Settings },
+
     { name: "Messages", icon: MessageSquare },
   ];
 

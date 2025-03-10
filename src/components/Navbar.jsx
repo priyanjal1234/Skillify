@@ -40,8 +40,9 @@ const Navbar = () => {
 
   async function handleMessageReadability() {
     try {
-      let readMessagesRes = await chatService.readChats(unreadMessages);
-      console.log(readMessagesRes);
+      let readMessagesRes = await chatService.readChats(
+        unreadMessages?.filteredMessages
+      );
     } catch (error) {
       if (
         error?.response?.data?.message ===

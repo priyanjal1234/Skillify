@@ -19,7 +19,6 @@ const StudentRegister = () => {
   const { darkMode } = useContext(ThemeDataContext);
   let navigate = useNavigate();
   let dispatch = useDispatch();
-  
 
   const { values, errors, handleChange } = useFormHandler(
     { name: "", email: "", password: "", role: "student" },
