@@ -1,17 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
 import { BookOpen, Sun, Moon } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { getRandomColor, hslToRgb } from "../utils/generateRandomColor";
 import { useQuery } from "@tanstack/react-query";
 import chatService from "../services/Chat";
 import { toast } from "react-toastify";
+import socket from "../socket/socket";
+import notificationService from "../services/Notification";
+import { setAllNotifications } from "../redux/reducers/NotificationReducer";
 
 const Navbar = () => {
   const { darkMode, setDarkMode } = useContext(ThemeDataContext);
   let { isLoggedin, currentUser } = useSelector((state) => state.user);
+  const [notificationCount, setnotificationCount] = useState(0);
   const [color, setcolor] = useState("");
+  let navigate = useNavigate();
+  let dispatch = useDispatch();
 
   useEffect(() => {
     let randomColor = getRandomColor();
@@ -52,6 +58,48 @@ const Navbar = () => {
       } else {
         toast.error(error?.response?.data?.message);
       }
+    }
+  }
+
+  let { data: unreadNotifications, refetch: refetchUnreadNotifications } =
+    useQuery({
+      queryKey: ["fetchUnreadNotifications"],
+      queryFn: async function () {
+        try {
+          let fetchUnreadNotificationsRes =
+            await notificationService.getUnreadNotifications();
+
+          setnotificationCount(fetchUnreadNotificationsRes?.data?.length);
+          dispatch(setAllNotifications(fetchUnreadNotificationsRes?.data));
+          return fetchUnreadNotificationsRes.data;
+        } catch (error) {
+          console.log(error?.response?.data?.message);
+        }
+      },
+    });
+
+  function handleGoLive() {
+    const domain = "meet.jit.si";
+    const roomName = `Skillify-${currentUser._id}-${Date.now()}`;
+    const meetingUrl = `https://${domain}/${roomName}`;
+    socket.emit("go-live", {
+      instructorId: currentUser?._id,
+      meetingUrl,
+    });
+    refetchUnreadNotifications();
+    navigate("/go-live");
+  }
+
+  async function handleMarkNotificationsRead() {
+    try {
+      let res = await notificationService.markAsRead();
+      console.log(res.data)
+
+      setnotificationCount(0);
+
+      
+    } catch (error) {
+      console.error("Error marking notifications as read:", error);
     }
   }
 
@@ -165,9 +213,30 @@ const Navbar = () => {
                         {unreadMessages?.length}
                       </span>
                     )}
+
+                    <Link
+                      onClick={handleMarkNotificationsRead}
+                      to={"/notifications"}
+                      className={`text-sm font-medium flex items-center gap-2 ${
+                        darkMode
+                          ? "text-white hover:text-indigo-400"
+                          : "text-indigo-600 hover:text-indigo-800"
+                      }`}
+                    >
+                      Notifications
+                    </Link>
+
+                    {notificationCount > 0 && (
+                      <span className="w-[25px] h-[25px] flex items-center justify-center  bg-blue-600 rounded-full">
+                        {notificationCount}
+                      </span>
+                    )}
                   </>
                 ) : (
-                  <button className="px-3 py-2 bg-blue-600 rounded-lg">
+                  <button
+                    onClick={handleGoLive}
+                    className="px-3 py-2 bg-blue-600 rounded-lg"
+                  >
                     Go Live
                   </button>
                 )}

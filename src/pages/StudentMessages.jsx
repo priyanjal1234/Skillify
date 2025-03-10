@@ -71,8 +71,6 @@ const StudentMessages = () => {
 
   useEffect(() => {
     function handleNewMessage(newMsg) {
-      console.log(newMsg);
-
       refetchReceiverChats();
       refetchSenderChats();
     }

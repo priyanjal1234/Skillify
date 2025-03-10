@@ -19,6 +19,9 @@ const Home = () => {
   const { isLoggedin } = useSelector((state) => state.user);
   let navigate = useNavigate();
 
+  useEffect(() => {
+    connectSocket()
+  },[])
 
   useEffect(() => {
     const cookie = document.cookie;

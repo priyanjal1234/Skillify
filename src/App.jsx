@@ -24,6 +24,8 @@ import LessonQuiz from "./pages/LessonQuiz";
 import StudentMessages from "./pages/StudentMessages";
 import Bot from "./components/Bot";
 import DoCode from "./pages/DoCode";
+import GoLive from "./pages/GoLive";
+import Notifications from "./components/Notifications";
 
 
 const App = () => {
@@ -75,6 +77,8 @@ const App = () => {
         <Route path="/student-messages" element = {<StudentMessages />}/>
         <Route path="/bot" element = {<Bot />} />
         <Route path="/do-code" element = {<DoCode />}/>
+        <Route path="/go-live" element = {<GoLive />}/>
+        <Route path="/notifications" element = {<Notifications />}/>
       </Routes>
     </>
   );
