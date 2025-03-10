@@ -32,8 +32,12 @@ import lessonRouter from './routes/lesson.router.js';
 import enrollmentRouter from './routes/enrollment.router.js';
 import quizRouter from './routes/quiz.router.js';
 import chatRouter from './routes/chat.router.js';
+import notificationRouter from './routes/notification.router.js'
+
 import getBotResponse from './utils/getBotResponse.js';
 import codeRouter from './routes/code.router.js';
+import notificationModel from './models/notification.model.js';
+import userModel from './models/user.model.js';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -103,6 +107,22 @@ io.on('connection', function (socket) {
     socket.emit('bot-reply', botResponse);
   });
 
+  socket.on('go-live', async function (data) {
+    try {
+      let instructor = await userModel.findOne({ _id: data.instructorId });
+      await notificationModel.create({
+        user: data.instructorId,
+        type: 'announcement',
+        message: `${instructor.name} has started live. The meeting url is <a href = ${data.meetingUrl}>${data.meetingUrl}</a>`,
+      });
+    } catch (error) {
+      socket.emit(
+        'live-error',
+        error instanceof Error ? error.message : 'Error going live'
+      );
+    }
+  });
+
   socket.on('disconnect', function () {
     console.log(`Disconnected ${socket.id}`);
   });
@@ -125,6 +145,8 @@ app.use('/api/quiz', quizRouter);
 app.use('/api/chats', chatRouter);
 
 app.use('/api/code', codeRouter);
+
+app.use("/api/notifications",notificationRouter)
 
 app.use(errorHandler);
 

@@ -63,6 +63,12 @@ const userSchema = mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "lesson"
       }
+    ],
+    notifications: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "notification"
+      }
     ]
   },
   { timestamps: true }
