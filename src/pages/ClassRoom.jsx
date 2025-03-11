@@ -93,6 +93,7 @@ const ClassRoom = () => {
 
   function handleSelectedLecture(lessonId) {
     let lesson = course?.lessons?.find((l) => l?._id === lessonId);
+    console.log(lesson);
     if (lesson) {
       setselectedLecture(lesson);
     }
@@ -188,12 +189,14 @@ const ClassRoom = () => {
                         <div className="p-4 bg-gray-100 dark:bg-gray-800 mt-4 rounded">
                           <h4 className="font-semibold mb-2">Related Links</h4>
                           <ul className="list-disc list-inside">
-                            {selectedLecture?.resouces?.map(
+                            {selectedLecture?.resources?.map(
                               (resource, index) => (
-                                <li>
+                                <li key={index}>
                                   <a
-                                    href="https://example.com/link1"
+                                    href={resource?.url}
                                     className="text-blue-500 hover:underline"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                   >
                                     {resource?.url}
                                   </a>
