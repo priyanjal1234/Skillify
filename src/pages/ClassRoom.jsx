@@ -18,11 +18,8 @@ const ClassRoom = () => {
   const [course, setCourse] = useState(null);
   const [thumbnails, setThumbnails] = useState({});
   const [selectedLecture, setselectedLecture] = useState(null);
-
   const [progress, setprogress] = useState(0);
-
   const [showModal, setshowModal] = useState(false);
-
   const [activeQuizLessonId, setActiveQuizLessonId] = useState(null);
 
   let navigate = useNavigate();
@@ -54,12 +51,10 @@ const ClassRoom = () => {
           courseId,
           selectedLecture?._id
         );
-
         setprogress(progressRes.data);
         return progressRes.data;
       } catch (error) {
         console.log(error?.response?.data?.message);
-
         return false;
       }
     },
@@ -181,10 +176,33 @@ const ClassRoom = () => {
                         onEnded={handleEndVideo}
                       />
                       <div className="p-2">
-                        <button onClick={() => navigate("/do-code")} className="w-full mt-2 h-[40px] bg-blue-600 rounded-lg text-sm font-semibold">
+                        <button
+                          onClick={() => navigate("/do-code")}
+                          className="w-full mt-2 h-[40px] bg-blue-600 rounded-lg text-sm font-semibold"
+                        >
                           Code Yourself
                         </button>
                       </div>
+                      {/* New Div for Lesson Related Links */}
+                      {selectedLecture?.resources?.length > 0 && (
+                        <div className="p-4 bg-gray-100 dark:bg-gray-800 mt-4 rounded">
+                          <h4 className="font-semibold mb-2">Related Links</h4>
+                          <ul className="list-disc list-inside">
+                            {selectedLecture?.resouces?.map(
+                              (resource, index) => (
+                                <li>
+                                  <a
+                                    href="https://example.com/link1"
+                                    className="text-blue-500 hover:underline"
+                                  >
+                                    {resource?.url}
+                                  </a>
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
+                      )}
                     </>
                   ) : (
                     <div className="w-full h-[500px] flex items-center justify-center bg-gray-300 dark:bg-gray-700">
@@ -235,49 +253,47 @@ const ClassRoom = () => {
           <h2 className="text-2xl font-bold mb-4">Lectures</h2>
           <div className="space-y-2 overflow-auto">
             {course?.lessons?.map((lesson, index) => (
-              <>
-                <div
-                  onClick={() => handleSelectedLecture(lesson?._id)}
-                  key={index}
-                  className={`cursor-pointer relative ${
-                    showModal && "pb-4"
-                  } overflow-hidden border rounded-xl transition-colors duration-200 ${
-                    darkMode
-                      ? "border-gray-700 hover:bg-gray-700"
-                      : "border-gray-200 hover:bg-gray-50"
-                  }`}
-                >
-                  <div className="flex items-center p-2">
-                    {/* Fixed-size thumbnail container */}
-                    <div className="w-[120px] h-[90px] overflow-hidden flex-shrink-0 mr-4">
-                      {/* Force the image to fill this container */}
-                      <img
-                        src={thumbnails[lesson?._id]}
-                        alt=""
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-
-                    {/* Lecture text */}
-                    <div className="flex-1">
-                      <span className="text-sm font-semibold">
-                        Lecture {index + 1}
-                      </span>
-                      <h3 className="text-lg font-semibold">{lesson?.title}</h3>
-                    </div>
-                    {completedLessons?.includes(lesson?._id) && (
-                      <CheckCircle color="green" />
-                    )}
-                  </div>
-                  {showModal && activeQuizLessonId === lesson?._id && (
-                    <QuizModal
-                      showModal={showModal}
-                      setShowModal={setshowModal}
-                      handleTakeQuiz={handleTakeQuiz}
+              <div
+                onClick={() => handleSelectedLecture(lesson?._id)}
+                key={index}
+                className={`cursor-pointer relative ${
+                  showModal && "pb-4"
+                } overflow-hidden border rounded-xl transition-colors duration-200 ${
+                  darkMode
+                    ? "border-gray-700 hover:bg-gray-700"
+                    : "border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                <div className="flex items-center p-2">
+                  {/* Fixed-size thumbnail container */}
+                  <div className="w-[120px] h-[90px] overflow-hidden flex-shrink-0 mr-4">
+                    {/* Force the image to fill this container */}
+                    <img
+                      src={thumbnails[lesson?._id]}
+                      alt=""
+                      className="object-cover w-full h-full"
                     />
+                  </div>
+
+                  {/* Lecture text */}
+                  <div className="flex-1">
+                    <span className="text-sm font-semibold">
+                      Lecture {index + 1}
+                    </span>
+                    <h3 className="text-lg font-semibold">{lesson?.title}</h3>
+                  </div>
+                  {completedLessons?.includes(lesson?._id) && (
+                    <CheckCircle color="green" />
                   )}
                 </div>
-              </>
+                {showModal && activeQuizLessonId === lesson?._id && (
+                  <QuizModal
+                    showModal={showModal}
+                    setShowModal={setshowModal}
+                    handleTakeQuiz={handleTakeQuiz}
+                  />
+                )}
+              </div>
             ))}
           </div>
         </div>

@@ -8,6 +8,7 @@ import {
   setSenderChats,
 } from "../redux/reducers/ChatReducer.js";
 import userService from "../services/User.js";
+import { Trash2 } from "lucide-react";
 
 const StudentMessages = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -16,6 +17,8 @@ const StudentMessages = () => {
   const { senderChats, receiverChats } = useSelector((state) => state.chat);
   const [message, setMessage] = useState("");
   const [room, setRoom] = useState(null);
+
+  const [deletedMessageIds, setDeletedMessageIds] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -30,7 +33,6 @@ const StudentMessages = () => {
     });
   }, []);
 
-  // Fetch incoming messages (from instructor to student)
   const { refetch: refetchReceiverChats } = useQuery({
     queryKey: ["fetchReceiverChats", selectedInstructor?._id],
     enabled: !!selectedInstructor,
@@ -48,7 +50,6 @@ const StudentMessages = () => {
     },
   });
 
-  // Fetch outgoing messages (from student to instructor)
   const { refetch: refetchSenderChats } = useQuery({
     queryKey: ["fetchSenderChats", selectedInstructor?._id],
     enabled: !!selectedInstructor,
@@ -95,7 +96,7 @@ const StudentMessages = () => {
     if (instructor && instructor._id) {
       setSelectedInstructor(instructor);
       socket.emit("join-room", instructor._id);
-      // Refetch both incoming and outgoing chats when an instructor is selected.
+
       refetchReceiverChats();
       refetchSenderChats();
     } else {
@@ -117,16 +118,13 @@ const StudentMessages = () => {
     }
   }
 
-  // Helper function to flatten messages from conversation objects.
   const flattenMessages = (chatsArray) => {
     if (!chatsArray) return [];
     return chatsArray.reduce((acc, conversation) => {
       if (conversation.messages && conversation.messages.length > 0) {
-        // Attach the conversation's sender so each message knows who sent it.
         const msgs = conversation.messages.map((m) => ({
           ...m,
-          sender: conversation.sender, // The sender for all messages in this conversation
-          // Use each message's createdAt if available; otherwise fall back to conversation.createdAt
+          sender: conversation.sender,
           createdAt: m.createdAt || conversation.createdAt,
         }));
         return [...acc, ...msgs];
@@ -137,10 +135,14 @@ const StudentMessages = () => {
 
   const flattenedSenderMessages = flattenMessages(senderChats);
   const flattenedReceiverMessages = flattenMessages(receiverChats);
-  // Merge the two arrays into one conversation
+
   const allChats = [...flattenedSenderMessages, ...flattenedReceiverMessages];
-  // Sort messages by creation time (oldest first)
+
   allChats.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+  const visibleChats = allChats.filter(
+    (msg) => !deletedMessageIds.includes(msg._id)
+  );
 
   return (
     <div className="flex flex-col h-screen bg-[#121826] text-white">
@@ -186,25 +188,29 @@ const StudentMessages = () => {
               </h2>
             </div>
             <div className="flex-1 p-4 overflow-y-auto flex flex-col">
-              {allChats.length > 0 ? (
-                allChats.map((msg, index) => (
+              {visibleChats.length > 0 ? (
+                visibleChats.map((msg, index) => (
                   <div
                     key={msg._id || index}
-                    className={`max-w-[60%] mb-4 p-3 rounded-md ${
+                    className={`max-w-[60%] flex items-center mb-4 p-3 rounded-md ${
                       // Outgoing messages (sent by the student) align right;
                       // incoming messages (sent by the instructor) align left.
                       msg.sender === currentUser._id
-                        ? "bg-[#48506b] self-end"
+                        ? "bg-[#47538c] self-end"
                         : "bg-[#2f3342] self-start"
                     }`}
                   >
-                    <p>{msg.content}</p>
-                    <span className="block mt-1 text-xs opacity-70 text-right">
-                      {new Date(msg.createdAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
+                    <div className="flex items-center justify-between w-full">
+                      <div>
+                        <p>{msg.content}</p>
+                        <span className="block mt-1 text-xs opacity-70 text-right">
+                          {new Date(msg.createdAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 ))
               ) : (
