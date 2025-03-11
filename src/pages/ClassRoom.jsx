@@ -93,7 +93,6 @@ const ClassRoom = () => {
 
   function handleSelectedLecture(lessonId) {
     let lesson = course?.lessons?.find((l) => l?._id === lessonId);
-    console.log(lesson);
     if (lesson) {
       setselectedLecture(lesson);
     }
