@@ -32,7 +32,8 @@ import lessonRouter from './routes/lesson.router.js';
 import enrollmentRouter from './routes/enrollment.router.js';
 import quizRouter from './routes/quiz.router.js';
 import chatRouter from './routes/chat.router.js';
-import notificationRouter from './routes/notification.router.js'
+import notificationRouter from './routes/notification.router.js';
+import resourceRouter from './routes/resource.router.js'
 
 import getBotResponse from './utils/getBotResponse.js';
 import codeRouter from './routes/code.router.js';
@@ -113,7 +114,7 @@ io.on('connection', function (socket) {
       await notificationModel.create({
         user: data.instructorId,
         type: 'announcement',
-        message: `${instructor.name} has started live. The meeting url is <a href = ${data.meetingUrl}>${data.meetingUrl}</a>`,
+        message: `${instructor.name} has started live. The meeting url is ${data.meetingUrl}`,
       });
     } catch (error) {
       socket.emit(
@@ -146,7 +147,9 @@ app.use('/api/chats', chatRouter);
 
 app.use('/api/code', codeRouter);
 
-app.use("/api/notifications",notificationRouter)
+app.use('/api/notifications', notificationRouter);
+
+app.use("/api/resources",resourceRouter)
 
 app.use(errorHandler);
 

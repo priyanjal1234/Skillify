@@ -91,7 +91,12 @@ const getOneCourse = async function (req, res, next) {
     let { id } = req.params;
     let singleCourse = await courseModel
       .findOne({ _id: id })
-      .populate([{ path: 'instructor' }, { path: 'lessons' }]);
+      .populate('instructor')
+      .populate({
+        path: 'lessons',
+        populate: { path: 'resources' }
+      });
+      
     if (!singleCourse) {
       return next(new ApiError(404, 'Course with the given id is not found'));
     }

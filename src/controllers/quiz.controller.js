@@ -1,3 +1,4 @@
+import lessonModel from '../models/lesson.model.js';
 import quizModel from '../models/quiz.model.js';
 import ApiError from '../utils/ApiError.js';
 
@@ -5,6 +6,12 @@ const createQuiz = async function (req, res, next) {
   try {
     let { lessonId } = req.params;
     let { questions } = req.body;
+
+    let lesson = await lessonModel.findOne({ _id: lessonId });
+
+    if (!lesson) {
+      return next(new ApiError(404, 'Lesson with this id not found'));
+    }
 
     if (!questions) {
       return next(
@@ -15,10 +22,13 @@ const createQuiz = async function (req, res, next) {
       );
     }
 
-    await quizModel.create({
+    let quiz = await quizModel.create({
       lesson: lessonId,
       questions,
     });
+
+    lesson.quizzes.push(quiz._id);
+    await lesson.save();
 
     return res.status(200).json({ message: 'Quiz Created Successfully' });
   } catch (error) {
