@@ -34,6 +34,7 @@ import quizRouter from './routes/quiz.router.js';
 import chatRouter from './routes/chat.router.js';
 import notificationRouter from './routes/notification.router.js';
 import resourceRouter from './routes/resource.router.js'
+import adminRouter from './routes/admin.router.js'
 
 import getBotResponse from './utils/getBotResponse.js';
 import codeRouter from './routes/code.router.js';
@@ -150,6 +151,8 @@ app.use('/api/code', codeRouter);
 app.use('/api/notifications', notificationRouter);
 
 app.use("/api/resources",resourceRouter)
+
+app.use("/api/admin",adminRouter)
 
 app.use(errorHandler);
 
