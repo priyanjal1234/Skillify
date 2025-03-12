@@ -27,4 +27,4 @@ export const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET
 
 export const geminiApiKey = process.env.GEMINI_API_KEY
 
-export const allowedEmails = ["priyanjalsaxena7@gmail.com","priyanjal362@gmail.com"]
+export const allowedEmails = ["priyanjal362@gmail.com"]

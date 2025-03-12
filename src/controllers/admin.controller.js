@@ -1,5 +1,6 @@
 import activityModel from '../models/activity.model.js';
 import courseModel from '../models/course.model.js';
+import enrollmentModel from '../models/enrollment.model.js';
 import orderModel from '../models/order.model.js';
 import userModel from '../models/user.model.js';
 import ApiError from '../utils/ApiError.js';
@@ -82,6 +83,37 @@ const getStudentDetails = async function (req, res, next) {
   }
 };
 
+const getInstructorDetails = async function (req, res, next) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    const instructors = await userModel
+      .find({ role: 'instructor' })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await userModel.countDocuments({ role: 'instructor' });
+
+    return res.status(200).json({
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      instructors,
+    });
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error
+          ? error.message
+          : 'Error occurred while fetch instructor details'
+      )
+    );
+  }
+};
+
 const deleteStudent = async function (req, res, next) {
   try {
     let { studentId } = req.params;
@@ -103,4 +135,30 @@ const deleteStudent = async function (req, res, next) {
   }
 };
 
-export { getDashboardDetails, getStudentDetails, deleteStudent };
+const deleteInstructor = async function (req, res, next) {
+  try {
+    let { instructorId } = req.params;
+    await userModel.findOneAndDelete({ _id: instructorId, role: 'instructor' });
+
+    await courseModel.deleteMany({ instructor: instructorId });
+    await enrollmentModel.deleteMany({instructor: instructorId})
+    await orderModel.deleteMany({instructor: instructorId})
+
+    return res.status(200).json({message: "Instructor Deleted Successfully"})
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error deleting instructor'
+      )
+    );
+  }
+};
+
+export {
+  getDashboardDetails,
+  getStudentDetails,
+  deleteStudent,
+  deleteInstructor,
+  getInstructorDetails,
+};
