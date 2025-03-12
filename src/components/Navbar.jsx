@@ -240,20 +240,17 @@ const Navbar = () => {
                     >
                       Go Live
                     </button>
-                    {[
-                      "priyanjalsaxena7@gmail.com",
-                      "priyanjal362@gmail.com",
-                    ].includes(currentUser?.email) && (
-                      <a
-                        className="px-3 py-2 bg-gray-600 rounded-lg"
-                        href="http://localhost:5174"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Admin Panel
-                      </a>
-                    )}
                   </>
+                )}
+                {["priyanjal362@gmail.com"].includes(currentUser?.email) && (
+                  <a
+                    className="px-3 py-2 bg-gray-600 rounded-lg"
+                    href="http://localhost:5174"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Admin Panel
+                  </a>
                 )}
               </>
             )}
