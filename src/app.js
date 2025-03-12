@@ -14,13 +14,13 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: corsOrigin,
+    origin: "http://localhost:5173",
     credentials: true,
   },
 });
 
 import errorHandler from './utils/errorHandler.js';
-import { corsOrigin } from './constants.js';
+
 import chatModel from './models/chat.model.js';
 
 // Route Imports
@@ -41,12 +41,17 @@ import codeRouter from './routes/code.router.js';
 import notificationModel from './models/notification.model.js';
 import userModel from './models/user.model.js';
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174"
+]
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: corsOrigin,
+    origin: allowedOrigins ,
     credentials: true,
   })
 );

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-export const corsOrigin = process.env.CORS_ORIGIN 
+
 
 export const port = process.env.PORT || 4000
 
@@ -26,3 +26,5 @@ export const razorpayKeyId = process.env.RAZORPAY_KEY_ID
 export const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET
 
 export const geminiApiKey = process.env.GEMINI_API_KEY
+
+export const allowedEmails = ["priyanjalsaxena7@gmail.com","priyanjal362@gmail.com"]

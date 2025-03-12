@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import sendMail from '../utils/sendEmail.js';
 import { instance } from 'three/examples/jsm/nodes/Nodes.js';
 import courseModel from '../models/course.model.js';
+import activityModel from '../models/activity.model.js';
 
 const registerUser = async function (req, res, next) {
   try {
@@ -106,6 +107,11 @@ const verifyEmail = async function (req, res, next) {
       user.verificationCode = undefined;
       user.verificationCodeExpiry = undefined;
       await user.save();
+      await activityModel.create({
+        type: "registration",
+        user: user._id,
+        description: `${user.name} is registered`
+      })
       return res.status(200).json({ message: 'Email Verified Successfully' });
     } else {
       return next(new ApiError(401, 'Invalid or Expired Code'));
