@@ -93,15 +93,15 @@ const Navbar = () => {
   async function handleMarkNotificationsRead() {
     try {
       let res = await notificationService.markAsRead();
-      console.log(res.data)
+      console.log(res.data);
 
       setnotificationCount(0);
-
-      
     } catch (error) {
       console.error("Error marking notifications as read:", error);
     }
   }
+
+  console.log(currentUser);
 
   return (
     <nav className={`shadow-lg ${darkMode ? "bg-gray-800" : "bg-white"}`}>
@@ -233,12 +233,27 @@ const Navbar = () => {
                     )}
                   </>
                 ) : (
-                  <button
-                    onClick={handleGoLive}
-                    className="px-3 py-2 bg-blue-600 rounded-lg"
-                  >
-                    Go Live
-                  </button>
+                  <>
+                    <button
+                      onClick={handleGoLive}
+                      className="px-3 py-2 bg-blue-600 rounded-lg"
+                    >
+                      Go Live
+                    </button>
+                    {[
+                      "priyanjalsaxena7@gmail.com",
+                      "priyanjal362@gmail.com",
+                    ].includes(currentUser?.email) && (
+                      <a
+                        className="px-3 py-2 bg-gray-600 rounded-lg"
+                        href="http://localhost:5174"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Admin Panel
+                      </a>
+                    )}
+                  </>
                 )}
               </>
             )}
