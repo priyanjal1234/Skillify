@@ -97,14 +97,7 @@ const InstructorDashboard = () => {
           </ul>
         </nav>
         <div className="mt-5 border-t pt-5">
-          <div
-            className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
-              darkMode ? "hover:bg-gray-700" : "hover:bg-gray-200"
-            }`}
-          >
-            <Bell size={20} />
-            Notifications
-          </div>
+          
 
           <Link className="block text-blue-600 mt-3" to={"/"}>
             Go back to home
