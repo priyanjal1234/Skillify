@@ -14,7 +14,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: 'http://localhost:5173',
     credentials: true,
   },
 });
@@ -27,31 +27,28 @@ import chatModel from './models/chat.model.js';
 import userRouter from './routes/user.router.js';
 import courseRouter from './routes/course.router.js';
 import orderRouter from './routes/order.router.js';
-import analyticsRouter from './routes/analytics.router.js';
+import analyticsRouter from './routes/analytics.router.js'
 import lessonRouter from './routes/lesson.router.js';
 import enrollmentRouter from './routes/enrollment.router.js';
 import quizRouter from './routes/quiz.router.js';
 import chatRouter from './routes/chat.router.js';
 import notificationRouter from './routes/notification.router.js';
-import resourceRouter from './routes/resource.router.js'
-import adminRouter from './routes/admin.router.js'
+import resourceRouter from './routes/resource.router.js';
+import adminRouter from './routes/admin.router.js';
 
 import getBotResponse from './utils/getBotResponse.js';
 import codeRouter from './routes/code.router.js';
 import notificationModel from './models/notification.model.js';
 import userModel from './models/user.model.js';
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174"
-]
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: allowedOrigins ,
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -155,9 +152,9 @@ app.use('/api/code', codeRouter);
 
 app.use('/api/notifications', notificationRouter);
 
-app.use("/api/resources",resourceRouter)
+app.use('/api/resources', resourceRouter);
 
-app.use("/api/admin",adminRouter)
+app.use('/api/admin', adminRouter);
 
 app.use(errorHandler);
 
