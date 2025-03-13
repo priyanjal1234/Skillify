@@ -49,6 +49,8 @@ const Navbar = () => {
       let readMessagesRes = await chatService.readChats(
         unreadMessages?.filteredMessages
       );
+
+      return readMessagesRes.data
     } catch (error) {
       if (
         error?.response?.data?.message ===
@@ -74,6 +76,7 @@ const Navbar = () => {
           return fetchUnreadNotificationsRes.data;
         } catch (error) {
           console.log(error?.response?.data?.message);
+          return false
         }
       },
     });
