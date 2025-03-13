@@ -93,15 +93,12 @@ const Navbar = () => {
   async function handleMarkNotificationsRead() {
     try {
       let res = await notificationService.markAsRead();
-      console.log(res.data);
 
       setnotificationCount(0);
     } catch (error) {
       console.error("Error marking notifications as read:", error);
     }
   }
-
-  console.log(currentUser);
 
   return (
     <nav className={`shadow-lg ${darkMode ? "bg-gray-800" : "bg-white"}`}>
