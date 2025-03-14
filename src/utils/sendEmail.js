@@ -12,7 +12,7 @@ async function sendMail(name,verificationCode,email) {
   let mailOptions = {
     from: 'Skillify Support',
     to: email,
-    subject: 'Verify your email for Learnify',
+    subject: 'Verify your email for Skillify',
     html: `<p>Hello ${name},</p>
                      <p>Thank you for registering with Skillify! Please verify your email address with the OTP given below:</p>
                      <p>Verification Code: ${verificationCode}</p>

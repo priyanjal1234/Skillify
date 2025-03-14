@@ -37,10 +37,7 @@ I will provide you with a set of frequently asked questions along with their cor
 ---
 
 **4️⃣ Can I get a refund after purchasing a course?**  
-📝 Answer: Refunds are available within **7 days** of purchase if you haven't accessed more than 10% of the course content. To request a refund:  
-1. Go to "My Purchases".  
-2. Select the course and click "Request Refund".  
-3. Our team will process your request within 3-5 business days.
+📝 Answer: It depends on the instructor who has created the course not on the application 
 
 ---
 
@@ -54,7 +51,53 @@ I will provide you with a set of frequently asked questions along with their cor
 
 **6️⃣ How do I take a quiz in a course?**  
 📝 Answer:  
-As you complete any lesson in Skillify, if there is any quiz associated with that lesson then the modal or popup will come which will ask you whether you want to take the quiz or not if you click on Take Quiz you will be redirected to the page where quiz questions will appear and you have to answer them 
+As you complete any lesson in Skillify, if there is any quiz associated with that lesson then a modal or popup will appear asking if you want to take the quiz. If you click "Take Quiz," you will be redirected to the quiz page where you can answer the questions.
+
+---
+
+**7️⃣ How can I create a new course on the LMS??**  
+📝 Answer: For creating the course on the LMS you need to acquire the role of the instructor, after that you will be provided with the complete instructor dashboard where you can create, read, update and delete courses.
+
+---
+
+**8️⃣ Can I access Skillify on mobile?**  
+📝 Answer: Yes! Skillify is fully optimized for mobile devices. You can also download our mobile app from the **Google Play Store** or **Apple App Store** for a better experience.
+
+---
+
+**9️⃣ What happens if I fail a quiz?**  
+📝 Answer: The LMS does not work on failing quiz mechanism, if the answer of any quiz question is wrong then it appears to be red and the submit or the next is disabled until you choose the correct option.
+
+---
+
+**🔟 How do I get a course completion certificate?**  
+📝 Answer: Once you complete all lessons and pass the final assessment:  
+1. Go to the "My Courses" section.  
+2. Select the completed course.  
+3. Click "Download Certificate."
+
+---
+
+**1️⃣1️⃣ How do I become an instructor on Skillify?**  
+📝 Answer: If you want to be an instructor, you can sign up or sign in as instructor from their respective pages.
+
+---
+
+**1️⃣2️⃣ Can I pause my course and continue later?**  
+📝 Answer: Yes! Your progress is automatically saved. You can pause anytime and resume from where you left off by visiting the "My Courses" section.
+
+---
+
+**1️⃣3️⃣ Is there a deadline to complete courses?**  
+📝 Answer: Most courses are self-paced, so you can complete them anytime. However, some courses with certifications may have a deadline, which will be mentioned in the course details
+
+---
+
+**1️⃣4️⃣ Can I interact with other students?**  
+📝 Answer: Yes! Skillify offers a discussion forum where you can:  
+- Ask questions.  
+- Share insights.  
+- Collaborate with other learners.
 
 ---
 
@@ -65,7 +108,6 @@ As you complete any lesson in Skillify, if there is any quiz associated with tha
 `;
 
 async function getBotResponse(userMessage) {
-   
   const genAI = new GoogleGenerativeAI(geminiApiKey);
   const model = genAI.getGenerativeModel({
     model: 'gemini-1.5-flash',
@@ -74,9 +116,8 @@ async function getBotResponse(userMessage) {
 
   try {
     const result = await model.generateContent(userMessage);
-    
-    
-    return result.response.text() || "No response generated.";
+
+    return result.response.text() || 'No response generated.';
   } catch (error) {
     console.error('Error generating response:', error);
     return "I'm sorry, but I couldn't process your request at the moment. Please try again.";

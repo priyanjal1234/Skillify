@@ -108,10 +108,10 @@ const verifyEmail = async function (req, res, next) {
       user.verificationCodeExpiry = undefined;
       await user.save();
       await activityModel.create({
-        type: "registration",
+        type: 'registration',
         user: user._id,
-        description: `${user.name} is registered`
-      })
+        description: `${user.name} is registered`,
+      });
       return res.status(200).json({ message: 'Email Verified Successfully' });
     } else {
       return next(new ApiError(401, 'Invalid or Expired Code'));
@@ -235,7 +235,9 @@ const updateLoggedinUser = async function (req, res, next) {
 const logoutUser = async function (req, res, next) {
   try {
     res.clearCookie('token');
-    await activityModel.deleteMany({})
+    await activityModel.deleteMany({
+      createdAt: { $lt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+    });
     return res.status(200).json({ message: 'Logout Success' });
   } catch (error) {
     return next(new ApiError(500, error.message || 'Error Logging Out User'));
@@ -437,5 +439,5 @@ export {
   completeLessons,
   getCompletedLessons,
   calculateProgress,
-  getInstructors
+  getInstructors,
 };
