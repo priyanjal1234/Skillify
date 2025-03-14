@@ -40,7 +40,7 @@ const ForgotPassword = () => {
     try {
       await userService.forgotPassword(email);
       setloading(false);
-      toast.success("Check Your Email for Verification");
+      toast.success("Check Your Email for Reset Link");
       navigate("/login/student")
     } catch (error) {
       setloading(false);

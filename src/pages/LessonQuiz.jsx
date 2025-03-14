@@ -90,6 +90,7 @@ const LessonQuiz = () => {
           </>
         ) : (
           <>
+            <div className="w-full flex justify-between">
             <h2
               className={`text-2xl font-bold ${
                 darkMode ? "text-white" : "text-gray-900"
@@ -98,6 +99,8 @@ const LessonQuiz = () => {
               Question {currentQuestionIndex + 1} /{" "}
               {currentQuiz?.questions?.length}
             </h2>
+              <h2 className="text-white">5 marks each</h2>
+            </div>
             <p
               className={`text-lg ${
                 darkMode ? "text-gray-300" : "text-gray-700"

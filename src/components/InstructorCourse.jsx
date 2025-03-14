@@ -8,6 +8,8 @@ import AddCourse from "./AddCourse";
 import { Link, useNavigate } from "react-router-dom";
 import courseService from "../services/Course";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import CourseRating from "./CourseRating";
 
 
 const InstructorCourse = ({ refetch }) => {
@@ -15,6 +17,8 @@ const InstructorCourse = ({ refetch }) => {
   const [errors, seterrors] = useState({});
   let { darkMode } = useContext(ThemeDataContext);
   let { instructorCourses } = useSelector((state) => state.course);
+
+  
 
   const [addCourseData, setaddCourseData] = useState({
     title: "",
@@ -151,7 +155,7 @@ const InstructorCourse = ({ refetch }) => {
                       {course?.studentsEnrolled?.length}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      {course?.rating?.totalRatings}
+                      <CourseRating courseId={course?._id}/>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       {new Date(course?.updatedAt).toLocaleDateString()}

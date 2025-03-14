@@ -78,26 +78,7 @@ const AddLessonPreviewSidebar = ({
               </p>
             </div>
           </div>
-          <div>
-            <h3
-              className={`text-sm font-medium ${
-                darkMode ? "text-gray-300" : "text-gray-700"
-              }`}
-            >
-              Resources
-            </h3>
-            <p className="text-gray-500 text-sm">No resources added</p>
-          </div>
-          <div>
-            <h3
-              className={`text-sm font-medium ${
-                darkMode ? "text-gray-300" : "text-gray-700"
-              }`}
-            >
-              Quiz Questions
-            </h3>
-            <p className="text-gray-500 text-sm">No quiz questions added</p>
-          </div>
+          
         </div>
       </div>
     </div>
