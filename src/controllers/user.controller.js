@@ -232,9 +232,10 @@ const updateLoggedinUser = async function (req, res, next) {
   }
 };
 
-const logoutUser = function (req, res, next) {
+const logoutUser = async function (req, res, next) {
   try {
     res.clearCookie('token');
+    await activityModel.deleteMany({})
     return res.status(200).json({ message: 'Logout Success' });
   } catch (error) {
     return next(new ApiError(500, error.message || 'Error Logging Out User'));
