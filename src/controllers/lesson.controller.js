@@ -2,6 +2,7 @@ import courseModel from '../models/course.model.js';
 import lessonModel from '../models/lesson.model.js';
 import ApiError from '../utils/ApiError.js';
 import imageKit from '../config/imageKitConfig.js';
+import uploadVideo from '../utils/uploadVideo.js';
 
 const createLesson = async function (req, res, next) {
   try {
@@ -25,17 +26,12 @@ const createLesson = async function (req, res, next) {
     const fileBuffer = req.file.buffer;
     const fileName = req.file.originalname;
 
-    const uploadResponse = await imageKit.upload({
-      file: fileBuffer,
-      fileName: fileName,
-      folder: '/videos',
-      resourceType: 'video',
-    });
+    const {videoUrl} = await uploadVideo(req.file)
 
     let lesson = await lessonModel.create({
       title,
       content,
-      videoUrl: uploadResponse.url,
+      videoUrl: videoUrl,
       course: course._id,
       duration,
     });

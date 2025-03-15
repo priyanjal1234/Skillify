@@ -28,3 +28,7 @@ export const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET
 export const geminiApiKey = process.env.GEMINI_API_KEY
 
 export const allowedEmails = ["priyanjal362@gmail.com"]
+
+export const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID
+
+export const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY

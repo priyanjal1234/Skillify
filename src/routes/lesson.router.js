@@ -9,7 +9,7 @@ import {
   getOneLesson,
   updateLesson,
 } from '../controllers/lesson.controller.js';
-import upload from '../config/multerConfig.js';
+const upload = multer()
 import asyncHandler from '../utils/asyncHandler.js';
 const router = express.Router();
 
@@ -21,7 +21,7 @@ router
   .post(
     isLoggedin,
     isInstructor,
-    imageKitUpload.single('lessonVideo'),
+    upload.single('lessonVideo'),
     asyncHandler(createLesson)
   );
 
