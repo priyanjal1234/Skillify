@@ -119,7 +119,7 @@ const CourseCard = ({ course }) => {
                 darkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
-              {Number(rating).toFixed(2)}
+              {Number(rating).toFixed(1)}
             </span>
             
           </div>
