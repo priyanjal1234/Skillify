@@ -6,7 +6,7 @@ import generateVerificationCode from '../utils/generateVerificationCode.js';
 import generateToken from '../utils/generateToken.js';
 import crypto from 'crypto';
 import sendMail from '../utils/sendEmail.js';
-import { instance } from 'three/examples/jsm/nodes/Nodes.js';
+
 import courseModel from '../models/course.model.js';
 import activityModel from '../models/activity.model.js';
 
