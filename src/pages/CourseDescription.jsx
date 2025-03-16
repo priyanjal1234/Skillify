@@ -217,7 +217,7 @@ const CourseDescription = () => {
                   >
                     <ShoppingCart className="h-5 w-5 mr-2" />
                     Enroll Now
-                    {loading && <span className="loader"></span>}
+                    {loading && <span className="loader ml-2"></span>}
                   </button>
                 </>
               )}
