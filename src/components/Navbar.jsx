@@ -44,6 +44,8 @@ const Navbar = () => {
     enabled: isLoggedin,
   });
 
+  console.log(currentUser)
+
   async function handleMessageReadability() {
     try {
       let readMessagesRes = await chatService.readChats(
