@@ -67,7 +67,7 @@ const InstructorRegister = () => {
         darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
       } min-h-screen`}
     >
-      <Navbar />
+      
 
       <div className="flex justify-center items-center min-h-screen">
         <div className="max-w-md w-full p-6">
