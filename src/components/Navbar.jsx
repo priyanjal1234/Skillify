@@ -145,13 +145,13 @@ const Navbar = () => {
                   to={"/register/student"}
                   className={`text-sm ${
                     window.location.href ===
-                      "http://localhost:5173/register/student" ||
+                      "https://skillify-frontend-alpha.vercel.app/register/student" ||
                     window.location.href ===
-                      "http://localhost:5173/login/student" ||
+                      "https://skillify-frontend-alpha.vercel.app/login/student" ||
                     window.location.href ===
-                      "http://localhost:5173/register/instructor" ||
+                      "https://skillify-frontend-alpha.vercel.app/register/instructor" ||
                     window.location.href ===
-                      "http://localhost:5173/login/instructor"
+                      "https://skillify-frontend-alpha.vercel.app/login/instructor"
                       ? "hidden"
                       : "block"
                   } font-medium ${
@@ -167,13 +167,13 @@ const Navbar = () => {
                   to={"/login/student"}
                   className={`text-sm ${
                     window.location.href ===
-                      "http://localhost:5173/register/student" ||
+                      "https://skillify-frontend-alpha.vercel.app/register/student" ||
                     window.location.href ===
-                      "http://localhost:5173/login/student" ||
+                      "https://skillify-frontend-alpha.vercel.app/login/student" ||
                     window.location.href ===
-                      "http://localhost:5173/register/instructor" ||
+                      "https://skillify-frontend-alpha.vercel.app/register/instructor" ||
                     window.location.href ===
-                      "http://localhost:5173/login/instructor"
+                      "https://skillify-frontend-alpha.vercel.app/login/instructor"
                       ? "hidden"
                       : "block"
                   } font-medium ${
