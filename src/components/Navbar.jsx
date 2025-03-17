@@ -44,7 +44,7 @@ const Navbar = () => {
     enabled: isLoggedin,
   });
 
-  console.log(currentUser)
+ 
 
   async function handleMessageReadability() {
     try {
