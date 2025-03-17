@@ -43,7 +43,7 @@ const Home = () => {
         return {};
       }
     },
-    enabled: isLoggedin,
+    
   });
 
   useQuery({
@@ -57,7 +57,7 @@ const Home = () => {
         return {};
       }
     },
-    enabled: isLoggedin,
+    
   });
 
   useQuery({
