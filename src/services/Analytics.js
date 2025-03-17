@@ -3,7 +3,7 @@ import api from "./api";
 class AnalyticsService {
   constructor() {
     this.api = api;
-    this.baseUrl = "http://localhost:3000/api/analytics";
+    this.baseUrl = "https://skillify-lms.xyz/api/analytics";
   }
 
   async getInstructorAnalytics(instructorId) {

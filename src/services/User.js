@@ -3,7 +3,7 @@ import api from "./api";
 class UserService {
   constructor() {
     this.api = api;
-    this.baseUrl = "http://localhost:3000/api/users";
+    this.baseUrl = "https://skillify-lms.xyz/api/users";
   }
 
   async createAccount(registerData) {
