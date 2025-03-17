@@ -51,7 +51,7 @@ const StudentRegister = () => {
 
   async function handleGoogleLogin() {
     try {
-      window.open("http://localhost:3000/api/users/google", "_self");
+      window.open("https://skillify-lms.xyz/api/users/google", "_self");
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Error logging in with Google"
