@@ -54,7 +54,7 @@ const InstructorLogin = () => {
         darkMode ? "bg-gray-900 text-white" : "bg-indigo-100 text-gray-900"
       } min-h-screen`}
     >
-      <Navbar />
+    
 
       <div className="py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
         <div className="max-w-md w-full">
