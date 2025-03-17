@@ -23,10 +23,10 @@ const Home = () => {
     connectSocket()
   },[])
 
-  useEffect(() => {
-    const cookie = document.cookie;
-    dispatch(setLoggedin(!!cookie));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   const cookie = document.cookie;
+  //   dispatch(setLoggedin(!!cookie));
+  // }, [dispatch]);
 
   useQuery({
     queryKey: ["loggedinUser"],
