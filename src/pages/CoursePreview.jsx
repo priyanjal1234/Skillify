@@ -14,6 +14,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import courseService from "../services/Course";
 import { toast } from "react-toastify";
 import { ThemeDataContext } from "../context/ThemeContext";
+import { useQuery } from "@tanstack/react-query";
 
 const CoursePreview = () => {
   let { courseId } = useParams();
@@ -21,6 +22,7 @@ const CoursePreview = () => {
   let navigate = useNavigate();
   let { instructorCourses } = useSelector((state) => state.course);
   const [courseStatus, setcourseStatus] = useState("");
+  const [courseRating, setcourseRating] = useState(0)
 
   useEffect(() => {
     async function fetchCourse() {
@@ -29,6 +31,23 @@ const CoursePreview = () => {
     }
     fetchCourse();
   }, [courseId]);
+
+  useQuery({
+    queryKey: ["fetchCourseRating",courseId],
+    queryFn: async function() {
+      try {
+        let ratingRes = await courseService.getCourseRating(courseId)
+        if(ratingRes.status === 200) {
+          setcourseRating(ratingRes.data)
+        }
+
+        return true
+       } catch (error) {
+        console.log(error?.response?.data?.message)
+        return false
+      }
+    }
+  })
 
   let specificCourse =
     Array.isArray(instructorCourses) &&
@@ -206,7 +225,7 @@ const CoursePreview = () => {
                 darkMode={darkMode}
                 icon={Star}
                 label="Rating"
-                value={specificCourse?.rating?.totalRatings}
+                value={Number(courseRating).toFixed(1)}
               />
             </div>
           </div>
