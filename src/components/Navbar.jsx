@@ -247,7 +247,7 @@ const Navbar = () => {
                 {["priyanjal362@gmail.com"].includes(currentUser?.email) && (
                   <a
                     className="px-3 py-2 bg-gray-600 rounded-lg"
-                    href="http://localhost:5174"
+                    href="https://skillify-admin-dashboard.vercel.app"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
