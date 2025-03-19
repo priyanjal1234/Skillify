@@ -3,7 +3,7 @@ import api from "./api";
 class ResourceService {
   constructor() {
     this.api = api;
-    this.baseUrl = "https://skillify-lms.xyz/api/resources";
+    this.baseUrl = "https://skillify-backend.onrender.com/api/resources";
   }
 
   async createResource(data, lessonId) {
