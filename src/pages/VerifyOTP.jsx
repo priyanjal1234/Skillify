@@ -37,11 +37,10 @@ const VerifyOTP = () => {
     }
 
     try {
-      await userService.verifyEmail(values);
-      toast.success("Email Verified Successfully");
+      await userService.verifyOTP(values);
+      toast.success("You are verified to reset your password");
       setloading(false)
-      dispatch(setLoggedin(true));
-      navigate("/");
+      navigate("/reset-password");
     } catch (error) {
       setloading(false)
       toast.error(error?.response?.data?.message);
