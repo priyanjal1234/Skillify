@@ -1,4 +1,4 @@
-import userModel from '../models/user.model.js';
+Yimport userModel from '../models/user.model.js';
 import ApiError from '../utils/ApiError.js';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
@@ -102,7 +102,12 @@ const verifyEmail = async function (req, res, next) {
       user.verificationCodeExpiry > Date.now()
     ) {
       let token = generateToken(user.name, user.email);
-      res.cookie('token', token);
+      res.cookie('token', token,{
+
+httpOnly: true,
+  secure: true,
+  sameSite: 'None',
+	});
       user.isVerified = true;
       user.verificationCode = undefined;
       user.verificationCodeExpiry = undefined;
@@ -160,7 +165,12 @@ const loginUser = async function (req, res, next) {
     let token = generateToken(user.name, user.email);
 
     // Set cookie with security options
-    res.cookie('token', token);
+    res.cookie('token', token,{
+httpOnly: true,
+  secure: true,
+  sameSite: 'None',
+
+});
 
     return res.status(200).json({ message: 'Login Success', token });
   } catch (error) {
@@ -257,8 +267,8 @@ const forgotPassword = async function (req, res, next) {
       return next(new ApiError(404, 'User with this email not found'));
     }
 
-    const resettoken = crypto.randomBytes(10).toString('hex');
-    const reseturl = `http://localhost:5173/reset-password/${resettoken}`;
+    const resettoken = generateVerificationCode();
+
 
     user.resetPasswordToken = resettoken;
     await user.save();
@@ -272,18 +282,18 @@ const forgotPassword = async function (req, res, next) {
     });
 
     let mailOptions = {
-      from: 'Learnify Support',
+      from: 'Skillify Support',
       to: email,
       subject: 'Password Reset',
       html: `<p>Hello ${user.name},</p>
-            <p>Click here to reset your password: ${reseturl}</p>`,
+            <p>OTP to reset password: ${resettoken}</p>`,
     };
 
     await transporter.sendMail(mailOptions);
 
     return res
       .status(200)
-      .json({ message: 'Check your email for reset password link' });
+      .json({ message: 'Check your email for reset password OTP' });
   } catch (error) {
     return next(
       new ApiError(
@@ -294,20 +304,51 @@ const forgotPassword = async function (req, res, next) {
   }
 };
 
+const verifyOTP = async function(req,res,next) {
+
+	try {
+ let {email,otp} = req.body
+        if(!otp) return next(new ApiError(400,"OTP is required"))
+        let user = await userModel.findOne({email})
+        if(!user) return next(new ApiError(404,"User with this email not found"))
+        if(Number(user.resetPasswordToken) === Number(otp)) {
+        return res.status(200).json({message: "OTP verified"})
+
+
+}
+
+else  {
+
+return next(new ApiError(401,"OTP is invalid"))
+
+}
+
+
+}
+
+catch {
+
+
+return next(new ApiError(500, error instanceOf Error ? error.message : "Error validating OTP"))
+
+
+
+}
+
+}
+
 const resetPassword = async function (req, res, next) {
   try {
-    let { token } = req.params;
+    
     let { password } = req.body;
 
     if (!password) {
       return next(new ApiError(400, 'Password is required'));
     }
 
-    let user = await userModel.findOne({ resetPasswordToken: token });
+    
 
-    if (!user) {
-      return next(new ApiError(404, 'User not found with this reset token'));
-    }
+    
     let newSalt = await bcrypt.genSalt(10);
     let newHash = await bcrypt.hash(password, newSalt);
     user.password = newHash;
@@ -434,6 +475,7 @@ export {
   getLoggedinUser,
   logoutUser,
   forgotPassword,
+verifyOTP
   resetPassword,
   updateLoggedinUser,
   completeLessons,
