@@ -40,8 +40,8 @@ const ForgotPassword = () => {
     try {
       await userService.forgotPassword(email);
       setloading(false);
-      toast.success("Check Your Email for Reset Link");
-      navigate("/login/student")
+      toast.success("Check Your Email for Password Reset OTP");
+      navigate("/verify-otp")
     } catch (error) {
       setloading(false);
       toast.error(error?.response?.data?.message);
