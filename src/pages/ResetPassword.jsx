@@ -10,7 +10,7 @@ import userService from "../services/User";
 import { toast } from "react-toastify";
 
 const ResetPassword = () => {
-  let { token } = useParams();
+  
   const [password, setPassword] = useState("");
   const [loading, setloading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -42,7 +42,7 @@ const ResetPassword = () => {
     try {
       const parsedData = resetPasswordSchema.parse({ password });
   
-      await userService.resetPassword(password, token);
+      await userService.resetPassword(password);
       toast.success("Password Reset Successfully");
       navigate("/login/student");
     } catch (error) {
