@@ -475,7 +475,7 @@ export {
   getLoggedinUser,
   logoutUser,
   forgotPassword,
-verifyOTP
+verifyOTP,
   resetPassword,
   updateLoggedinUser,
   completeLessons,
