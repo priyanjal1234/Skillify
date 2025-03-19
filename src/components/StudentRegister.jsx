@@ -51,7 +51,7 @@ const StudentRegister = () => {
 
   async function handleGoogleLogin() {
     try {
-      window.open("https://skillify-lms.xyz/api/users/google", "_self");
+      window.open("https://skillify-backend.onrender.com/api/users/google", "_self");
       dispatch(setLoggedin(true))
     } catch (error) {
       toast.error(
