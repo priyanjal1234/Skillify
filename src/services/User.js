@@ -99,10 +99,10 @@ class UserService {
     } 
   }
 
-  async resetPassword(password, token) {
+  async resetPassword(password) {
     try {
       return await this.api.post(
-        `${this.baseUrl}/reset-password/${token}`,
+        `${this.baseUrl}/reset-password`,
         { password },
         { withCredentials: true }
       );
