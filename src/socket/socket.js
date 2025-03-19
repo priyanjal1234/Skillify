@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const socket = io("https://skillify-lms.xyz",{
+const socket = io("https://skillify-backend.onrender.com",{
     autoConnect: false,
     withCredentials: true
 })
