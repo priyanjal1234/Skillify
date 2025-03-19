@@ -6,6 +6,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/ForgotPassword";
+import VerifyOTP from "./pages/VerifyOTP"
 import ResetPassword from "./pages/ResetPassword";
 import EditProfile from "./pages/EditProfile";
 import CoursePreview from "./pages/CoursePreview";
