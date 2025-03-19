@@ -3,7 +3,7 @@ import {
   calculateProgress,
   completeLessons,
   forgotPassword,
-verifyOTP
+verifyOTP,
   getCompletedLessons,
   getInstructors,
   getLoggedinUser,
