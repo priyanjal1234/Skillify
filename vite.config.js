@@ -8,5 +8,12 @@ export default defineConfig({
   define: {
     global: {}
   },
- 
+ build: {
+    outDir: 'dist', // Ensure this matches Vercel's expected output directory
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+      },
+    },
+  },
 })
