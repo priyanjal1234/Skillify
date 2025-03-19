@@ -88,6 +88,17 @@ class UserService {
     }
   }
 
+  async verifyOTP(data) {
+    try {
+      return await this.api.post(
+        `${this.baseUrl}/validate-reset-otp`,data,{withCredentials: true}
+      )
+    }
+    catch {
+      throw error 
+    } 
+  }
+
   async resetPassword(password, token) {
     try {
       return await this.api.post(
