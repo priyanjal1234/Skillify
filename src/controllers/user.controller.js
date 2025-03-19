@@ -329,7 +329,7 @@ return next(new ApiError(401,"OTP is invalid"))
 catch(error) {
 
 
-return next(new ApiError(500, error instanceOf Error ? error.message : "Error validating OTP"))
+return next(new ApiError(500, error instanceof Error ? error.message : "Error validating OTP"));
 
 
 
