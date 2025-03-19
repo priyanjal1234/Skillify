@@ -2,7 +2,7 @@ import { CheckCircle2, Mail, ShieldCheck } from "lucide-react";
 import React, { useContext, useState } from "react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import useFormHandler from "../hooks/useFormHandler";
-import verifyEmailSchema from "../schemas/verifyEmailSchema";
+import verifyOTPSchema from "../schemas/verifyOTPSchema";
 import FormField from "../components/FormField";
 import SubmitBtn from "../components/SubmitBtn";
 import { toast } from "react-toastify";
@@ -20,15 +20,15 @@ const VerifyOTP = () => {
 
   const { values, handleChange, errors } = useFormHandler(
     { email: "", otp: "" },
-    verifyEmailSchema
+    verifyOTPSchema
   );
 
-  async function handleEmailVerification(e) {
+  async function handleOTPVerification(e) {
     e.preventDefault();
 
     setloading(true)
 
-    const parsedData = verifyEmailSchema.safeParse(values);
+    const parsedData = verifyOTPSchema.safeParse(values);
     if (!parsedData.success) {
       setloading(false)
       const firstError = parsedData.error.issues[0]?.message;
@@ -48,14 +48,7 @@ const VerifyOTP = () => {
     }
   }
 
-  async function handleResendCode() {
-    try {
-      await userService.resendCode(values.email);
-      toast.success("Check Your Email For Verification Code");
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
-    }
-  }
+  
 
   return (
     <div
@@ -91,7 +84,7 @@ const VerifyOTP = () => {
             darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
           }`}
         >
-          <form onSubmit={handleEmailVerification} className="space-y-6">
+          <form onSubmit={handleOTPVerification} className="space-y-6">
             <FormField
               label="Email Address"
               icon={Mail}
@@ -108,10 +101,10 @@ const VerifyOTP = () => {
               icon={ShieldCheck}
               type="number"
               placeholder="Enter 6 digit OTP"
-              name="verificationCode"
-              value={values.verificationCode}
+              name="otp"
+              value={values.otp}
               handleChange={handleChange}
-              error={errors.verificationCode}
+              error={errors.otp}
             />
 
             <div>
@@ -119,14 +112,7 @@ const VerifyOTP = () => {
             </div>
           </form>
 
-          <div className="mt-6 text-center">
-            <button
-              className="text-indigo-600 hover:text-indigo-500 text-sm font-medium"
-              onClick={handleResendCode}
-            >
-              Didn't receive the code? Resend
-            </button>
-          </div>
+          
         </div>
 
         <div className="mt-6 text-center text-sm">
