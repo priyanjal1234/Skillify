@@ -2,7 +2,7 @@
   "routes": [
     {
       "src": "/reset-password/.*",
-      "dest": "/index.html"
+      "dest": "index.html"
     },
   ]
 }
