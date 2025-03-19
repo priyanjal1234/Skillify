@@ -3,7 +3,7 @@ import api from "./api";
 class NotificationService {
   constructor() {
     this.api = api;
-    this.baseUrl = "https://skillify-lms.xyz/api/notifications";
+    this.baseUrl = "https://skillify-backend.onrender.com/api/notifications";
   }
 
   async getUnreadNotifications() {
