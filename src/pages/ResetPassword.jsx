@@ -1,4 +1,4 @@
-import { ArrowLeft, Lock, Shield } from "lucide-react";
+import { ArrowLeft, Lock, Shield,Mail } from "lucide-react";
 import React, { useState, useContext } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import FormField from "../components/FormField";
