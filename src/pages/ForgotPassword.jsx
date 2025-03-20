@@ -94,7 +94,7 @@ const ForgotPassword = () => {
             />
 
             <div>
-              <SubmitBtn btnText="Send Reset Link" loading={loading} />
+              <SubmitBtn btnText="Get OTP" loading={loading} />
             </div>
           </form>
 
