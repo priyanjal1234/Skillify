@@ -27,7 +27,7 @@ const ResetPassword = () => {
       setemail(value)
     }
     else if(name === "password") {
-      setpassword(value)
+      setPassword(value)
     }
 
     try {
