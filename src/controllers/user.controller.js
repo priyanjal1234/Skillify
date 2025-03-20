@@ -340,13 +340,18 @@ return next(new ApiError(500, error instanceof Error ? error.message : "Error va
 const resetPassword = async function (req, res, next) {
   try {
     
-    let { password } = req.body;
+    let { email, password } = req.body;
 
-    if (!password) {
-      return next(new ApiError(400, 'Password is required'));
+    if (!email || !password) {
+      return next(new ApiError(400, 'All Fields are required'));
     }
 
-    
+    let user = await userModel.findOne({email})
+
+	if (!user) {
+      return next(new ApiError(404, 'User with this email not found'));
+    }
+
 
     
     let newSalt = await bcrypt.genSalt(10);
