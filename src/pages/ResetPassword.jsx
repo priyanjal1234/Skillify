@@ -10,7 +10,7 @@ import userService from "../services/User";
 import { toast } from "react-toastify";
 
 const ResetPassword = () => {
-  
+  const [email,setemail] = useState("")
   const [password, setPassword] = useState("");
   const [loading, setloading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -21,8 +21,14 @@ const ResetPassword = () => {
   let navigate = useNavigate();
 
   function handleChange(e) {
-    let newPassword = e.target.value;
-    setPassword(newPassword);
+     let {name,value} = e.target
+
+    if(name === "email") {
+      setemail(value)
+    }
+    else if(name === "password") {
+      setpassword(value)
+    }
 
     try {
       resetPasswordSchema
@@ -40,9 +46,9 @@ const ResetPassword = () => {
     e.preventDefault();
   
     try {
-      const parsedData = resetPasswordSchema.parse({ password });
+      const parsedData = resetPasswordSchema.parse({ email, password });
   
-      await userService.resetPassword(password);
+      await userService.resetPassword(email,password);
       toast.success("Password Reset Successfully");
       navigate("/login/student");
     } catch (error) {
@@ -91,6 +97,18 @@ const ResetPassword = () => {
         >
           <form onSubmit={handleResetPassword} className="space-y-6">
             <FormField
+              label="Email"
+              icon={Mail}
+              type="email"
+              placeholder="you@example.com"
+              name="email"
+              value={email}
+              handleChange={handleChange}
+              error={error.email}
+            />
+
+            
+            <FormField
               label="New Password"
               icon={Lock}
               type={showPassword ? "text" : "password"}
@@ -98,7 +116,7 @@ const ResetPassword = () => {
               name="password"
               value={password}
               handleChange={handleChange}
-              error={error}
+              error={error.password}
             />
 
             <div>
