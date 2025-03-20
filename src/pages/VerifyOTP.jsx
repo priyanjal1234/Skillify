@@ -72,10 +72,8 @@ const VerifyOTP = () => {
               />
             </div>
           </div>
-          <h2 className="text-4xl font-extrabold mb-2">Verify Your Email</h2>
-          <p className="text-lg">
-            We've sent a verification code to your email
-          </p>
+          <h2 className="text-4xl font-extrabold mb-2">Enter OTP for Password Reset</h2>
+          
         </div>
 
         <div
