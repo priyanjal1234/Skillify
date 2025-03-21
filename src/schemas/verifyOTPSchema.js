@@ -4,7 +4,7 @@ const verifyOTPSchema = z.object({
   email: z.string().email("Invalid email address"),
   otp: z
     .string()
-    .regex(/^\d{6}$/, "Verification code must be a 6-digit number"),
+    .regex(/^\d{6}$/, "OTP must be a 6-digit number"),
 });
 
 export default verifyOTPSchema;
