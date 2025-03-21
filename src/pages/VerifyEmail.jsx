@@ -115,7 +115,7 @@ const VerifyEmail = () => {
             />
 
             <div>
-              <SubmitBtn btnText="Verify Email" />
+              <SubmitBtn btnText="Verify Email" loading = {loading} />
             </div>
           </form>
 
