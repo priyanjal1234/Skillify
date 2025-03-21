@@ -105,7 +105,7 @@ const VerifyOTP = () => {
             />
 
             <div>
-              <SubmitBtn btnText="Verify OTP" />
+              <SubmitBtn btnText="Verify OTP" loading = {loading} />
             </div>
           </form>
 
