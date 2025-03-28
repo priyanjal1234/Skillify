@@ -2,20 +2,23 @@ import { BookOpen } from "lucide-react";
 import React, { useContext } from "react";
 import { ThemeDataContext } from "../context/ThemeContext";
 
-const AnalyticCard = ({ heading, icon: Icon, value }) => {
+const AnalyticCard = ({
+  heading ,
+  icon: Icon,
+  value,
+}) => {
   const { darkMode } = useContext(ThemeDataContext);
 
   return (
     <div
-      className={`
-        ${darkMode ? "bg-gray-800" : "bg-white"}
-        p-6 rounded-xl shadow-sm w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg
-        flex flex-col justify-between transition-all
-      `}
+      className={
+        `${darkMode ? "bg-gray-800" : "bg-white"}
+        p-6 rounded-xl shadow-sm
+        w-full sm:w-96`
+      }
     >
-      {/* Header Section */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className={`${darkMode ? "text-gray-400" : "text-gray-500"} text-sm sm:text-base`}>
+        <h3 className={`${darkMode ? "text-gray-400" : "text-gray-500"}`}>
           {heading}
         </h3>
         <Icon
@@ -24,19 +27,15 @@ const AnalyticCard = ({ heading, icon: Icon, value }) => {
           }`}
         />
       </div>
-
-      {/* Value Display */}
       <p
-        className={`text-2xl sm:text-3xl font-bold ${
+        className={`text-3xl font-bold ${
           darkMode ? "text-white" : "text-gray-900"
         }`}
       >
         {value}
       </p>
-
-      {/* Growth Indicator */}
       <p
-        className={`mt-2 text-xs sm:text-sm ${
+        className={`mt-2 text-sm ${
           darkMode ? "text-green-400" : "text-green-600"
         }`}
       >

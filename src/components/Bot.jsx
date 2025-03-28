@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import Navbar from "../components/Navbar";
+import { toast } from "react-toastify";
 import socket, { connectSocket, disconnectSocket } from "../socket/socket";
 
 const initialMessages = [
@@ -15,24 +16,24 @@ const initialMessages = [
 const Bot = () => {
   const { darkMode } = useContext(ThemeDataContext);
   const [messages, setMessages] = useState(initialMessages);
-  const [inputVal, setInputVal] = useState("");
+  const [inputVal, setinputVal] = useState("");
 
   useEffect(() => {
     connectSocket();
-    socket.on("bot-reply", (msg) => {
+    socket.on("bot-reply", function (msg) {
       setMessages((prev) => [...prev, { sender: "bot", text: msg }]);
     });
 
     return () => {
-      disconnectSocket();
-    };
+      disconnectSocket()
+    }
   }, []);
 
   function handleSendMessage() {
     if (inputVal.trim() !== "") {
       setMessages((prev) => [...prev, { sender: "user", text: inputVal }]);
       socket.emit("student-message", inputVal);
-      setInputVal("");
+      setinputVal("");
     }
   }
 
@@ -44,13 +45,11 @@ const Bot = () => {
     >
       <Navbar />
 
-      {/* Chat Container */}
-      <div className="flex-grow container mx-auto px-4 py-6 flex flex-col items-center">
-        {/* Messages Box */}
+      <div className="flex-grow container mx-auto px-4 py-6 flex flex-col">
         <div
-          className={`w-full max-w-3xl flex-grow overflow-y-auto p-4 rounded-md shadow-md 
-          ${darkMode ? "bg-gray-800" : "bg-gray-100"}`}
-          style={{ maxHeight: "70vh" }}
+          className={`flex-grow overflow-y-auto p-4 rounded-md ${
+            darkMode ? "bg-gray-800" : "bg-gray-100"
+          }`}
         >
           {messages.map((message, idx) => (
             <div
@@ -60,8 +59,7 @@ const Bot = () => {
               }`}
             >
               <div
-                className={`p-3 rounded-lg max-w-[75%] sm:max-w-[60%] md:max-w-[50%] lg:max-w-[40%] 
-                ${
+                className={`p-3 rounded-lg max-w-xs md:max-w-sm ${
                   message.sender === "bot"
                     ? darkMode
                       ? "bg-gray-700 text-white"
@@ -75,19 +73,17 @@ const Bot = () => {
           ))}
         </div>
 
-        {/* Input Field */}
-        <div className="w-full max-w-3xl mt-4 flex sticky bottom-0 bg-white dark:bg-gray-900 py-3 px-4 rounded-md">
+        <div className="mt-4 flex sticky bottom-0">
           <input
             type="text"
-            className={`flex-grow px-4 py-2 rounded-l-md border focus:outline-none 
-            ${
+            className={`flex-grow px-4 py-2 rounded-l-md border focus:outline-none ${
               darkMode
                 ? "bg-gray-700 border-gray-600 text-white"
                 : "bg-white border-gray-300 text-gray-900"
             }`}
             placeholder="Type your message..."
             value={inputVal}
-            onChange={(e) => setInputVal(e.target.value)}
+            onChange={(e) => setinputVal(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
           />
           <button

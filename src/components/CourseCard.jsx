@@ -10,16 +10,16 @@ import courseService from "../services/Course";
 const CourseCard = ({ course }) => {
   let { darkMode } = useContext(ThemeDataContext);
   let { currentUser, isLoggedin } = useSelector((state) => state.user);
-  const [rating, setrating] = useState(0);
+  const [rating, setRating] = useState(0);
 
   useQuery({
-    queryKey: ["fetchCourseRating",course?._id],
+    queryKey: ["fetchCourseRating", course?._id],
     queryFn: async function () {
       try {
         let getRatingRes = await courseService.getCourseRating(course?._id);
 
         if (getRatingRes.status === 200) {
-          setrating(Number(getRatingRes.data));
+          setRating(Number(getRatingRes.data));
         }
 
         return getRatingRes.data;
@@ -33,9 +33,7 @@ const CourseCard = ({ course }) => {
 
   return (
     <div
-      className={`${
-        darkMode ? "bg-gray-800" : "bg-white"
-      } w-[400px] h-fit rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300`}
+      className={`${darkMode ? "bg-gray-800" : "bg-white"} w-[400px] h-fit rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300`}
     >
       {/* Course Thumbnail */}
       {course?.thumbnail !== "" && (
@@ -121,7 +119,6 @@ const CourseCard = ({ course }) => {
             >
               {Number(rating).toFixed(1)}
             </span>
-            
           </div>
           <Link
             to={`/course/${course?._id}`}
@@ -139,7 +136,7 @@ const CourseCard = ({ course }) => {
         {course?.studentsEnrolled?.includes(currentUser?._id) && isLoggedin ? (
           <Link
             to={`/classroom/${course?._id}`}
-            className={`w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center`}
+            className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center"
           >
             Go to Classroom
           </Link>
