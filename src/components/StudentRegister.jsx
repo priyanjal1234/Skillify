@@ -2,8 +2,9 @@ import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import FormField from "./FormField";
 import SubmitBtn from "./SubmitBtn";
-import { BookOpen, User, Mail, Lock } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
+import { User, Mail, Lock } from "lucide-react";
 import Terms from "./Terms";
 import useFormHandler from "../hooks/useFormHandler";
 import registerSchema from "../schemas/registerSchema";
@@ -13,7 +14,7 @@ import { useDispatch } from "react-redux";
 import { setLoggedin } from "../redux/reducers/UserReducer";
 
 const StudentRegister = () => {
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { darkMode } = useContext(ThemeDataContext);
   let navigate = useNavigate();
   let dispatch = useDispatch();
@@ -25,11 +26,11 @@ const StudentRegister = () => {
 
   async function handleRegisterSubmit(e) {
     e.preventDefault();
-    setloading(true);
+    setLoading(true);
     const parsedData = registerSchema.safeParse(values);
 
     if (!parsedData.success) {
-      setloading(false);
+      setLoading(false);
       const firstError = parsedData.error.issues[0]?.message;
       toast.error(firstError);
       return;
@@ -38,10 +39,10 @@ const StudentRegister = () => {
     try {
       await userService.createAccount(values);
       toast.success("Check Your Email For Email Verification");
-      setloading(false);
+      setLoading(false);
       navigate("/verify-email");
     } catch (error) {
-      setloading(false);
+      setLoading(false);
       toast.error(error?.response?.data?.message || "Error Registering User");
     }
   }
@@ -63,12 +64,15 @@ const StudentRegister = () => {
         darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
       } min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8`}
     >
-      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl">
+      <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl px-6 py-6 sm:py-8 md:py-10 shadow-2xl rounded-2xl transition-all duration-200
+        ${darkMode ? "bg-gray-800" : "bg-white"}
+      ">
+        {/* Logo & Title */}
         <div className="text-center mb-4 sm:mb-6">
-          <div className="flex justify-center mb-3 sm:mb-4">
+          <div className="flex justify-center mb-2 sm:mb-4">
             <div
-              className={`p-3 rounded-full shadow-lg ${
-                darkMode ? "bg-gray-800" : "bg-white"
+              className={`p-2 sm:p-3 rounded-full shadow-lg ${
+                darkMode ? "bg-gray-700" : "bg-white"
               }`}
             >
               <BookOpen
@@ -78,97 +82,81 @@ const StudentRegister = () => {
               />
             </div>
           </div>
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold">
-            Join Skillify
-          </h2>
-          <p className="text-xs sm:text-sm md:text-base text-gray-400">
-            Start your learning journey today
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold">Join Skillify</h2>
+          <p className="text-xs sm:text-sm text-gray-400">Start your learning journey today</p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleRegisterSubmit} className="space-y-3 sm:space-y-4">
+          <FormField
+            label="Full Name"
+            icon={User}
+            type="text"
+            placeholder="John Doe"
+            name="name"
+            value={values.name}
+            handleChange={handleChange}
+            error={errors.name}
+          />
+
+          <FormField
+            label="Email Address"
+            icon={Mail}
+            type="email"
+            placeholder="you@example.com"
+            name="email"
+            value={values.email}
+            handleChange={handleChange}
+            error={errors.email}
+          />
+
+          <FormField
+            label="Password"
+            icon={Lock}
+            type="password"
+            placeholder="••••••••"
+            name="password"
+            value={values.password}
+            handleChange={handleChange}
+            error={errors.password}
+          />
+
+          <SubmitBtn loading={loading} btnText="Create Account" />
+
+          {/* Google Login Button */}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center space-x-2 sm:space-x-3 border-2 rounded-lg sm:rounded-xl py-2 sm:py-3 transition duration-200
+            dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700
+            border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+          >
+            <svg className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 24 24">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+            </svg>
+            <span className="text-xs sm:text-sm font-medium">Continue with Google</span>
+          </button>
+        </form>
+
+        {/* Links */}
+        <div className="mt-4 sm:mt-6 text-center text-xs sm:text-sm text-gray-400">
+          <p>
+            Already have an account?{" "}
+            <Link to="/login/student" className="text-indigo-500 hover:text-indigo-400">
+              Sign in
+            </Link>
+          </p>
+          <p>
+            Want to be an Instructor?{" "}
+            <Link to="/register/instructor" className="text-indigo-500 hover:text-indigo-400">
+              Sign Up as Instructor
+            </Link>
           </p>
         </div>
-
-        <div
-          className={`py-5 px-5 sm:px-6 md:px-8 shadow-2xl rounded-2xl ${
-            darkMode ? "bg-gray-800" : "bg-white"
-          }`}
-        >
-          <form onSubmit={handleRegisterSubmit} className="space-y-3 sm:space-y-5">
-            <FormField
-              label="Full Name"
-              icon={User}
-              type="text"
-              placeholder="John Doe"
-              name="name"
-              value={values.name}
-              handleChange={handleChange}
-              error={errors.name}
-            />
-
-            <FormField
-              label="Email Address"
-              icon={Mail}
-              type="email"
-              placeholder="you@example.com"
-              name="email"
-              value={values.email}
-              handleChange={handleChange}
-              error={errors.email}
-            />
-
-            <FormField
-              label="Password"
-              icon={Lock}
-              type="password"
-              placeholder="••••••••"
-              name="password"
-              value={values.password}
-              handleChange={handleChange}
-              error={errors.password}
-            />
-
-            <SubmitBtn loading={loading} btnText="Create Account" />
-
-            {/* Google Button with Adjustments for Mobile */}
-            <button
-              type="button"
-              onClick={handleGoogleLogin}
-              className="w-full flex items-center justify-center space-x-2 sm:space-x-3 border-2 rounded-xl py-2.5 sm:py-3 transition duration-200
-              dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700
-              border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-            >
-              <svg className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 24 24">
-                <path
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  fill="#4285F4"
-                />
-                <path
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  fill="#34A853"
-                />
-              </svg>
-              <span className="text-sm sm:text-base font-medium">
-                Continue with Google
-              </span>
-            </button>
-          </form>
-
-          <div className="mt-4 sm:mt-6 text-center">
-            <p className="text-xs sm:text-sm text-gray-400">
-              Already have an account?{" "}
-              <Link to="/login/student" className="text-indigo-600 hover:text-indigo-500">
-                Sign in
-              </Link>
-            </p>
-            <p className="text-xs sm:text-sm text-gray-400">
-              Want to be an Instructor?{" "}
-              <Link to="/register/instructor" className="text-indigo-600 hover:text-indigo-500">
-                Sign Up as Instructor
-              </Link>
-            </p>
-          </div>
-        </div>
-
-        <Terms />
       </div>
+
+      <Terms />
     </div>
   );
 };
