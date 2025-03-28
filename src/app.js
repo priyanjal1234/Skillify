@@ -118,7 +118,7 @@ io.on('connection', function (socket) {
       await notificationModel.create({
         user: data.instructorId,
         type: 'announcement',
-        message: `${instructor.name} has started live. The meeting url is ${data.meetingUrl}`,
+        message: `${instructor.name} has started live. Ask For Invitaion`,
       });
     } catch (error) {
       socket.emit(
