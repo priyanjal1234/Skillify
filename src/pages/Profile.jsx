@@ -78,87 +78,73 @@ const Profile = () => {
   }
 
   return (
-    <div
-      className={
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
-      }
-    >
+    <div className={`${darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}>
       <Navbar />
 
-      <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div
-            className={`rounded-2xl shadow-xl overflow-hidden ${
-              darkMode ? "bg-gray-800" : "bg-white"
-            }`}
-          >
+          <div className={`rounded-2xl shadow-xl overflow-hidden ${darkMode ? "bg-gray-800" : "bg-white"}`}>
             {/* Header/Cover Image */}
             <div className="h-32 bg-gradient-to-r from-indigo-600 to-purple-600"></div>
 
             {/* Profile Content */}
             <div className="relative px-4 sm:px-6 lg:px-8 pb-8">
               {/* Avatar */}
-              <div className="relative -mt-16 mb-8 flex justify-center">
-                <div className="relative">
-                  <img
-                    src={currentUser?.profileImage}
-                    className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-700"
-                  />
-                </div>
+              <div className="relative -mt-16 flex justify-center">
+                <img
+                  src={currentUser?.profileImage}
+                  alt="Profile"
+                  className="w-28 h-28 md:w-32 md:h-32 rounded-full border-4 border-white dark:border-gray-800"
+                />
               </div>
 
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold">{currentUser?.name}</h1>
+              <div className="text-center mt-4">
+                <h1 className="text-2xl sm:text-3xl font-bold">{currentUser?.name}</h1>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {/* Details Section */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <Mail className="h-5 w-5 text-indigo-500" />
-                    <span>{currentUser?.email}</span>
+                    <span className="text-sm sm:text-base">{currentUser?.email}</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <MapPin className="h-5 w-5 text-indigo-500" />
-                    <span>{location}</span>
+                    <span className="text-sm sm:text-base">{location}</span>
                   </div>
                 </div>
 
-                <div>
-                  <div className="mb-2">
-                    <div className="flex items-center space-x-3">
-                      <Calendar className="h-5 w-5 text-indigo-500" />
-                      <span className="font-semibold">
-                        Joined on {convertToRealDate(currentUser?.createdAt)}
-                      </span>
-                    </div>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <Calendar className="h-5 w-5 text-indigo-500" />
+                    <span className="text-sm sm:text-base font-semibold">
+                      Joined on {convertToRealDate(currentUser?.createdAt)}
+                    </span>
                   </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <User className="h-5 w-5 text-indigo-500" />
-                      <span className="font-semibold">
-                        {String(currentUser?.role).toUpperCase()}
-                      </span>
-                    </div>
+                  <div className="flex items-center space-x-3">
+                    <User className="h-5 w-5 text-indigo-500" />
+                    <span className="text-sm sm:text-base font-semibold">
+                      {String(currentUser?.role).toUpperCase()}
+                    </span>
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center pb-5">
-                <div className="text-gray-400">
-                  <p className="text-sm">
-                    If You are Logged in with Google then by default your role
-                    is Student, you can edit your profile to change your role
-                  </p>
-                </div>
+
+              {/* Role Info */}
+              <div className="flex justify-center mt-5">
+                <p className="text-xs sm:text-sm text-gray-400 text-center">
+                  If you are logged in with Google, your default role is Student. You can edit your profile to change it.
+                </p>
               </div>
+
               {/* Buttons */}
-              <div className="flex justify-center items-center space-x-4">
+              <div className="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4 mt-6">
                 <Link
-                  to={"/edit-profile"}
-                  type="button"
-                  className="px-6 py-2 flex items-center space-x-2 rounded-lg transition-colors"
+                  to="/edit-profile"
+                  className="px-6 py-2 flex items-center space-x-2 rounded-lg text-white transition"
                   style={{
                     backgroundColor: darkMode ? "#374151" : "#4f46e5",
-                    color: darkMode ? "#ffffff" : "#ffffff",
                   }}
                 >
                   <Edit className="h-4 w-4" />
@@ -167,23 +153,21 @@ const Profile = () => {
 
                 <button
                   onClick={handleLogout}
-                  type="button"
-                  className="px-6 py-2 flex items-center space-x-2 rounded-lg transition-colors"
+                  className="px-6 py-2 flex items-center space-x-2 rounded-lg text-white transition"
                   style={{
                     backgroundColor: darkMode ? "#b91c1c" : "#ef4444",
-                    color: darkMode ? "#ffffff" : "#ffffff",
                   }}
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>
                 </button>
+
                 {currentUser?.role === "instructor" && (
                   <Link
-                    to={"/dashboard/instructor"}
-                    className="px-6 py-2 flex items-center space-x-2 rounded-lg transition-colors"
+                    to="/dashboard/instructor"
+                    className="px-6 py-2 flex items-center space-x-2 rounded-lg text-white transition"
                     style={{
                       backgroundColor: darkMode ? "#2563eb" : "#3b82f6",
-                      color: darkMode ? "#ffffff" : "#ffffff",
                     }}
                   >
                     <span>Instructor Dashboard</span>
