@@ -14,8 +14,8 @@ import { setAllNotifications } from "../redux/reducers/NotificationReducer";
 const Navbar = () => {
   const { darkMode, setDarkMode } = useContext(ThemeDataContext);
   let { isLoggedin, currentUser } = useSelector((state) => state.user);
-  const [notificationCount, setnotificationCount] = useState(0);
-  const [color, setcolor] = useState("");
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [color, setColor] = useState("");
   let navigate = useNavigate();
   let dispatch = useDispatch();
 
@@ -26,7 +26,7 @@ const Navbar = () => {
       randomColor.saturation,
       randomColor.lightness
     );
-    setcolor(rgbColor);
+    setColor(rgbColor);
   }, []);
 
   let { data: unreadMessages } = useQuery({
@@ -43,8 +43,6 @@ const Navbar = () => {
     },
     enabled: isLoggedin,
   });
-
- 
 
   async function handleMessageReadability() {
     try {
@@ -73,7 +71,7 @@ const Navbar = () => {
           let fetchUnreadNotificationsRes =
             await notificationService.getUnreadNotifications();
 
-          setnotificationCount(fetchUnreadNotificationsRes?.data?.length);
+          setNotificationCount(fetchUnreadNotificationsRes?.data?.length);
           dispatch(setAllNotifications(fetchUnreadNotificationsRes?.data));
           return fetchUnreadNotificationsRes.data;
         } catch (error) {
@@ -99,7 +97,7 @@ const Navbar = () => {
     try {
       let res = await notificationService.markAsRead();
 
-      setnotificationCount(0);
+      setNotificationCount(0);
     } catch (error) {
       console.error("Error marking notifications as read:", error);
     }
@@ -192,7 +190,7 @@ const Navbar = () => {
                 <Link
                   to={"/profile"}
                   style={{ backgroundColor: color }}
-                  className="w-[40px] h-[40px] cursor-pointer  text-lg flex items-center justify-center rounded-full"
+                  className="w-[40px] h-[40px] cursor-pointer text-lg flex items-center justify-center rounded-full"
                 >
                   {String(currentUser?.name).split("")[0]}
                 </Link>
@@ -207,11 +205,11 @@ const Navbar = () => {
                           : "text-indigo-600 hover:text-indigo-800"
                       }`}
                     >
-                      Messages{" "}
+                      Messages
                     </Link>
 
                     {unreadMessages?.length > 0 && (
-                      <span className="w-[25px] h-[25px] flex items-center justify-center  bg-blue-600 rounded-full">
+                      <span className="w-[25px] h-[25px] flex items-center justify-center bg-blue-600 rounded-full">
                         {unreadMessages?.length}
                       </span>
                     )}
@@ -229,7 +227,7 @@ const Navbar = () => {
                     </Link>
 
                     {notificationCount > 0 && (
-                      <span className="w-[25px] h-[25px] flex items-center justify-center  bg-blue-600 rounded-full">
+                      <span className="w-[25px] h-[25px] flex items-center justify-center bg-blue-600 rounded-full">
                         {notificationCount}
                       </span>
                     )}
@@ -247,7 +245,7 @@ const Navbar = () => {
                 {["priyanjal362@gmail.com"].includes(currentUser?.email) && (
                   <a
                     className="px-3 py-2 bg-gray-600 rounded-lg"
-                    href="http://localhost:5174"
+                    href="https://skillify-admin-dashboard.vercel.app"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

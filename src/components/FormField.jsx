@@ -4,47 +4,33 @@ import { ThemeDataContext } from "../context/ThemeContext";
 const FormField = ({
   label,
   icon: Icon,
-  type = "text",
+  type,
   placeholder,
   name,
   value,
   handleChange,
-  error,
+  error
 }) => {
   const { darkMode } = useContext(ThemeDataContext);
-
   return (
-    <div className="w-full max-w-md">
-      {/* Label */}
-      <label
-        className={`block text-sm sm:text-base font-medium mb-1 ${
-          darkMode ? "text-gray-300" : "text-gray-700"
-        }`}
-      >
-        {label}
-      </label>
-
-      {/* Input Field with Icon */}
+    <div>
+      <label className="block text-sm font-medium mb-1">{label}</label>
       <div className="relative">
-        {Icon && (
-          <Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-indigo-500" />
-        )}
+        <Icon className="absolute left-3 top-3.5 h-5 w-5 text-indigo-500" />
         <input
           type={type}
+          className={`pl-10 w-full h-12 border-2 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
+            darkMode
+              ? "border-gray-600 bg-gray-700 text-white"
+              : "border-gray-200 bg-gray-50 text-gray-800"
+          }`}
           name={name}
           placeholder={placeholder}
           value={value}
           onChange={handleChange}
-          className={`w-full h-12 px-4 pl-10 rounded-xl border-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all duration-200 ${
-            darkMode
-              ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400"
-              : "border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-500"
-          }`}
         />
       </div>
-
-      {/* Error Message */}
-      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+      {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>
   );
 };
