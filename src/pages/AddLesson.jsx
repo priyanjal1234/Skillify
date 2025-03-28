@@ -3,18 +3,11 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Save,
-  Plus,
-  Trash2,
   Upload,
   Video,
-  FileText,
-  Link as LinkIcon,
   Clock,
-  CheckSquare,
 } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
-import AddLessonResource from "../components/AddLessonResource";
-import AddLessonQuiz from "../components/AddLessonQuiz";
 import AddLessonPreviewSidebar from "../components/AddLessonPreviewSidebar";
 import truncateText from "../utils/truncateText";
 import lessonService from "../services/Lesson";
@@ -26,37 +19,35 @@ const AddLesson = () => {
   const navigate = useNavigate();
   const { darkMode } = useContext(ThemeDataContext);
 
-  let videoRef = useRef(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
-  const [previewTitle, setpreviewTitle] = useState("No Title Yet");
-  const [previewDescription, setpreviewDescription] =
+  const [previewTitle, setPreviewTitle] = useState("No Title Yet");
+  const [previewDescription, setPreviewDescription] =
     useState("No Description Yet");
-  const [previewDuration, setpreviewDuration] = useState("No Duration Yet");
+  const [previewDuration, setPreviewDuration] = useState("No Duration Yet");
 
-  const [lessonData, setlessonData] = useState({
+  const [lessonData, setLessonData] = useState({
     title: "",
     content: "",
     duration: "",
   });
-  const [lessonVideo, setlessonVideo] = useState(null);
-  const [thumbnail, setthumbnail] = useState(null);
-  const [loading, setloading] = useState(false);
-  let canvasRef = useRef(null);
+  const [lessonVideo, setLessonVideo] = useState(null);
+  const [thumbnail, setThumbnail] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   function handleAddLessonChange(e) {
-    let { name, value } = e.target;
-    setlessonData((prev) => ({ ...prev, [name]: value }));
+    const { name, value } = e.target;
+    setLessonData((prev) => ({ ...prev, [name]: value }));
 
     if (name === "title") {
-      setpreviewTitle(value === "" ? "No Title Yet" : value);
+      setPreviewTitle(value === "" ? "No Title Yet" : value);
     }
     if (name === "content") {
-      setpreviewDescription(
-        value === "" ? "No Description Yet" : truncateText(value, 30)
-      );
+      setPreviewDescription(value === "" ? "No Description Yet" : truncateText(value, 30));
     }
     if (name === "duration") {
-      setpreviewDuration(value === "" ? "No Duration Yet" : `${value} minutes`);
+      setPreviewDuration(value === "" ? "No Duration Yet" : `${value} minutes`);
     }
   }
 
@@ -69,10 +60,8 @@ const AddLesson = () => {
       return;
     }
 
-    setlessonVideo(file);
-
+    setLessonVideo(file);
     const videoUrl = URL.createObjectURL(file);
-
     const videoElement = document.createElement("video");
     videoElement.src = videoUrl;
 
@@ -91,13 +80,12 @@ const AddLesson = () => {
       canvas.height = thumbnailHeight;
 
       ctx.drawImage(videoElement, 0, 0, thumbnailWidth, thumbnailHeight);
-      const thumbnailUrl = canvas.toDataURL("image/jpeg");
-      setthumbnail(thumbnailUrl);
+      setThumbnail(canvas.toDataURL("image/jpeg"));
     };
   }
 
   async function handleSaveLesson() {
-    setloading(true);
+    setLoading(true);
     let formdata = new FormData();
     formdata.append("title", lessonData.title);
     formdata.append("content", lessonData.content);
@@ -106,19 +94,14 @@ const AddLesson = () => {
 
     try {
       await lessonService.createLesson(formdata, courseId);
-      await courseService.changeCourseStatus(courseId,"Draft")
+      await courseService.changeCourseStatus(courseId, "Draft");
       toast.success("Lesson Created Successfully");
-      setloading(false);
-      navigate(`/dashboard/instructor`)
-      setlessonData((prev) => ({
-        ...prev,
-        title: "",
-        content: "",
-        duration: "",
-      }));
-      setlessonVideo(null);
+      setLoading(false);
+      navigate(`/dashboard/instructor`);
+      setLessonData({ title: "", content: "", duration: "" });
+      setLessonVideo(null);
     } catch (error) {
-      setloading(false)
+      setLoading(false);
       toast.error(error?.response?.data?.message);
     }
   }
@@ -132,19 +115,11 @@ const AddLesson = () => {
             <div className="flex items-center space-x-3">
               <Link
                 to={`/lessons/${courseId}`}
-                className={`${
-                  darkMode
-                    ? "text-gray-300 hover:text-white"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
+                className={`${darkMode ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900"}`}
               >
                 <ArrowLeft className="h-6 w-6" />
               </Link>
-              <h1
-                className={`text-xl font-bold ${
-                  darkMode ? "text-white" : "text-gray-900"
-                }`}
-              >
+              <h1 className={`text-xl font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
                 Add New Lesson
               </h1>
             </div>
@@ -160,153 +135,66 @@ const AddLesson = () => {
         </div>
       </div>
 
+      {/* Responsive Layout */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}
-          <div className="lg:col-span-2 space-y-8">
-            <div
-              className={`${
-                darkMode ? "bg-gray-800" : "bg-white"
-              } rounded-xl shadow-sm p-6`}
-            >
-              <h2
-                className={`text-lg font-semibold mb-4 ${
-                  darkMode ? "text-white" : "text-gray-900"
-                }`}
-              >
+          <div className="lg:col-span-2 space-y-6">
+            <div className={`${darkMode ? "bg-gray-800" : "bg-white"} rounded-xl shadow-sm p-6`}>
+              <h2 className={`text-lg font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
                 Lesson Information
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label
-                    htmlFor="title"
-                    className={`block text-sm font-medium mb-1 ${
-                      darkMode ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
                     Lesson Title
                   </label>
                   <input
                     type="text"
-                    id="title"
                     name="title"
                     value={lessonData.title}
                     onChange={handleAddLessonChange}
-                    placeholder="Enter lesson title"
-                    className={`w-full px-4 py-2 border-2 ${
-                      darkMode
-                        ? "bg-gray-700 text-white border-gray-600"
-                        : "bg-gray-50 text-gray-900 border-gray-200"
-                    } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
+                    className="w-full px-4 py-2 border rounded-lg"
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="content"
-                    className={`block text-sm font-medium mb-1 ${
-                      darkMode ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
                     Content
                   </label>
                   <textarea
-                    id="content"
                     name="content"
                     value={lessonData.content}
                     onChange={handleAddLessonChange}
+                    className="w-full px-4 py-2 border rounded-lg"
                     rows={4}
-                    placeholder="Describe what students will learn in this lesson"
-                    className={`w-full px-4 py-2 border-2 ${
-                      darkMode
-                        ? "bg-gray-700 text-white border-gray-600"
-                        : "bg-gray-50 text-gray-900 border-gray-200"
-                    } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="videoUrl"
-                    className={`block text-sm font-medium mb-1 ${
-                      darkMode ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    Video URL
-                  </label>
-                  <div className="flex">
-                    <div className="relative flex-grow">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Video className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="url"
-                        id="videoUrl"
-                        name="videoUrl"
-                        placeholder="https://example.com/video"
-                        className={`pl-10 w-full px-4 py-2 border-2 ${
-                          darkMode
-                            ? "bg-gray-700 text-white border-gray-600"
-                            : "bg-gray-50 text-gray-900 border-gray-200"
-                        } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
-                      />
-                    </div>
-                    <input
-                      id="lessonVideo"
-                      name="lessonVideo"
-                      onChange={handleLessonVideoChange}
-                      ref={videoRef}
-                      type="file"
-                      className="hidden"
-                      accept="video/*"
-                    />
-
-                    <button
-                      onClick={() => videoRef.current.click()}
-                      type="button"
-                      className="ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-                    >
-                      <Upload className="h-5 w-5" />
-                    </button>
-                  </div>
+                  <label className="block text-sm font-medium mb-1">Upload Video</label>
+                  <input
+                    id="lessonVideo"
+                    type="file"
+                    onChange={handleLessonVideoChange}
+                    ref={videoRef}
+                    className="w-full"
+                    accept="video/*"
+                  />
                 </div>
                 <div>
-                  <label
-                    htmlFor="duration"
-                    className={`block text-sm font-medium mb-1 ${
-                      darkMode ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    Duration (minutes)
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Clock className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="number"
-                      id="duration"
-                      name="duration"
-                      value={lessonData.duration}
-                      onChange={handleAddLessonChange}
-                      placeholder="15"
-                      min="1"
-                      className={`pl-10 w-full px-4 py-2 border-2 ${
-                        darkMode
-                          ? "bg-gray-700 text-white border-gray-600"
-                          : "bg-gray-50 text-gray-900 border-gray-200"
-                      } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
-                    />
-                  </div>
+                  <label className="block text-sm font-medium mb-1">Duration (minutes)</label>
+                  <input
+                    type="number"
+                    name="duration"
+                    value={lessonData.duration}
+                    onChange={handleAddLessonChange}
+                    className="w-full px-4 py-2 border rounded-lg"
+                  />
                 </div>
               </div>
-
-              {/* Hidden Canvas */}
-              <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
             </div>
-
-            
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar Preview */}
           <AddLessonPreviewSidebar
             previewTitle={previewTitle}
             previewDescription={previewDescription}
