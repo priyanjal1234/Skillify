@@ -136,7 +136,7 @@ const StudentLogin = () => {
               Forgot password?
             </Link>
             
-            <SubmitBtn btnText="Login" />
+            <SubmitBtn btnText="Login" loading = {loading} />
 
             {/* Google Login Button */}
             <button
