@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import lessonService from "../services/Lesson";
-import { ArrowLeft, Edit, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Edit, Plus, PlusCircle, Trash2 } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import { useSelector } from "react-redux";
 import courseService from "../services/Course";
@@ -83,27 +83,21 @@ const CourseLessons = () => {
           darkMode ? "bg-gray-800" : "bg-white"
         } transition-colors`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Link
               to="/dashboard/instructor"
-              className={`${
-                darkMode
-                  ? "text-gray-300 hover:text-white"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
+              className={`${darkMode ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900"}`}
             >
               <ArrowLeft className="h-6 w-6" />
             </Link>
-            <h1 className="text-lg sm:text-xl font-bold text-center">
-              Lessons for {course?.title}
-            </h1>
+            <h1 className="text-xl font-bold">Lessons for {course?.title} </h1>
           </div>
 
           <Link
             onClick={handleChangeStatusOnAddingCourse}
             to={`/add-lesson/${courseId}`}
-            className="px-4 py-2 rounded-lg flex gap-3 items-center justify-center text-white bg-green-600 hover:bg-green-700 text-sm sm:text-base"
+            className="px-4 py-2 rounded-lg flex gap-3 items-center justify-center text-white bg-green-600 hover:bg-green-700"
           >
             <Plus className="h-5 w-5" />
             Add Lesson
@@ -112,16 +106,14 @@ const CourseLessons = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {lessons && lessons.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {lessons.map((lesson, index) => (
               <div
                 key={lesson._id}
                 className={`p-4 border rounded-xl transition-colors duration-200 ${
-                  darkMode
-                    ? "border-gray-700 hover:bg-gray-700"
-                    : "border-gray-200 hover:bg-gray-100"
+                  darkMode ? "border-gray-700 hover:bg-gray-700" : "border-gray-200 hover:bg-gray-50"
                 }`}
               >
                 <h2 className="text-lg font-semibold">
@@ -143,7 +135,7 @@ const CourseLessons = () => {
                 <div className="flex items-center space-x-4 mt-4">
                   <button
                     onClick={() => handleEditLesson(lesson?._id)}
-                    className="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-200 text-sm sm:text-base"
+                    className={`text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-200`}
                   >
                     <Edit className="h-5 w-5" />
                   </button>
@@ -151,7 +143,7 @@ const CourseLessons = () => {
                     onClick={() =>
                       handleDeleteLesson(lesson?._id, lesson?.course)
                     }
-                    className="text-red-600 hover:text-red-800 text-sm sm:text-base"
+                    className="text-red-600 hover:text-red-800"
                   >
                     <Trash2 className="h-5 w-5" />
                   </button>
@@ -160,7 +152,7 @@ const CourseLessons = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center text-gray-500 text-sm sm:text-base">
+          <div className="text-center text-gray-500">
             No lessons found. Click <strong>Add Lesson</strong> to create one.
           </div>
         )}

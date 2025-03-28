@@ -23,7 +23,7 @@ const LessonQuiz = () => {
 
   useEffect(() => {
     if (localStorage.getItem("quizCompleted") === "true") {
-      navigate(`/classroom/${courseId}`);
+      navigate(`/classroom/${courseId}`); 
     }
   }, [navigate]);
 
@@ -62,54 +62,45 @@ const LessonQuiz = () => {
   };
 
   const handleSubmit = () => {
+
     localStorage.setItem("quizCompleted", "true");
     setShowRightMarks(true);
+    
     toast.success("Quiz submitted!");
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#101828] pt-10 flex items-center justify-center px-4">
+    <div className="w-full h-screen bg-[#101828] pt-10">
       <div
-        className={`w-full max-w-2xl mx-auto p-6 ${
-          darkMode ? "bg-[#1E2939]" : "bg-white"
-        } rounded-lg shadow-lg`}
+        className={`max-w-2xl mx-auto p-6 ${darkMode ? "bg-[#1E2939]" : "bg-white"} rounded-lg shadow-lg`}
       >
         {showRightMarks ? (
           <>
-            <h1 className="text-2xl font-semibold text-white text-center">
-              You Scored {rightMarks} marks 😊
-            </h1>
-            <div className="w-full flex justify-center text-white">
-              <Link
-                to={`/classroom/${courseId}`}
-                className="px-4 py-2 bg-blue-600 rounded-lg mt-4 text-sm sm:text-base"
-              >
-                Go back to classroom
-              </Link>
-            </div>
+          <h1 className="text-2xl font-semibold text-white text-center">
+            You Scored {rightMarks} marks 😊
+          </h1>
+          <div className="w-full flex justify-center text-white">
+          <Link to={`/classroom/${courseId}`} className="px-3 py-2 bg-blue-600 rounded-lg mt-4">
+            Go back to classroom
+          </Link>
+          </div>
           </>
         ) : (
           <>
-            <div className="w-full flex flex-col sm:flex-row justify-between">
-              <h2
-                className={`text-lg sm:text-xl font-bold ${
-                  darkMode ? "text-white" : "text-gray-900"
-                } mb-4`}
-              >
-                Question {currentQuestionIndex + 1} /{" "}
-                {currentQuiz?.questions?.length}
-              </h2>
-              <h2 className="text-white text-sm sm:text-base">5 marks each</h2>
+            <div className="w-full flex justify-between">
+            <h2
+              className={`text-2xl font-bold ${darkMode ? "text-white" : "text-gray-900"} mb-4`}
+            >
+              Question {currentQuestionIndex + 1} /{" "}
+              {currentQuiz?.questions?.length}
+            </h2>
+              <h2 className="text-white">5 marks each</h2>
             </div>
-
             <p
-              className={`text-base sm:text-lg ${
-                darkMode ? "text-gray-300" : "text-gray-700"
-              } mb-6`}
+              className={`text-lg ${darkMode ? "text-gray-300" : "text-gray-700"} mb-6`}
             >
               {currentQuiz?.questions[currentQuestionIndex]?.questionText}
             </p>
-
             <div className="space-y-3">
               {currentQuiz?.questions[currentQuestionIndex]?.options?.map(
                 (option, index) => {
@@ -124,7 +115,7 @@ const LessonQuiz = () => {
                     <button
                       key={index}
                       onClick={() => handleSelectOption(index)}
-                      className={`block w-full text-left ${buttonBg} text-gray-900 dark:text-white px-4 py-2 rounded-md transition text-sm sm:text-base`}
+                      className={`block w-full text-left ${buttonBg} text-gray-900 dark:text-white px-4 py-2 rounded-md transition`}
                     >
                       {option}
                     </button>
@@ -132,17 +123,12 @@ const LessonQuiz = () => {
                 }
               )}
             </div>
-
-            <div className="flex flex-col sm:flex-row justify-end mt-6 gap-3">
+            <div className="flex justify-end mt-6">
               {currentQuestionIndex === currentQuiz?.questions?.length - 1 ? (
                 <button
                   onClick={handleSubmit}
                   disabled={!isNextEnabled}
-                  className={`px-4 py-2 rounded-md transition text-sm sm:text-base ${
-                    isNextEnabled
-                      ? "bg-blue-600 text-white hover:bg-blue-700"
-                      : "bg-gray-400 text-gray-700 cursor-not-allowed"
-                  }`}
+                  className={`px-4 py-2 rounded-md transition ${isNextEnabled ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-gray-400 text-gray-700 cursor-not-allowed"}`}
                 >
                   Submit
                 </button>
@@ -150,11 +136,7 @@ const LessonQuiz = () => {
                 <button
                   onClick={handleNextQuestion}
                   disabled={!isNextEnabled}
-                  className={`px-4 py-2 rounded-md transition text-sm sm:text-base ${
-                    isNextEnabled
-                      ? "bg-blue-600 text-white hover:bg-blue-700"
-                      : "bg-gray-400 text-gray-700 cursor-not-allowed"
-                  }`}
+                  className={`px-4 py-2 rounded-md transition ${isNextEnabled ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-gray-400 text-gray-700 cursor-not-allowed"}`}
                 >
                   Next
                 </button>
@@ -167,4 +149,4 @@ const LessonQuiz = () => {
   );
 };
 
-export default LessonQuiz;
+export default LessonQuiz; 

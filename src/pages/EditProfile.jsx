@@ -49,17 +49,13 @@ const EditProfile = () => {
 
   return (
     <div
-      className={`w-full min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
-      }`}
+      className={`w-full min-h-screen flex items-center justify-center overflow-hidden p-4 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"}`}
     >
       <div
-        className={`w-full max-w-lg p-6 rounded-lg shadow-md transition duration-300 ${
-          darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
-        }`}
+        className={`w-full max-w-md p-6 rounded-lg shadow-md ${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"}`}
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
-        <form onSubmit={handleEditProfile} className="space-y-5">
+        <form onSubmit={handleEditProfile} className="space-y-4">
           <FormField
             label="Name"
             icon={User}
@@ -81,10 +77,10 @@ const EditProfile = () => {
 
           {/* Role Selection */}
           {currentUser?.googleId && (
-            <div>
+            <div className="form-group">
               <label className="block text-sm font-medium mb-2">Role</label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <label className="flex items-center space-x-2 p-2 bg-gray-100 dark:bg-gray-700 rounded-md cursor-pointer">
+              <div className="flex flex-col sm:flex-row sm:space-x-4">
+                <label className="flex items-center mb-2 sm:mb-0">
                   <input
                     type="radio"
                     name="role"
@@ -93,9 +89,9 @@ const EditProfile = () => {
                     onChange={handleChange}
                     className="text-indigo-600 focus:ring-indigo-500"
                   />
-                  <span>Student</span>
+                  <span className="ml-2">Student</span>
                 </label>
-                <label className="flex items-center space-x-2 p-2 bg-gray-100 dark:bg-gray-700 rounded-md cursor-pointer">
+                <label className="flex items-center">
                   <input
                     type="radio"
                     name="role"
@@ -104,20 +100,20 @@ const EditProfile = () => {
                     onChange={handleChange}
                     className="text-indigo-600 focus:ring-indigo-500"
                   />
-                  <span>Instructor</span>
+                  <span className="ml-2">Instructor</span>
                 </label>
               </div>
             </div>
           )}
 
           {/* Profile Picture Upload */}
-          <div>
+          <div className="form-group">
             <label className="block text-sm font-medium mb-2">
               Profile Picture
             </label>
             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3">
-              <label className="flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md shadow-md cursor-pointer w-full sm:w-auto">
-                <Upload className="w-5 h-5" />
+              <label className="flex items-center cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md shadow-md mb-2 sm:mb-0">
+                <Upload className="mr-2" size={16} />
                 <span>Upload</span>
                 <input
                   ref={imageRef}
@@ -128,7 +124,7 @@ const EditProfile = () => {
                 />
               </label>
               {profilePicture && (
-                <span className="text-sm mt-2 sm:mt-0">{profilePicture.name}</span>
+                <span className="text-sm">{profilePicture.name}</span>
               )}
             </div>
           </div>
