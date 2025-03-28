@@ -8,22 +8,29 @@ import {
   setSenderChats,
 } from "../redux/reducers/ChatReducer.js";
 import userService from "../services/User.js";
-import { Menu } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 const StudentMessages = () => {
   const { currentUser } = useSelector((state) => state.user);
-  const { senderChats, receiverChats } = useSelector((state) => state.chat);
   const [selectedInstructor, setSelectedInstructor] = useState(null);
+  // We'll now use both senderChats and receiverChats from Redux.
+  const { senderChats, receiverChats } = useSelector((state) => state.chat);
   const [message, setMessage] = useState("");
   const [room, setRoom] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+
+  const [deletedMessageIds, setDeletedMessageIds] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
     connectSocket();
 
-    socket.on("room-joined", (room) => setRoom(room));
-    socket.on("error", (errorMessage) => console.log(errorMessage));
+    socket.on("room-joined", (room) => {
+      setRoom(room);
+    });
+
+    socket.on("error", (errorMessage) => {
+      console.log(errorMessage);
+    });
   }, []);
 
   const { refetch: refetchReceiverChats } = useQuery({
@@ -92,13 +99,19 @@ const StudentMessages = () => {
 
       refetchReceiverChats();
       refetchSenderChats();
-      setMenuOpen(false);
+    } else {
+      console.error("Invalid instructor object:", instructor);
     }
   }
 
   function handleSendMessage(senderId, receiverId) {
     if (message && room) {
-      socket.emit("send-message", { room, senderId, receiverId, message });
+      socket.emit("send-message", {
+        room,
+        senderId,
+        receiverId,
+        message,
+      });
 
       setMessage("");
       refetchSenderChats();
@@ -120,30 +133,28 @@ const StudentMessages = () => {
     }, []);
   };
 
-  const allChats = [
-    ...flattenMessages(senderChats),
-    ...flattenMessages(receiverChats),
-  ].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  const flattenedSenderMessages = flattenMessages(senderChats);
+  const flattenedReceiverMessages = flattenMessages(receiverChats);
+
+  const allChats = [...flattenedSenderMessages, ...flattenedReceiverMessages];
+
+  allChats.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+  const visibleChats = allChats.filter(
+    (msg) => !deletedMessageIds.includes(msg._id)
+  );
 
   return (
     <div className="flex flex-col h-screen bg-[#121826] text-white">
       {/* Navbar */}
-      <nav className="flex items-center justify-between bg-[#1d2231] px-4 py-3 sm:px-6">
+      <nav className="flex items-center justify-between bg-[#1d2231] px-4 py-2">
         <div className="text-xl font-bold">Skillify</div>
-        {/* Hamburger Menu for Mobile */}
-        <button className="sm:hidden" onClick={() => setMenuOpen(!menuOpen)}>
-          <Menu size={24} />
-        </button>
       </nav>
 
       {/* Main Chat Container */}
       <div className="flex flex-1">
-        {/* Sidebar */}
-        <div
-          className={`absolute sm:relative sm:w-1/4 bg-[#1d2231] border-r border-[#2f3342] flex flex-col transition-transform duration-300 ease-in-out ${
-            menuOpen ? "translate-x-0" : "-translate-x-full"
-          } sm:translate-x-0 w-2/3 sm:w-1/4 z-10`}
-        >
+        {/* Left Panel: Chat List */}
+        <div className="w-1/4 bg-[#1d2231] border-r border-[#2f3342] flex flex-col">
           <div className="p-4 border-b border-[#2f3342]">
             <h2 className="text-lg">Chats</h2>
           </div>
@@ -157,7 +168,7 @@ const StudentMessages = () => {
                     instructor?._id === selectedInstructor?._id
                       ? "bg-[#2f3342]"
                       : "hover:bg-[#2f3342]"
-                  } border-[#2f3342] cursor-pointer`}
+                  } border-[#2f3342] cursor-pointer transition-colors`}
                 >
                   <div className="font-bold mb-1">{instructor?.name}</div>
                 </li>
@@ -168,50 +179,64 @@ const StudentMessages = () => {
           </ul>
         </div>
 
-        {/* Chat Area */}
-        <div className="flex-1 flex flex-col bg-[#0e1118]">
-          <div className="p-4 border-b border-[#2f3342]">
-            <h2 className="text-lg">{selectedInstructor?.name || "Select a Chat"}</h2>
-          </div>
-          <div className="flex-1 p-4 overflow-y-auto flex flex-col">
-            {allChats.length > 0 ? (
-              allChats.map((msg, index) => (
-                <div
-                  key={msg._id || index}
-                  className={`max-w-[80%] sm:max-w-[60%] p-3 rounded-md ${
-                    msg.sender === currentUser._id ? "bg-blue-500 self-end" : "bg-gray-700 self-start"
-                  }`}
-                >
-                  <p>{msg.content}</p>
-                  <span className="block mt-1 text-xs opacity-70">
-                    {new Date(msg.createdAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-400">No Messages Yet</p>
-            )}
-          </div>
+        {/* Right Panel: Conversation Area */}
+        {selectedInstructor !== null && (
+          <div className="flex-1 flex flex-col bg-[#0e1118]">
+            <div className="p-4 border-b border-[#2f3342]">
+              <h2 className="text-lg">
+                {selectedInstructor?.name || "Select a Chat"}
+              </h2>
+            </div>
+            <div className="flex-1 p-4 overflow-y-auto flex flex-col">
+              {visibleChats.length > 0 ? (
+                visibleChats.map((msg, index) => (
+                  <div
+                    key={msg._id || index}
+                    className={`max-w-[60%] flex items-center mb-4 p-3 rounded-md ${
+                      msg.sender === currentUser._id
+                        ? "bg-[#47538c] self-end"
+                        : "bg-[#2f3342] self-start"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div>
+                        <p>{msg.content}</p>
+                        <span className="block mt-1 text-xs opacity-70 text-right">
+                          {new Date(msg.createdAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-400">No Messages Yet</p>
+              )}
+            </div>
 
-          {/* Input */}
-          <div className="p-4 bg-[#1d2231] flex">
-            <input
-              type="text"
-              placeholder="Type your message..."
-              className="flex-1 p-2 rounded bg-[#2f3342] text-white"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-            <button onClick={() => handleSendMessage(currentUser?._id, selectedInstructor?._id)}
-              className="ml-2 px-4 py-2 rounded bg-blue-600 hover:bg-blue-700"
-            >
-              Send
-            </button>
+            <div className="sticky bottom-0 p-4 bg-[#1d2231]">
+              <div className="flex p-4 border-t border-[#2f3342] bg-[#1d2231]">
+                <input
+                  type="text"
+                  placeholder="Type your message..."
+                  className="flex-1 p-2 mr-2 rounded bg-[#2f3342] text-white focus:outline-none"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+                <button
+                  onClick={() =>
+                    handleSendMessage(currentUser?._id, selectedInstructor?._id)
+                  }
+                  className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 transition-colors"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

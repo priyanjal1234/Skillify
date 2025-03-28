@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 const VerifyEmail = () => {
   const { darkMode } = useContext(ThemeDataContext);
-  const [loading, setLoading] = useState(false);
+  const [loading, setloading] = useState(false)
 
   let dispatch = useDispatch();
   let navigate = useNavigate();
@@ -26,11 +26,11 @@ const VerifyEmail = () => {
   async function handleEmailVerification(e) {
     e.preventDefault();
 
-    setLoading(true);
+    setloading(true)
 
     const parsedData = verifyEmailSchema.safeParse(values);
     if (!parsedData.success) {
-      setLoading(false);
+      setloading(false)
       const firstError = parsedData.error.issues[0]?.message;
       toast.error(firstError);
       return;
@@ -39,11 +39,11 @@ const VerifyEmail = () => {
     try {
       await userService.verifyEmail(values);
       toast.success("Email Verified Successfully");
-      setLoading(false);
+      setloading(false)
       dispatch(setLoggedin(true));
       navigate("/");
     } catch (error) {
-      setLoading(false);
+      setloading(false)
       toast.error(error?.response?.data?.message);
     }
   }
@@ -59,37 +59,35 @@ const VerifyEmail = () => {
 
   return (
     <div
-      className={`min-h-screen flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 ${
+      className={`min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center ${
         darkMode
           ? "bg-gray-900 text-white"
           : "bg-gradient-to-br from-indigo-100 to-purple-100 text-gray-900"
       }`}
     >
-      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
-        <div className="text-center mb-8">
-          <div className="flex justify-center">
+      <div className="max-w-md w-full">
+        <div className="text-center mb-10">
+          <div className="flex justify-center mb-4">
             <div
               className={`p-3 rounded-full shadow-lg ${
                 darkMode ? "bg-gray-800" : "bg-white"
               }`}
             >
               <CheckCircle2
-                className={`h-12 w-12 ${
+                className={`h-10 w-10 ${
                   darkMode ? "text-indigo-400" : "text-indigo-600"
                 }`}
               />
             </div>
           </div>
-          <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-extrabold">
-            Verify Your Email
-          </h2>
-          <p className="mt-2 text-sm sm:text-base">
+          <h2 className="text-4xl font-extrabold mb-2">Verify Your Email</h2>
+          <p className="text-lg">
             We've sent a verification code to your email
           </p>
         </div>
 
         <div
-          className={`p-6 sm:p-8 md:p-10 shadow-2xl rounded-xl ${
+          className={`py-8 px-10 shadow-2xl rounded-2xl ${
             darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
           }`}
         >
@@ -116,7 +114,9 @@ const VerifyEmail = () => {
               error={errors.verificationCode}
             />
 
-            <SubmitBtn btnText="Verify Email" loading={loading} />
+            <div>
+              <SubmitBtn btnText="Verify Email" loading = {loading} />
+            </div>
           </form>
 
           <div className="mt-6 text-center">

@@ -1,31 +1,33 @@
-import { ArrowLeft, Lock, Shield, Mail } from "lucide-react";
+import { ArrowLeft, Lock, Shield,Mail } from "lucide-react";
 import React, { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import FormField from "../components/FormField";
 import resetPasswordSchema from "../schemas/resetPasswordSchema";
 import { z } from "zod";
-import { ThemeDataContext } from "../context/ThemeContext";
+import { ThemeDataContext } from "../context/ThemeContext"; // Assuming dark mode is stored in a context
 import SubmitBtn from "../components/SubmitBtn";
 import userService from "../services/User";
 import { toast } from "react-toastify";
 
 const ResetPassword = () => {
-  const [email, setEmail] = useState("");
+  const [email,setemail] = useState("")
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setloading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const { darkMode } = useContext(ThemeDataContext);
+
   let navigate = useNavigate();
 
   function handleChange(e) {
-    let { name, value } = e.target;
+     let {name,value} = e.target
 
-    if (name === "email") {
-      setEmail(value);
-    } else if (name === "password") {
-      setPassword(value);
+    if(name === "email") {
+      setemail(value)
+    }
+    else if(name === "password") {
+      setPassword(value)
     }
 
     try {
@@ -42,33 +44,33 @@ const ResetPassword = () => {
 
   async function handleResetPassword(e) {
     e.preventDefault();
-
+  
     try {
       const parsedData = resetPasswordSchema.parse({ email, password });
-
-      await userService.resetPassword(email, password);
+  
+      await userService.resetPassword(email,password);
       toast.success("Password Reset Successfully");
       navigate("/login/student");
     } catch (error) {
       if (error instanceof z.ZodError) {
-        toast.error(error.errors[0]?.message);
+        const firstError = error.errors[0]?.message;
+        toast.error(firstError);
       } else {
         toast.error(error?.response?.data?.message || "Something went wrong");
       }
     }
   }
-
+  
   return (
     <div
-      className={`min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 ${
+      className={`min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center ${
         darkMode
           ? "bg-gray-900 text-white"
           : "bg-gradient-to-br from-indigo-100 to-purple-100"
       }`}
     >
-      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
-        {/* Header Section */}
-        <div className="text-center mb-8">
+      <div className="max-w-md w-full">
+        <div className="text-center mb-10">
           <div className="flex justify-center mb-4">
             <div
               className={`p-3 rounded-full shadow-lg ${
@@ -82,19 +84,18 @@ const ResetPassword = () => {
               />
             </div>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold">Set New Password</h2>
-          <p className="text-sm md:text-lg text-gray-600 dark:text-gray-300">
+          <h2 className="text-4xl font-extrabold mb-2">Set New Password</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
             Choose a strong password for your account
           </p>
         </div>
 
-        {/* Form Section */}
         <div
-          className={`py-6 px-6 md:px-10 shadow-lg rounded-lg ${
+          className={`py-8 px-10 shadow-2xl rounded-2xl ${
             darkMode ? "bg-gray-800" : "bg-white"
           }`}
         >
-          <form onSubmit={handleResetPassword} className="space-y-5">
+          <form onSubmit={handleResetPassword} className="space-y-6">
             <FormField
               label="Email"
               icon={Mail}
@@ -106,6 +107,7 @@ const ResetPassword = () => {
               error={error.email}
             />
 
+            
             <FormField
               label="New Password"
               icon={Lock}
@@ -122,8 +124,7 @@ const ResetPassword = () => {
             </div>
           </form>
 
-          {/* Back to Login */}
-          <div className="mt-6 flex justify-center">
+          <div className="mt-8 flex justify-center">
             <Link
               to={"/login"}
               className={`flex items-center space-x-2 ${
@@ -138,7 +139,6 @@ const ResetPassword = () => {
           </div>
         </div>
 
-        {/* Support Section */}
         <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
           Need help?{" "}
           <a
@@ -157,4 +157,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default ResetPassword; 
