@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { BookOpen, Sun, Moon } from "lucide-react";
+import { BookOpen, Sun, Moon, Menu, X } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +16,7 @@ const Navbar = () => {
   let { isLoggedin, currentUser } = useSelector((state) => state.user);
   const [notificationCount, setnotificationCount] = useState(0);
   const [color, setcolor] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false); // For mobile menu toggle
   let navigate = useNavigate();
   let dispatch = useDispatch();
 
@@ -34,7 +35,6 @@ const Navbar = () => {
     queryFn: async function () {
       try {
         let getUnreadChatsRes = await chatService.getUnreadChats();
-
         return getUnreadChatsRes.data;
       } catch (error) {
         console.log(error?.response?.data?.message);
@@ -44,15 +44,12 @@ const Navbar = () => {
     enabled: isLoggedin,
   });
 
- 
-
   async function handleMessageReadability() {
     try {
       let readMessagesRes = await chatService.readChats(
         unreadMessages?.filteredMessages
       );
-
-      return readMessagesRes.data
+      return readMessagesRes.data;
     } catch (error) {
       if (
         error?.response?.data?.message ===
@@ -78,7 +75,7 @@ const Navbar = () => {
           return fetchUnreadNotificationsRes.data;
         } catch (error) {
           console.log(error?.response?.data?.message);
-          return false
+          return false;
         }
       },
     });
@@ -98,7 +95,6 @@ const Navbar = () => {
   async function handleMarkNotificationsRead() {
     try {
       let res = await notificationService.markAsRead();
-
       setnotificationCount(0);
     } catch (error) {
       console.error("Error marking notifications as read:", error);
@@ -106,159 +102,86 @@ const Navbar = () => {
   }
 
   return (
-    <nav className={`shadow-lg ${darkMode ? "bg-gray-800" : "bg-white"}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <BookOpen
-              className={`h-8 w-8 ${
-                darkMode ? "text-indigo-400" : "text-indigo-600"
-              }`}
-            />
-            <Link
-              to={"/"}
-              className={`ml-2 text-xl font-bold ${
-                darkMode ? "text-white" : "text-gray-800"
-              }`}
-            >
-              Skillify
-            </Link>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className={`p-2 rounded-lg transition-colors duration-200 ${
-                darkMode
-                  ? "bg-gray-700 hover:bg-gray-600"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
-            >
-              {darkMode ? (
-                <Sun className="h-5 w-5 text-yellow-500" />
-              ) : (
-                <Moon className="h-5 w-5 text-gray-600" />
-              )}
-            </button>
-
-            {isLoggedin === false ? (
-              <>
-                {/* Sign Up Link */}
-                <Link
-                  to={"/register/student"}
-                  className={`text-sm ${
-                    window.location.href ===
-                      "https://skillify-frontend-alpha.vercel.app/register/student" ||
-                    window.location.href ===
-                      "https://skillify-frontend-alpha.vercel.app/login/student" ||
-                    window.location.href ===
-                      "https://skillify-frontend-alpha.vercel.app/register/instructor" ||
-                    window.location.href ===
-                      "https://skillify-frontend-alpha.vercel.app/login/instructor"
-                      ? "hidden"
-                      : "block"
-                  } font-medium ${
-                    darkMode
-                      ? "text-white hover:text-indigo-400"
-                      : "text-indigo-600 hover:text-indigo-800"
-                  }`}
-                >
-                  Sign Up
-                </Link>
-                {/* Sign in link */}
-                <Link
-                  to={"/login/student"}
-                  className={`text-sm ${
-                    window.location.href ===
-                      "https://skillify-frontend-alpha.vercel.app/register/student" ||
-                    window.location.href ===
-                      "https://skillify-frontend-alpha.vercel.app/login/student" ||
-                    window.location.href ===
-                      "https://skillify-frontend-alpha.vercel.app/register/instructor" ||
-                    window.location.href ===
-                      "https://skillify-frontend-alpha.vercel.app/login/instructor"
-                      ? "hidden"
-                      : "block"
-                  } font-medium ${
-                    darkMode
-                      ? "text-white hover:text-indigo-400"
-                      : "text-indigo-600 hover:text-indigo-800"
-                  }`}
-                >
-                  Login
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link
-                  to={"/profile"}
-                  style={{ backgroundColor: color }}
-                  className="w-[40px] h-[40px] cursor-pointer  text-lg flex items-center justify-center rounded-full"
-                >
-                  {String(currentUser?.name).split("")[0]}
-                </Link>
-                {currentUser?.role !== "instructor" ? (
-                  <>
-                    <Link
-                      onClick={handleMessageReadability}
-                      to={"/student-messages"}
-                      className={`text-sm font-medium flex items-center gap-2 ${
-                        darkMode
-                          ? "text-white hover:text-indigo-400"
-                          : "text-indigo-600 hover:text-indigo-800"
-                      }`}
-                    >
-                      Messages{" "}
-                    </Link>
-
-                    {unreadMessages?.length > 0 && (
-                      <span className="w-[25px] h-[25px] flex items-center justify-center  bg-blue-600 rounded-full">
-                        {unreadMessages?.length}
-                      </span>
-                    )}
-
-                    <Link
-                      onClick={handleMarkNotificationsRead}
-                      to={"/notifications"}
-                      className={`text-sm font-medium flex items-center gap-2 ${
-                        darkMode
-                          ? "text-white hover:text-indigo-400"
-                          : "text-indigo-600 hover:text-indigo-800"
-                      }`}
-                    >
-                      Notifications
-                    </Link>
-
-                    {notificationCount > 0 && (
-                      <span className="w-[25px] h-[25px] flex items-center justify-center  bg-blue-600 rounded-full">
-                        {notificationCount}
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={handleGoLive}
-                      className="px-3 py-2 bg-blue-600 rounded-lg"
-                    >
-                      Go Live
-                    </button>
-                  </>
-                )}
-                {["priyanjal362@gmail.com"].includes(currentUser?.email) && (
-                  <a
-                    className="px-3 py-2 bg-gray-600 rounded-lg"
-                    href="https://skillify-admin-dashboard.vercel.app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Admin Panel
-                  </a>
-                )}
-              </>
-            )}
-          </div>
+    <nav className={`shadow-lg ${darkMode ? "bg-gray-800" : "bg-white"} p-4`}>
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        {/* Logo */}
+        <div className="flex items-center">
+          <BookOpen className={`h-8 w-8 ${darkMode ? "text-indigo-400" : "text-indigo-600"}`} />
+          <Link to={"/"} className={`ml-2 text-xl font-bold ${darkMode ? "text-white" : "text-gray-800"}`}>
+            Skillify
+          </Link>
         </div>
+
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center space-x-6">
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className={`p-2 rounded-lg transition-colors duration-200 ${
+              darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"
+            }`}
+          >
+            {darkMode ? <Sun className="h-5 w-5 text-yellow-500" /> : <Moon className="h-5 w-5 text-gray-600" />}
+          </button>
+
+          {!isLoggedin ? (
+            <>
+              <Link to={"/register/student"} className="text-sm text-indigo-600 hover:text-indigo-800">
+                Sign Up
+              </Link>
+              <Link to={"/login/student"} className="text-sm text-indigo-600 hover:text-indigo-800">
+                Login
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to={"/profile"} style={{ backgroundColor: color }} className="w-[40px] h-[40px] cursor-pointer text-lg flex items-center justify-center rounded-full">
+                {String(currentUser?.name).charAt(0)}
+              </Link>
+              {currentUser?.role !== "instructor" ? (
+                <>
+                  <Link onClick={handleMessageReadability} to={"/student-messages"} className="text-sm text-indigo-600 hover:text-indigo-800">
+                    Messages {unreadMessages?.length > 0 && <span className="ml-1 text-red-500">({unreadMessages?.length})</span>}
+                  </Link>
+                  <Link onClick={handleMarkNotificationsRead} to={"/notifications"} className="text-sm text-indigo-600 hover:text-indigo-800">
+                    Notifications {notificationCount > 0 && <span className="ml-1 text-red-500">({notificationCount})</span>}
+                  </Link>
+                </>
+              ) : (
+                <button onClick={handleGoLive} className="px-3 py-2 bg-blue-600 rounded-lg text-white">
+                  Go Live
+                </button>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden p-2 rounded-lg">
+          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="md:hidden flex flex-col items-center space-y-4 mt-4">
+          <Link to={"/register/student"} className="text-sm text-indigo-600 hover:text-indigo-800">
+            Sign Up
+          </Link>
+          <Link to={"/login/student"} className="text-sm text-indigo-600 hover:text-indigo-800">
+            Login
+          </Link>
+          {isLoggedin && (
+            <>
+              <Link to={"/profile"} className="text-sm text-indigo-600 hover:text-indigo-800">
+                Profile
+              </Link>
+              <Link to={"/notifications"} className="text-sm text-indigo-600 hover:text-indigo-800">
+                Notifications {notificationCount > 0 && <span className="ml-1 text-red-500">({notificationCount})</span>}
+              </Link>
+            </>
+          )}
+        </div>
+      )}
     </nav>
   );
 };
