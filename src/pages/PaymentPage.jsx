@@ -130,11 +130,69 @@ const PaymentPage = () => {
               )}
             </div>
           </div>
+
+          <div
+            className={`${
+              darkMode ? "bg-gray-800" : "bg-white"
+            } rounded-2xl shadow-lg p-6 mb-8`}
+          >
+            <h2
+              className={`text-xl font-bold mb-4 ${
+                darkMode ? "text-white" : "text-gray-900"
+              }`}
+            >
+              Payment &amp; Support Info
+            </h2>
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-center space-x-2">
+                <Check className="text-green-500" />
+                <span
+                  className={`text-sm font-medium ${
+                    darkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  3-Days Refund Policy
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Check className="text-green-500" />
+                <span
+                  className={`text-sm font-medium ${
+                    darkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Contact Us:&nbsp;
+                  <a
+                    href="mailto:hello@skillify.com"
+                    className={`underline ${
+                      darkMode
+                        ? "text-indigo-400 hover:text-indigo-500"
+                        : "text-indigo-600 hover:text-indigo-500"
+                    }`}
+                  >
+                    hello@skillify.com
+                  </a>
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Check className="text-green-500" />
+                <span
+                  className={`text-sm font-medium ${
+                    darkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Get Course Completion Certificate
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Payment Details Section */}
         <div className="w-full sm:w-[40%]">
-          <h1 className="text-2xl sm:text-3xl mb-6 sm:mb-10">Payment Details</h1>
+          <h1 className="text-2xl sm:text-3xl mb-6 sm:mb-10">
+            Payment Details
+          </h1>
           <div className="w-full bg-[#2C394D] rounded-lg p-6">
             <h2 className="flex w-full justify-between text-lg sm:text-xl mb-4">
               <span>Base Amount</span>
