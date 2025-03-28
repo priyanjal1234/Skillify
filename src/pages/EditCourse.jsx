@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ThemeDataContext } from "../context/ThemeContext";
 import FormFieldWithoutIcon from "../components/FormFieldWithoutIcon";
@@ -72,10 +72,12 @@ const EditCourse = () => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div
-        className="rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6"
+        className="rounded-xl shadow-xl w-full max-w-lg md:max-w-2xl lg:max-w-4xl max-h-[90vh] overflow-y-auto p-6"
         style={containerStyles}
       >
-        <h2 className="text-2xl font-semibold mb-4">Edit Course</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-center md:text-left">
+          Edit Course
+        </h2>
         <form onSubmit={handleEditCourse} className="space-y-6">
           <FormFieldWithoutIcon
             label="Course Title"
@@ -110,7 +112,7 @@ const EditCourse = () => {
               <select
                 name="category"
                 value={edit.category}
-                onChange={handleEditCourse}
+                onChange={handleEditCourseChange}
                 className="w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 style={inputStyles}
               >
@@ -118,21 +120,6 @@ const EditCourse = () => {
                 <option value="programming">Programming</option>
                 <option value="data science">Data Science</option>
                 <option value="web development">Web Development</option>
-                <option value="mobile development">Mobile Development</option>
-                <option value="ui/ux design">UI/UX Design</option>
-                <option value="cybersecurity">Cybersecurity</option>
-                <option value="cloud computing">Cloud Computing</option>
-                <option value="artificial intelligence & machine learning">
-                  Artificial Intelligence & Machine Learning
-                </option>
-                <option value="business & entrepreneurship">
-                  Business & Entrepreneurship
-                </option>
-                <option value="digital marketing">Digital Marketing</option>
-                <option value="graphic design">Graphic Design</option>
-                <option value="photography & video editing">
-                  Photography & Video Editing
-                </option>
               </select>
             </div>
 
@@ -155,79 +142,23 @@ const EditCourse = () => {
           {/* Price Field */}
           <div>
             <label className="block text-sm font-medium mb-1">Price</label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                ₹
-              </span>
-              <input
-                type="number"
-                name="price"
-                placeholder="Update Price"
-                className="w-full pl-8 pr-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                style={inputStyles}
-                onChange={handleEditCourseChange}
-                value={edit.price}
-              />
-            </div>
+            <input
+              type="number"
+              name="price"
+              placeholder="Update Price"
+              className="w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              style={inputStyles}
+              onChange={handleEditCourseChange}
+              value={edit.price}
+            />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Coupon Code (if any)
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                name="couponCode"
-                placeholder="Add Coupon Code (if any)"
-                className="w-full px-4 pr-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                style={inputStyles}
-                onChange={handleEditCourseChange}
-                value={edit.couponCode}
-              />
-            </div>
-          </div>
-          {edit.couponCode.trim() !== "" && (
-            <>
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Discount Type
-                </label>
-                <select
-                  name="discountType"
-                  value={edit.discountType}
-                  onChange={handleEditCourseChange}
-                  className="w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  style={inputStyles}
-                >
-                  <option value="Percentage">Percentage</option>
-                  <option value="Fixed">Fixed</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Add Discount associated with Coupon Code
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    name="discountValue"
-                    placeholder="eg. 15% (percentage) or 2000 (fixed)"
-                    className="w-full px-4 pr-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    style={inputStyles}
-                    onChange={handleEditCourseChange}
-                    value={edit.discountValue}
-                  />
-                </div>
-              </div>
-            </>
-          )}
 
           {/* Course Thumbnail Upload */}
           <div>
             <label className="block text-sm font-medium mb-1">
               Course Thumbnail
             </label>
-            <div className="flex items-center">
+            <div className="flex flex-col sm:flex-row items-center gap-3">
               <input
                 id="thumbnail-upload"
                 type="file"
@@ -238,7 +169,7 @@ const EditCourse = () => {
               />
               <label
                 htmlFor="thumbnail-upload"
-                className="cursor-pointer px-4 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700"
+                className="cursor-pointer px-4 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto text-center"
               >
                 Upload Thumbnail
               </label>
@@ -246,11 +177,11 @@ const EditCourse = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end space-x-4">
+          <div className="flex flex-col sm:flex-row justify-end space-y-4 sm:space-y-0 sm:space-x-4">
             <button
               onClick={() => navigate("/dashboard/instructor")}
               type="button"
-              className="px-4 py-2 border rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100"
+              className="px-4 py-2 border rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 w-full sm:w-auto"
               style={{
                 backgroundColor: darkMode ? "#374151" : "#E5E7EB",
                 color: darkMode ? "#F3F4F6" : "#1F2937",
@@ -260,7 +191,7 @@ const EditCourse = () => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg flex gap-3 items-center justify-center text-white bg-indigo-600 hover:bg-indigo-700"
+              className="px-4 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto"
             >
               Update Course
               {loading && <span className="loader"></span>}
