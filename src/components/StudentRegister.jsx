@@ -64,8 +64,10 @@ const StudentRegister = () => {
         darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
       } min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8`}
     >
-      <div className={`w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl px-6 py-6 sm:py-8 md:py-10 shadow-2xl rounded-2xl transition-all duration-200
-        ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+     <div
+  className={`w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl px-6 py-6 sm:py-8 md:py-10 shadow-2xl rounded-2xl transition-all duration-200 ` +
+  (darkMode ? "bg-gray-800" : "bg-white")}
+>
         {/* Logo & Title */}
         <div className="text-center mb-4 sm:mb-6">
           <div className="flex justify-center mb-2 sm:mb-4">
