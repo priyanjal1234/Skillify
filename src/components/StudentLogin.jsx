@@ -158,7 +158,7 @@ const StudentLogin = () => {
               </div>
 
               <div>
-                <SubmitBtn btnText="Login" />
+                <SubmitBtn btnText="Login" loading={loading} />
 
                 <button
                   type="button"
