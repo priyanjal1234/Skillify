@@ -12,9 +12,9 @@ import { BookOpen, IndianRupee, Users } from "lucide-react";
 
 const InstructorAnalytics = ({ instructorId }) => {
   let dispatch = useDispatch();
-
-  let { totalCourses,totalStudents,totalRevenue } = useSelector((state) => state.instructor);
-
+  let { totalCourses, totalStudents, totalRevenue } = useSelector(
+    (state) => state.instructor
+  );
 
   useQuery({
     queryKey: ["fetchInstructorAnalytics"],
@@ -23,9 +23,11 @@ const InstructorAnalytics = ({ instructorId }) => {
         let instructorAnalyticsRes =
           await analyticsService.getInstructorAnalytics(instructorId);
         dispatch(setTotalCourses(instructorAnalyticsRes?.data?.totalCourses));
-        dispatch(setTotalStudents(instructorAnalyticsRes?.data?.totalStudents?.length));
+        dispatch(
+          setTotalStudents(instructorAnalyticsRes?.data?.totalStudents?.length)
+        );
         dispatch(setTotalRevenue(instructorAnalyticsRes?.data?.totalRevenue));
-        
+
         return instructorAnalyticsRes.data;
       } catch (error) {
         console.log(error?.response?.data?.message);
@@ -36,18 +38,14 @@ const InstructorAnalytics = ({ instructorId }) => {
 
   return (
     <div className="p-3">
-      <h1 className="text-3xl font-semibold mb-8">Key Analytics</h1>
-      <div className="flex flex-wrap gap-6">
+      <h1 className="text-xl md:text-3xl font-semibold mb-6">Key Analytics</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         <AnalyticCard
           heading="Total Courses"
           icon={BookOpen}
           value={totalCourses?.length}
         />
-        <AnalyticCard
-          heading="Total Students"
-          icon={Users}
-          value={totalStudents}
-        />
+        <AnalyticCard heading="Total Students" icon={Users} value={totalStudents} />
         <AnalyticCard
           heading="Total Revenue"
           icon={IndianRupee}
