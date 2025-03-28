@@ -155,14 +155,23 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
-        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden p-2 rounded-lg">
-          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        {/* Mobile Menu Button (only visible if not logged in) */}
+        {!isLoggedin && (
+          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden p-2 rounded-lg">
+            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        )}
+
+        {/* Profile for logged-in users in mobile view */}
+        {isLoggedin && (
+          <Link to={"/profile"} style={{ backgroundColor: color }} className="md:hidden w-[40px] h-[40px] cursor-pointer text-lg flex items-center justify-center rounded-full">
+            {String(currentUser?.name).charAt(0)}
+          </Link>
+        )}
       </div>
 
-      {/* Mobile Menu */}
-      {menuOpen && (
+      {/* Mobile Menu (Only visible if user is not logged in) */}
+      {menuOpen && !isLoggedin && (
         <div className="md:hidden flex flex-col items-center space-y-4 mt-4">
           <Link to={"/register/student"} className="text-sm text-indigo-600 hover:text-indigo-800">
             Sign Up
@@ -170,16 +179,6 @@ const Navbar = () => {
           <Link to={"/login/student"} className="text-sm text-indigo-600 hover:text-indigo-800">
             Login
           </Link>
-          {isLoggedin && (
-            <>
-              <Link to={"/profile"} className="text-sm text-indigo-600 hover:text-indigo-800">
-                Profile
-              </Link>
-              <Link to={"/notifications"} className="text-sm text-indigo-600 hover:text-indigo-800">
-                Notifications {notificationCount > 0 && <span className="ml-1 text-red-500">({notificationCount})</span>}
-              </Link>
-            </>
-          )}
         </div>
       )}
     </nav>
