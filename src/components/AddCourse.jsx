@@ -4,7 +4,6 @@ import { ThemeDataContext } from "../context/ThemeContext";
 import courseSchema from "../schemas/courseSchema";
 import { toast } from "react-toastify";
 import courseService from "../services/Course";
-import { Editor, EditorState, convertToRaw } from "draft-js";
 import "draft-js/dist/Draft.css";
 
 const AddCourse = ({
@@ -18,6 +17,7 @@ const AddCourse = ({
   const { darkMode } = useContext(ThemeDataContext);
   const [loading, setLoading] = useState(false);
   const [courseOutcomeList, setcourseOutcomeList] = useState([]);
+  const [thumbnail, setthumbnail] = useState();
 
   const containerStyles = {
     backgroundColor: darkMode ? "#1F2937" : "#ffffff",
@@ -30,14 +30,9 @@ const AddCourse = ({
     color: darkMode ? "#E5E7EB" : "#1F2937",
   };
 
-  const [thumbnail, setthumbnail] = useState();
-
   function handleAddCourseChange(e) {
     let { name, value } = e.target;
-
-    if (name === "duration") {
-      value = value ? Number(value) : "";
-    }
+    if (name === "duration") value = value ? Number(value) : "";
 
     setaddCourseData((prev) => ({ ...prev, [name]: value }));
 
@@ -57,7 +52,6 @@ const AddCourse = ({
 
   function handleCourseOutcomeChange(e) {
     let { value } = e.target;
-
     if (value.includes(",")) {
       const outcomes = value
         .split(",")
@@ -82,11 +76,10 @@ const AddCourse = ({
 
   async function handleCreateCourse(e) {
     e.preventDefault();
-
     setLoading(true);
 
     if (!thumbnail) {
-      setLoading(false)
+      setLoading(false);
       toast.error("Thumbnail is required");
       return;
     }
@@ -107,7 +100,7 @@ const AddCourse = ({
     formdata.append("price", addCourseData.price);
     formdata.append("thumbnail", thumbnail);
     formdata.append("duration", addCourseData.duration);
-    addCourseData.courseOutcome.forEach(function (outcome) {
+    addCourseData.courseOutcome.forEach((outcome) => {
       formdata.append("courseOutcome[]", outcome);
     });
 
@@ -116,17 +109,15 @@ const AddCourse = ({
       toast.success("Course Created Successfully");
       setShowAddCourse(false);
       setLoading(false);
-      let emptycourseOutcome = [];
-      setaddCourseData((prev) => ({
-        ...prev,
+      setaddCourseData({
         title: "",
         description: "",
         category: "",
         level: "Beginner",
         price: "",
         duration: "",
-        courseOutcome: emptycourseOutcome,
-      }));
+        courseOutcome: [],
+      });
       refetch();
     } catch (error) {
       setLoading(false);
@@ -137,10 +128,12 @@ const AddCourse = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div
-        className="rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6"
+        className="rounded-xl shadow-xl max-w-lg w-full max-h-screen overflow-y-auto p-6 md:max-w-2xl lg:max-w-3xl"
         style={containerStyles}
       >
-        <h2 className="text-2xl font-semibold mb-4">Add New Course</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-center">
+          Add New Course
+        </h2>
         <form onSubmit={handleCreateCourse} className="space-y-6">
           <FormFieldWithoutIcon
             label="Course Title"
@@ -153,106 +146,35 @@ const AddCourse = ({
             inputStyles={inputStyles}
           />
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={addCourseData.description}
-              onChange={handleAddCourseChange}
-              placeholder="Write Course Description"
-              rows={4}
-              className="w-full px-4 py-2 resize-none border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              style={inputStyles}
-            />
-            {errors.description && (
-              <p className="text-red-500 mt-2">{errors.description}</p>
-            )}
-          </div>
-
-          {/* Category & Level */}
+          {/* Responsive Form Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium mb-1">Category</label>
-              <select
-                name="category"
-                value={addCourseData.category}
-                onChange={handleAddCourseChange}
-                className="w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                style={inputStyles}
-              >
-                <option value="">Select Category</option>
-                <option value="programming">Programming</option>
-                <option value="data science">Data Science</option>
-                <option value="web development">Web Development</option>
-                <option value="mobile development">Mobile Development</option>
-                <option value="ui/ux design">UI/UX Design</option>
-                <option value="cybersecurity">Cybersecurity</option>
-                <option value="cloud computing">Cloud Computing</option>
-                <option value="artificial intelligence & machine learning">
-                  Artificial Intelligence & Machine Learning
-                </option>
-                <option value="business & entrepreneurship">
-                  Business & Entrepreneurship
-                </option>
-                <option value="digital marketing">Digital Marketing</option>
-                <option value="graphic design">Graphic Design</option>
-                <option value="photography & video editing">
-                  Photography & Video Editing
-                </option>
-              </select>
-              {errors.category && (
-                <p className="text-red-500 mt-2">{errors.category}</p>
-              )}
-            </div>
+            <FormFieldWithoutIcon
+              label="Category"
+              type="text"
+              placeholder="Course Category"
+              name="category"
+              value={addCourseData.category}
+              handleChange={handleAddCourseChange}
+              error={errors.category}
+              inputStyles={inputStyles}
+            />
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Level</label>
-              <select
-                name="level"
-                value={addCourseData.level}
-                onChange={handleAddCourseChange}
-                className="w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                style={inputStyles}
-              >
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Advanced">Advanced</option>
-              </select>
-              {errors.level && (
-                <p className="text-red-500 mt-2">{errors.level}</p>
-              )}
-            </div>
+            <FormFieldWithoutIcon
+              label="Price (₹)"
+              type="number"
+              placeholder="Course Price"
+              name="price"
+              value={addCourseData.price}
+              handleChange={handleAddCourseChange}
+              error={errors.price}
+              inputStyles={inputStyles}
+            />
           </div>
 
-          {/* Price Field */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Price</label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                ₹
-              </span>
-              <input
-                type="number"
-                name="price"
-                value={addCourseData.price}
-                onChange={handleAddCourseChange}
-                className="w-full pl-8 pr-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                style={inputStyles}
-              />
-            </div>
-            {errors.price && (
-              <p className="text-red-500 mt-2">{errors.price}</p>
-            )}
-          </div>
-
-          {/* Duration Field */}
           <FormFieldWithoutIcon
-            label="Duration"
+            label="Duration (weeks)"
             type="number"
-            placeholder="e.g., 12 weeks"
+            placeholder="e.g., 12"
             name="duration"
             value={addCourseData.duration}
             handleChange={handleAddCourseChange}
@@ -260,81 +182,35 @@ const AddCourse = ({
             inputStyles={inputStyles}
           />
 
-          <div>
-            <label className="block text-smm font-medium mb-1">
-              What Students will Learn
-            </label>
-            <div
-              className="flex flex-wrap gap-2 p-2 border rounded-lg"
-              style={inputStyles}
-            >
-              {courseOutcomeList.map((outcome, index) => (
-                <span
-                  key={index}
-                  className="flex items-center bg-indigo-500 text-white px-2 py-1 rounded-lg"
-                >
-                  {outcome}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveItem(index)}
-                    className="ml-2 text-white font-bold hover:text-red-500"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-              <input
-                type="text"
-                name="courseOutcome"
-                placeholder="Type and press comma"
-                onChange={handleCourseOutcomeChange}
-                className="outline-none flex-grow bg-transparent px-2"
-              />
-            </div>
-          </div>
-
-          {/* Course Thumbnail Upload */}
+          {/* Thumbnail Upload */}
           <div>
             <label className="block text-sm font-medium mb-1">
               Course Thumbnail
             </label>
-            <div className="flex items-center">
-              <input
-                id="thumbnail-upload"
-                type="file"
-                name="thumbnail"
-                accept="image/*"
-                onChange={(e) => setthumbnail(e.target.files[0])}
-                className="hidden"
-              />
-              <label
-                htmlFor="thumbnail-upload"
-                className="cursor-pointer px-4 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700"
-              >
-                Upload Thumbnail
-              </label>
-            </div>
+            <input
+              type="file"
+              name="thumbnail"
+              accept="image/*"
+              onChange={(e) => setthumbnail(e.target.files[0])}
+              className="w-full border px-2 py-2 rounded-lg"
+            />
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end space-x-4">
+          <div className="flex flex-wrap justify-end gap-4">
             <button
               type="button"
               onClick={() => setShowAddCourse(false)}
               className="px-4 py-2 border rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100"
-              style={{
-                backgroundColor: darkMode ? "#374151" : "#E5E7EB",
-                color: darkMode ? "#F3F4F6" : "#1F2937",
-              }}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg flex gap-3 items-center justify-center  text-white bg-indigo-600 hover:bg-indigo-700"
+              className="px-4 py-2 rounded-lg flex gap-3 items-center justify-center text-white bg-indigo-600 hover:bg-indigo-700"
             >
               Create Course
-              {loading && <span class="loader"></span>}
+              {loading && <span className="loader"></span>}
             </button>
           </div>
         </form>
