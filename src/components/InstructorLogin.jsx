@@ -170,7 +170,7 @@ const InstructorLogin = () => {
                     />
                   </svg>
                   <span className="font-medium">
-                    {darkMode ? "Continue with Google" : "Continue with Google"}
+                    {darkMode ? "Login with Google" : "Login with Google"}
                   </span>
                 </button>
               </div>
