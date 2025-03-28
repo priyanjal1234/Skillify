@@ -20,13 +20,8 @@ const Home = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    connectSocket()
-  },[])
-
-  // useEffect(() => {
-  //   const cookie = document.cookie;
-  //   dispatch(setLoggedin(!!cookie));
-  // }, [dispatch]);
+    connectSocket();
+  }, []);
 
   useQuery({
     queryKey: ["loggedinUser"],
@@ -43,7 +38,6 @@ const Home = () => {
         return {};
       }
     },
-    
   });
 
   useQuery({
@@ -57,7 +51,6 @@ const Home = () => {
         return {};
       }
     },
-    
   });
 
   useQuery({
@@ -81,14 +74,18 @@ const Home = () => {
     >
       <div className="transition-colors duration-200">
         <Navbar />
-        <Hero />
-        <Features />
-        <CalltoAction />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <Hero />
+          <Features />
+          <CalltoAction />
+        </div>
 
+        {/* Floating Button for ChatBot */}
         <button
           onClick={() => navigate("/bot")}
-          className="fixed bottom-5 right-5 bg-blue-600 text-white py-3 px-6 
-                   rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+          className="fixed bottom-3 right-3 md:bottom-5 md:right-5 bg-blue-600 text-white 
+                     py-2 px-4 md:py-3 md:px-6 rounded-full shadow-lg 
+                     hover:bg-blue-700 transition-all"
         >
           Ask the Bot
         </button>
