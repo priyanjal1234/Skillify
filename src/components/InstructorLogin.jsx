@@ -145,7 +145,7 @@ const InstructorLogin = () => {
                 <button
                   type="button"
                   onClick={handleGoogleLogin}
-                  className={`w-full h-12 mb-8 flex items-center justify-center space-x-3 border-2 rounded-xl transition duration-200 ${
+                  className={`w-full h-12 mt-3 mb-8 flex items-center justify-center space-x-3 border-2 rounded-xl transition duration-200 ${
                     darkMode
                       ? "border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
                       : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
