@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 const VerifyOTP = () => {
   const { darkMode } = useContext(ThemeDataContext);
-  const [loading, setLoading] = useState(false);
+  const [loading, setloading] = useState(false)
 
   let dispatch = useDispatch();
   let navigate = useNavigate();
@@ -26,11 +26,11 @@ const VerifyOTP = () => {
   async function handleOTPVerification(e) {
     e.preventDefault();
 
-    setLoading(true);
+    setloading(true)
 
     const parsedData = verifyOTPSchema.safeParse(values);
     if (!parsedData.success) {
-      setLoading(false);
+      setloading(false)
       const firstError = parsedData.error.issues[0]?.message;
       toast.error(firstError);
       return;
@@ -39,46 +39,47 @@ const VerifyOTP = () => {
     try {
       await userService.verifyOTP(values);
       toast.success("You are verified to reset your password");
-      setLoading(false);
+      setloading(false)
       navigate("/reset-password");
     } catch (error) {
-      setLoading(false);
+      setloading(false)
       toast.error(error?.response?.data?.message);
     }
   }
 
+  
+
   return (
     <div
-      className={`min-h-screen flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 ${
+      className={min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center ${
         darkMode
           ? "bg-gray-900 text-white"
           : "bg-gradient-to-br from-indigo-100 to-purple-100 text-gray-900"
-      }`}
+      }}
     >
-      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg">
-        <div className="text-center mb-8">
-          <div className="flex justify-center">
+      <div className="max-w-md w-full">
+        <div className="text-center mb-10">
+          <div className="flex justify-center mb-4">
             <div
-              className={`p-3 rounded-full shadow-lg ${
+              className={p-3 rounded-full shadow-lg ${
                 darkMode ? "bg-gray-800" : "bg-white"
-              }`}
+              }}
             >
               <CheckCircle2
-                className={`h-12 w-12 ${
+                className={h-10 w-10 ${
                   darkMode ? "text-indigo-400" : "text-indigo-600"
-                }`}
+                }}
               />
             </div>
           </div>
-          <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-extrabold">
-            Enter OTP for Password Reset
-          </h2>
+          <h2 className="text-4xl font-extrabold mb-2">Enter OTP for Password Reset</h2>
+          
         </div>
 
         <div
-          className={`p-6 sm:p-8 md:p-10 shadow-2xl rounded-xl ${
+          className={py-8 px-10 shadow-2xl rounded-2xl ${
             darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
-          }`}
+          }}
         >
           <form onSubmit={handleOTPVerification} className="space-y-6">
             <FormField
@@ -96,15 +97,19 @@ const VerifyOTP = () => {
               label="OTP"
               icon={ShieldCheck}
               type="number"
-              placeholder="Enter 6-digit OTP"
+              placeholder="Enter 6 digit OTP"
               name="otp"
               value={values.otp}
               handleChange={handleChange}
               error={errors.otp}
             />
 
-            <SubmitBtn btnText="Verify OTP" loading={loading} />
+            <div>
+              <SubmitBtn btnText="Verify OTP" loading = {loading} />
+            </div>
           </form>
+
+          
         </div>
 
         <div className="mt-6 text-center text-sm">
@@ -118,4 +123,4 @@ const VerifyOTP = () => {
   );
 };
 
-export default VerifyOTP;
+export default VerifyOTP; 
