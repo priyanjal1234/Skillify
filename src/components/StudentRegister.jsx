@@ -87,7 +87,7 @@ const StudentRegister = () => {
         </div>
 
         <div
-          className={`py-5 px-5 sm:px-6 md:px-8 shadow-2xl rounded-2xl ${
+          className={`py-5 px-5 w-fit sm:px-6 md:px-8 shadow-2xl rounded-2xl ${
             darkMode ? "bg-gray-800" : "bg-white"
           }`}
         >
