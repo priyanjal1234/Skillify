@@ -264,7 +264,7 @@ const getRevenueAnalytics = async function (req, res, next) {
     const data = await orderModel.aggregate([
       {
         $match: {
-          createdAt: { $gte: new Date(startDate), $lt: new Date(endDate) },
+          createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) },
           paymentStatus: 'Success',
         },
       },
