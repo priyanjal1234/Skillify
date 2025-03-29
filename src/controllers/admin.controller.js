@@ -159,10 +159,18 @@ const deleteInstructor = async function (req, res, next) {
 const getUserRegisterationAnalytics = async function (req, res, next) {
   try {
     let { startDate, endDate } = req.query;
+
+
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+    
     const data = await userModel.aggregate([
       {
         $match: {
-          createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) },
+          createdAt: { $gte: start, $lte:end },
         },
       },
       {
@@ -261,10 +269,17 @@ const getCourseRatingsAnalytics = async function (req, res, next) {
 const getRevenueAnalytics = async function (req, res, next) {
   try {
     let { startDate, endDate } = req.query;
+
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+    
     const data = await orderModel.aggregate([
       {
         $match: {
-          createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) },
+          createdAt: { $gte: start, $lte: end },
           paymentStatus: 'Success',
         },
       },
