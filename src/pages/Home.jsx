@@ -40,6 +40,9 @@ const Home = () => {
         return {};
       } catch (error) {
         console.log(error?.response?.data?.message);
+        if(error?.response?.data?.message === "Token not found") {
+          dispatch(setLoggedin(false))
+        }
         return {};
       }
     },
