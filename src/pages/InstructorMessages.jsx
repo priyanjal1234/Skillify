@@ -199,7 +199,8 @@ const InstructorMessages = () => {
               const studentObj = enrollment?.student;
               const unreadCount = getUnreadCountForStudent(studentObj?._id);
               return (
-                <li
+                {
+                  studentObj?.name !== currentUser?.name && <li
                   key={enrollment?._id}
                   onClick={() => handleSelectStudent(studentObj)}
                   className={`p-4 border-b flex items-center justify-between border-[#2f3342] cursor-pointer transition-colors ${
@@ -208,13 +209,14 @@ const InstructorMessages = () => {
                       : "hover:bg-[#2f3342]"
                   }`}
                 >
-                  <div className="font-bold mb-1">{studentObj?.name !== currentUser?.name && studentObj?.name}</div>
+                  <div className="font-bold mb-1">{studentObj?.name}</div>
                   {unreadCount > 0 && (
                     <span className="text-red-500 bg-white rounded-full px-2 py-1 text-sm">
                       {unreadCount}
                     </span>
                   )}
                 </li>
+                }
               );
             })}
           </ul>
