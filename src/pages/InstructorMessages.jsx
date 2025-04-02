@@ -195,31 +195,36 @@ const InstructorMessages = () => {
             <h2 className="text-lg">Chats</h2>
           </div>
           <ul className="flex-grow overflow-y-auto">
-            {enrolledStudents?.map((enrollment) => {
-              const studentObj = enrollment?.student;
-              const unreadCount = getUnreadCountForStudent(studentObj?._id);
-              return (
-                {
-                  studentObj?.name !== currentUser?.name && <li
-                  key={enrollment?._id}
-                  onClick={() => handleSelectStudent(studentObj)}
-                  className={`p-4 border-b flex items-center justify-between border-[#2f3342] cursor-pointer transition-colors ${
-                    studentObj?._id === selectedStudent?._id
-                      ? "bg-[#2f3342]"
-                      : "hover:bg-[#2f3342]"
-                  }`}
-                >
-                  <div className="font-bold mb-1">{studentObj?.name}</div>
-                  {unreadCount > 0 && (
-                    <span className="text-red-500 bg-white rounded-full px-2 py-1 text-sm">
-                      {unreadCount}
-                    </span>
-                  )}
-                </li>
-                }
-              );
-            })}
-          </ul>
+  {enrolledStudents?.map((enrollment) => {
+    const studentObj = enrollment?.student;
+    const unreadCount = getUnreadCountForStudent(studentObj?._id);
+
+    // Skip rendering if the student name matches currentUser name
+    if (studentObj?.name === currentUser?.name) {
+      return null;
+    }
+
+    return (
+      <li
+        key={enrollment?._id}
+        onClick={() => handleSelectStudent(studentObj)}
+        className={`p-4 border-b flex items-center justify-between border-[#2f3342] cursor-pointer transition-colors ${
+          studentObj?._id === selectedStudent?._id
+            ? "bg-[#2f3342]"
+            : "hover:bg-[#2f3342]"
+        }`}
+      >
+        <div className="font-bold mb-1">{studentObj?.name}</div>
+        {unreadCount > 0 && (
+          <span className="text-red-500 bg-white rounded-full px-2 py-1 text-sm">
+            {unreadCount}
+          </span>
+        )}
+      </li>
+    );
+  })}
+</ul>
+
         </div>
 
         {/* Right Panel: Selected Chat */}
