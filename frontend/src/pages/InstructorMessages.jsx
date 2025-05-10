@@ -14,6 +14,8 @@ const InstructorMessages = () => {
   const { currentUser, isLoggedin } = useSelector((state) => state.user);
   const { senderChats, receiverChats } = useSelector((state) => state.chat);
 
+  console.log(enrolledStudents)
+
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [message, setMessage] = useState("");
   const [room, setRoom] = useState(null);
@@ -195,36 +197,36 @@ const InstructorMessages = () => {
             <h2 className="text-lg">Chats</h2>
           </div>
           <ul className="flex-grow overflow-y-auto">
-  {enrolledStudents?.map((enrollment) => {
-    const studentObj = enrollment?.student;
-    const unreadCount = getUnreadCountForStudent(studentObj?._id);
+            {enrolledStudents?.map((enrollment) => {
+              const studentObj = enrollment?.student;
+              console.log(studentObj)
+              const unreadCount = getUnreadCountForStudent(studentObj?._id);
 
-    // Skip rendering if the student name matches currentUser name
-    if (studentObj?.name === currentUser?.name) {
-      return null;
-    }
+              // Skip rendering if the student name matches currentUser name
+              if (studentObj?.name === currentUser?.name) {
+                return null;
+              }
 
-    return (
-      <li
-        key={enrollment?._id}
-        onClick={() => handleSelectStudent(studentObj)}
-        className={`p-4 border-b flex items-center justify-between border-[#2f3342] cursor-pointer transition-colors ${
-          studentObj?._id === selectedStudent?._id
-            ? "bg-[#2f3342]"
-            : "hover:bg-[#2f3342]"
-        }`}
-      >
-        <div className="font-bold mb-1">{studentObj?.name}</div>
-        {unreadCount > 0 && (
-          <span className="text-red-500 bg-white rounded-full px-2 py-1 text-sm">
-            {unreadCount}
-          </span>
-        )}
-      </li>
-    );
-  })}
-</ul>
-
+              return (
+                <li
+                  key={enrollment?._id}
+                  onClick={() => handleSelectStudent(studentObj)}
+                  className={`p-4 border-b flex items-center justify-between border-[#2f3342] cursor-pointer transition-colors ${
+                    studentObj?._id === selectedStudent?._id
+                      ? "bg-[#2f3342]"
+                      : "hover:bg-[#2f3342]"
+                  }`}
+                >
+                  <div className="font-bold mb-1">{studentObj?.name}</div>
+                  {unreadCount > 0 && (
+                    <span className="text-red-500 bg-white rounded-full px-2 py-1 text-sm">
+                      {unreadCount}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         </div>
 
         {/* Right Panel: Selected Chat */}
