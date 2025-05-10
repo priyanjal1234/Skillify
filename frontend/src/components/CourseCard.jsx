@@ -148,7 +148,7 @@ const CourseCard = ({ course }) => {
           </Link>
         </div>
 
-        {course?.studentsEnrolled?.includes(currentUser?._id) && isLoggedin ? (
+        {course?.studentsEnrolled?.includes(currentUser?._id) && isLoggedin && currentOrder?.paymentStatus !== "Pending" ? (
           <Link
             to={`/classroom/${course?._id}`}
             className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center"
