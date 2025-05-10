@@ -17,6 +17,7 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
+import orderService from "../services/Order";
 
 const CourseDescription = () => {
   const { darkMode } = useContext(ThemeDataContext);
@@ -26,6 +27,7 @@ const CourseDescription = () => {
   const [loading, setloading] = useState(false);
   let navigate = useNavigate();
   let { currentUser } = useSelector((state) => state.user);
+  const [currentOrder, setcurrentOrder] = useState(null);
 
   // State for user rating and submission status
   const [userRating, setUserRating] = useState(0);
@@ -46,6 +48,19 @@ const CourseDescription = () => {
       try {
         const singleCourseRes = await courseService.getSingleCourse(courseId);
         return dispatch(setcurrentCourse(singleCourseRes.data));
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+        return;
+      }
+    },
+  });
+
+  useQuery({
+    queryKey: ["fetchsingleorder"],
+    queryFn: async () => {
+      try {
+        let order = await orderService.getOneOrder(courseId);
+        return setcurrentOrder(order.data);
       } catch (error) {
         console.log(error?.response?.data?.message);
       }
@@ -80,14 +95,14 @@ const CourseDescription = () => {
   }
 
   function changeToTitleCase(word) {
-    if(!word || typeof word !== "string") return 
+    if (!word || typeof word !== "string") return;
 
-    let splitted = word.split(' ')
-    let newWordArr = splitted.map((each,index) => {
-      return each.charAt(0).toUpperCase() + each.slice(1).toLowerCase()
-    })
+    let splitted = word.split(" ");
+    let newWordArr = splitted.map((each, index) => {
+      return each.charAt(0).toUpperCase() + each.slice(1).toLowerCase();
+    });
 
-    return newWordArr.join(' ')
+    return newWordArr.join(" ");
   }
 
   return (
@@ -114,7 +129,8 @@ const CourseDescription = () => {
               <div className="flex flex-wrap items-center gap-4 text-white">
                 <div className="flex items-center">
                   <span className="ml-1">
-                    {currentCourse?.studentsEnrolled?.length === 0 || currentCourse?.studentsEnrolled?.length === 1
+                    {currentCourse?.studentsEnrolled?.length === 0 ||
+                    currentCourse?.studentsEnrolled?.length === 1
                       ? `${currentCourse?.studentsEnrolled?.length} Student`
                       : `${currentCourse?.studentsEnrolled?.length} Students`}
                   </span>
@@ -129,7 +145,9 @@ const CourseDescription = () => {
                 </div>
                 <div className="flex items-center">
                   <BookOpen className="h-5 w-5 text-gray-300" />
-                  <span className="ml-1">{changeToTitleCase(currentCourse?.category)}</span>
+                  <span className="ml-1">
+                    {changeToTitleCase(currentCourse?.category)}
+                  </span>
                 </div>
                 <div>
                   <span className="ml-1 text-lg font-semibold">
@@ -210,7 +228,8 @@ const CourseDescription = () => {
                 darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
               }`}
             >
-              {currentCourse?.studentsEnrolled?.includes(currentUser?._id) ? (
+              {currentCourse?.studentsEnrolled?.includes(currentUser?._id) &&
+              currentOrder?.paymentStatus !== "Pending" ? (
                 <Link
                   to={`/classroom/${courseId}`}
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl mb-4 flex items-center justify-center"

@@ -6,11 +6,11 @@ class OrderService {
     this.baseUrl = "https://skillify-lms-backend.onrender.com/api/orders";
   }
 
-  async createOrder(amount, courseId,instructor) {
+  async createOrder(amount, courseId, instructor) {
     try {
       return await this.api.post(
         `${this.baseUrl}/create-order`,
-        { amount, courseId,instructor },
+        { amount, courseId, instructor },
         { withCredentials: true }
       );
     } catch (error) {
@@ -18,9 +18,23 @@ class OrderService {
     }
   }
 
-  async verifyPayment(response,courseId) {
+  async verifyPayment(response, courseId) {
     try {
-      return this.api.post(`${this.baseUrl}/verify-payment/${courseId}`, response, {
+      return this.api.post(
+        `${this.baseUrl}/verify-payment/${courseId}`,
+        response,
+        {
+          withCredentials: true,
+        }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getOneOrder(courseId) {
+    try {
+      return this.api.get(`${this.baseUrl}/one-order/${courseId}`, {
         withCredentials: true,
       });
     } catch (error) {

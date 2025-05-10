@@ -36,7 +36,7 @@ const createOrder = async function (req, res, next) {
 
     return res.status(200).json({ success: true, order });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return next(
       new ApiError(
         500,
@@ -104,4 +104,20 @@ const verifyPayment = async function (req, res, next) {
   }
 };
 
-export { createOrder, verifyPayment };
+const getOneOrder = async function (req, res, next) {
+  try {
+    let { courseId } = req.params;
+    let order = await orderModel.findOne({ course: courseId });
+    if (!order) return next(new ApiError(404, 'Order not found'));
+    return res.status(200).json(order);
+  } catch (error) {
+    return next(
+      new ApiError(
+        500,
+        error instanceof Error ? error.message : 'Error fetching order'
+      )
+    );
+  }
+};
+
+export { createOrder, verifyPayment, getOneOrder };
