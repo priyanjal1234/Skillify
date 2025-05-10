@@ -3,7 +3,7 @@ import api from "./api";
 class AnalyticsService {
   constructor() {
     this.api = api;
-    this.baseUrl = "https://skillify-backend.onrender.com/api/analytics";
+    this.baseUrl = "https://skillify-lms-backend.onrender.com/api/analytics";
   }
 
   async getInstructorAnalytics(instructorId) {

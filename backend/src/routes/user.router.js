@@ -3,7 +3,7 @@ import {
   calculateProgress,
   completeLessons,
   forgotPassword,
-verifyOTP,
+  verifyOTP,
   getCompletedLessons,
   getInstructors,
   getLoggedinUser,
@@ -56,13 +56,13 @@ router
 router.route('/auth/google/callback').get(
   passport.authenticate('google', {
     failureRedirect:
-      'https://skillify-frontend-sooty.vercel.app/login/student?error=google_login_failed',
+      'https://skillify-lms-frontend.vercel.app/login/student?error=google_login_failed',
   }),
   async function (req, res) {
     try {
       if (!req.user) {
         return res.redirect(
-          'https://skillify-frontend-sooty.vercel.app/login/student?error=auth_failed'
+          'https://skillify-lms-frontend.vercel.app/login/student?error=auth_failed'
         );
       }
 
@@ -76,18 +76,18 @@ router.route('/auth/google/callback').get(
 
       res.cookie('token', token,{httpOnly: true,secure: true, sameSite: 'None'});
 
-      return res.redirect('https://skillify-frontend-sooty.vercel.app');
+      return res.redirect('https://skillify-lms-frontend.vercel.app');
     } catch (error) {
       console.error('Google Auth Error:', error);
 
       if (error.code === 11000) {
         return res.redirect(
-          'https://skillify-frontend-sooty.vercel.app/login/student?error=account_exists'
+          'https://skillify-lms-frontend.vercel.app/login/student?error=account_exists'
         );
       }
 
       return res.redirect(
-        'https://skillify-frontend-sooty.vercel.app/login/student?error=google_login_failed'
+        'https://skillify-lms-frontend.vercel.app/login/student?error=google_login_failed'
       );
     }
   }
@@ -95,7 +95,7 @@ router.route('/auth/google/callback').get(
 
 router.route('/logout').get(function (req, res) {
   req.logout(() => {
-    res.redirect('https://skillify-frontend-sooty.vercel.app');
+    res.redirect('https://skillify-lms-frontend.vercel.app');
   });
 });
 

@@ -56,7 +56,7 @@ const InstructorLogin = () => {
   async function handleGoogleLogin() {
     try {
       window.open(
-        "https://skillify-backend.onrender.com/api/users/google",
+        "https://skillify-lms-backend.onrender.com/api/users/google",
         "_self"
       );
       dispatch(setLoggedin(true));

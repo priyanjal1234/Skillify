@@ -7,7 +7,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'https://skillify-backend.onrender.com/api/users/auth/google/callback',
+      callbackURL: 'https://skillify-lms-backend.onrender.com/api/users/auth/google/callback',
     },
     async function (accessToken, refreshToken, profile, done) {
       try {

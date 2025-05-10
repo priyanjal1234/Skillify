@@ -3,7 +3,7 @@ import api from "./api";
 class UserService {
   constructor() {
     this.api = api;
-    this.baseUrl = "https://skillify-backend.onrender.com/api/users";
+    this.baseUrl = "https://skillify-lms-backend.onrender.com/api/users";
   }
 
   async createAccount(registerData) {

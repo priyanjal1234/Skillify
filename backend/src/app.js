@@ -48,7 +48,7 @@ app.use(express.urlencoded({ limit: "50mb",extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['https://skillify-frontend-sooty.vercel.app','https://skillify-admin-dashboard.vercel.app'],
+    origin: ['https://skillify-lms-frontend.vercel.app','https://skillify-admin-dashboard.vercel.app'],
 methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })

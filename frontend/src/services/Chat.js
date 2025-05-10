@@ -3,7 +3,7 @@ import api from "./api";
 class ChatService {
   constructor() {
     this.api = api;
-    this.baseUrl = "https://skillify-backend.onrender.com/api/chats";
+    this.baseUrl = "https://skillify-lms-backend.onrender.com/api/chats";
   }
 
   async getSenderChats(senderId, receiverId) {
