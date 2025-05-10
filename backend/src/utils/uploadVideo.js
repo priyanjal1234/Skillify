@@ -5,7 +5,7 @@ import getVideoUrl from './serveVideo.js';
 async function uploadVideo(file) {
   const fileKey = `videos/${Date.now()}_${file.originalname}`;
   const params = {
-    Bucket: 'lms-videos-bucket-in-aws',
+    Bucket: 'my-lms-bucket-in-the-world',
     Key: fileKey,
     Body: file.buffer,
     ContentType: file.mimetype,
