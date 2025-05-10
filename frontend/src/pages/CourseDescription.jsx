@@ -87,7 +87,7 @@ const CourseDescription = () => {
       return each.charAt(0).toUpperCase() + each.slice(1).toLowerCase()
     })
 
-    return splitted.join(' ')
+    return newWordArr.join(' ')
   }
 
   return (
