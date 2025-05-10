@@ -1,5 +1,5 @@
 async function getVideoUrl(key) {
-  const url = `https://lms-videos-bucket-in-aws.s3.us-east-1.amazonaws.com/${key}`;
+  const url = `https://my-lms-bucket-in-the-world.s3.ap-south-1.amazonaws.com/${key}`;
   return url;
 }
 
