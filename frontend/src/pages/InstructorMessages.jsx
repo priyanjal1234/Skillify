@@ -203,7 +203,7 @@ const InstructorMessages = () => {
               const unreadCount = getUnreadCountForStudent(studentObj?._id);
 
               // Skip rendering if the student name matches currentUser name
-              if (studentObj?.name === currentUser?.name) {
+              if (studentObj?.email === currentUser?.email) {
                 return null;
               }
 
