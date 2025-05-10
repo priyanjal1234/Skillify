@@ -6,11 +6,25 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import courseService from "../services/Course";
+import orderService from "../services/Order";
 
 const CourseCard = ({ course }) => {
   let { darkMode } = useContext(ThemeDataContext);
   let { currentUser, isLoggedin } = useSelector((state) => state.user);
   const [rating, setRating] = useState(0);
+  const [currentOrder, setcurrentOrder] = useState(null)
+
+  useQuery({
+    queryKey: ["fetchsingleorder"],
+    queryFn: async () => {
+      try {
+        let order = await orderService.getOneOrder(course?._id);
+        return setcurrentOrder(order.data);
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+      }
+    },
+  });
 
   useQuery({
     queryKey: ["fetchCourseRating", course?._id],
@@ -30,6 +44,7 @@ const CourseCard = ({ course }) => {
       }
     },
   });
+
 
   return (
     <div
