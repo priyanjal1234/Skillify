@@ -6,7 +6,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/ForgotPassword";
-import VerifyOTP from "./pages/VerifyOTP"
+import VerifyOTP from "./pages/VerifyOTP";
 import ResetPassword from "./pages/ResetPassword";
 import EditProfile from "./pages/EditProfile";
 import CoursePreview from "./pages/CoursePreview";
@@ -28,7 +28,6 @@ import DoCode from "./pages/DoCode";
 import GoLive from "./pages/GoLive";
 import Notifications from "./components/Notifications";
 
-
 const App = () => {
   useEffect(() => {
     const script = document.createElement("script");
@@ -43,11 +42,25 @@ const App = () => {
         <Route path="/register/:name" element={<Register />} />
         <Route path="/login/:name" element={<Login />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path = "/verify-otp" element = {<VerifyOTP />} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route
+          path="/edit-profile"
+          element={
+            <ProtectedRoute>
+              <EditProfile />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/dashboard/instructor" element={<InstructorDashboard />} />
         <Route path="/course-preview/:courseId" element={<CoursePreview />} />
         <Route path="/edit-course/:courseId" element={<EditCourse />} />
@@ -76,11 +89,11 @@ const App = () => {
           element={<EditLesson />}
         />
         <Route path="/quiz/:courseId/:lessonId" element={<LessonQuiz />} />
-        <Route path="/student-messages" element = {<StudentMessages />}/>
-        <Route path="/bot" element = {<Bot />} />
-        <Route path="/do-code" element = {<DoCode />}/>
-        <Route path="/go-live" element = {<GoLive />}/>
-        <Route path="/notifications" element = {<Notifications />}/>
+        <Route path="/student-messages" element={<StudentMessages />} />
+        <Route path="/bot" element={<Bot />} />
+        <Route path="/do-code" element={<DoCode />} />
+        <Route path="/go-live" element={<GoLive />} />
+        <Route path="/notifications" element={<Notifications />} />
       </Routes>
     </>
   );
