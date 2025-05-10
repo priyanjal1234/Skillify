@@ -79,6 +79,17 @@ const CourseDescription = () => {
     }
   }
 
+  function changeToTitleCase(word) {
+    if(!word || typeof word !== "string") return 
+
+    let splitted = word.split(' ')
+    let newWordArr = splitted.map((each,index) => {
+      return each.charAt(0).toUpperCase() + each.slice(1).toLowerCase()
+    })
+
+    return splitted.join(' ')
+  }
+
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-50"}`}>
       <div className="relative">
@@ -103,8 +114,8 @@ const CourseDescription = () => {
               <div className="flex flex-wrap items-center gap-4 text-white">
                 <div className="flex items-center">
                   <span className="ml-1">
-                    {currentCourse?.studentsEnrolled?.length === 1
-                      ? "1 Student"
+                    {currentCourse?.studentsEnrolled?.length === 0 || currentCourse?.studentsEnrolled?.length === 1
+                      ? `${currentCourse?.studentsEnrolled?.length} Student`
                       : `${currentCourse?.studentsEnrolled?.length} Students`}
                   </span>
                 </div>
@@ -118,7 +129,7 @@ const CourseDescription = () => {
                 </div>
                 <div className="flex items-center">
                   <BookOpen className="h-5 w-5 text-gray-300" />
-                  <span className="ml-1">{currentCourse?.category}</span>
+                  <span className="ml-1">{changeToTitleCase(currentCourse?.category)}</span>
                 </div>
                 <div>
                   <span className="ml-1 text-lg font-semibold">
@@ -135,7 +146,9 @@ const CourseDescription = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div
-              className={`rounded-xl shadow-sm p-6 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"}`}
+              className={`rounded-xl shadow-sm p-6 ${
+                darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+              }`}
             >
               <h2 className="text-2xl font-bold mb-4">About This Course</h2>
               <p>{currentCourse?.description}</p>
@@ -170,7 +183,11 @@ const CourseDescription = () => {
                       >
                         <Star
                           fill={star <= userRating ? "currentColor" : "none"}
-                          className={`h-6 w-6 ${star <= userRating ? "text-yellow-400" : "text-gray-300"}`}
+                          className={`h-6 w-6 ${
+                            star <= userRating
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          }`}
                         />
                       </button>
                     ))}
@@ -189,7 +206,9 @@ const CourseDescription = () => {
 
           <div className="lg:col-span-1">
             <div
-              className={`rounded-xl shadow-sm p-6 sticky top-8 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"}`}
+              className={`rounded-xl shadow-sm p-6 sticky top-8 ${
+                darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+              }`}
             >
               {currentCourse?.studentsEnrolled?.includes(currentUser?._id) ? (
                 <Link
