@@ -189,7 +189,7 @@ const AddLesson = () => {
                     htmlFor="content"
                     className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-300" : "text-gray-700"}`}
                   >
-                    Content
+                    Description
                   </label>
                   <textarea
                     id="content"

@@ -35,7 +35,7 @@ const PaymentButton = ({ courseId, amount, instructor }) => {
               newResponse,
               courseId
             );
-
+            console.log(verifyRes)
             toast.success("Payment Successfull");
             dispatch(setDiscountValue(0))
             dispatch(setDiscountVisible(false))
