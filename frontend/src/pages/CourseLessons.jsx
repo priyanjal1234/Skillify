@@ -65,7 +65,7 @@ const CourseLessons = () => {
 
   async function handleChangeStatusOnAddingCourse() {
     try {
-      await courseService.changeCourseStatus(courseId, "Review");
+      await courseService.changeCourseStatus(courseId, "Draft");
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
