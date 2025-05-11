@@ -44,8 +44,9 @@ const PaymentButton = ({ courseId, amount, instructor }) => {
               dispatch(setDiscountVisible(false));
               navigate(`/course/${courseId}`);
             } else {
-              toast.error("Payment Failed. Try again after some time. Your amount has not been deducted")
-              
+              toast.error(
+                "Payment Failed. Try again after some time. Your amount has not been deducted"
+              );
             }
           } catch (error) {
             toast.error("Payment verification failed!");

@@ -56,44 +56,52 @@ const verifyPayment = async function (req, res, next) {
       razorpay_signature,
       instructor,
     } = req.body;
-    let { courseId } = req.params;
+    const { courseId } = req.params;
 
-    let student = await userModel.findOne({ email: req.user.email });
-    if (!student) {
-      return next(new ApiError(404, 'Student not found'));
-    }
+    const student = await userModel.findOne({ email: req.user.email });
+    if (!student) return next(new ApiError(404, 'Student not found'));
 
-    let order = await orderModel.findOne({
+    const order = await orderModel.findOne({
       student: student._id,
+      course: courseId,
     });
-    if (!order) {
-      return next(new ApiError(404, 'Order not found'));
-    }
+    if (!order) return next(new ApiError(404, 'Order not found'));
 
-    const secret = razorpayKeySecret;
-    const hash = crypto
-      .createHmac('sha256', secret)
+    // STEP 1: Verify the signature
+    const expectedSignature = crypto
+      .createHmac('sha256', razorpayKeySecret)
       .update(razorpay_order_id + '|' + razorpay_payment_id)
       .digest('hex');
 
-    if (hash === razorpay_signature) {
-      order.paymentStatus = 'Success';
-      await order.save();
-
-      await enrollmentModel.create({
-        student: student._id,
-        instructor: instructor,
-        course: courseId,
-      });
-
-      return res
-        .status(200)
-        .json({ success: true, message: 'Payment verified successfully' });
-    } else {
+    if (expectedSignature !== razorpay_signature) {
       order.paymentStatus = 'Failed';
       await order.save();
-      return res.status(200).json({success: false,message: "Payment Verification Failed"})
+      return res.status(200).json({ success: false, message: 'Invalid signature' });
     }
+
+    // STEP 2: Fetch payment from Razorpay and check actual status
+    const payment = await razorpay.payments.fetch(razorpay_payment_id);
+
+    if (payment.status !== 'captured') {
+      order.paymentStatus = 'Failed';
+      await order.save();
+      return res.status(200).json({ success: false, message: 'Payment not captured' });
+    }
+
+    
+    order.paymentStatus = 'Success';
+    await order.save();
+
+    await enrollmentModel.create({
+      student: student._id,
+      instructor: instructor,
+      course: courseId,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Payment verified and captured successfully',
+    });
   } catch (error) {
     return next(
       new ApiError(
@@ -103,6 +111,7 @@ const verifyPayment = async function (req, res, next) {
     );
   }
 };
+
 
 const getOneOrder = async function (req, res, next) {
   try {
