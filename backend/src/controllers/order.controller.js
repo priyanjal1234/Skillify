@@ -92,7 +92,7 @@ const verifyPayment = async function (req, res, next) {
     } else {
       order.paymentStatus = 'Failed';
       await order.save();
-      return next(new ApiError(400, 'Payment Verification Failed'));
+      return res.status(200).json({success: false,message: "Payment Verification Failed"})
     }
   } catch (error) {
     return next(

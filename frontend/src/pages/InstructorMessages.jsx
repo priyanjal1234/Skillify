@@ -14,7 +14,7 @@ const InstructorMessages = () => {
   const { currentUser, isLoggedin } = useSelector((state) => state.user);
   const { senderChats, receiverChats } = useSelector((state) => state.chat);
 
-  console.log(enrolledStudents)
+  
 
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [message, setMessage] = useState("");
@@ -111,7 +111,7 @@ const InstructorMessages = () => {
         let readMessagesRes = await chatService.readChats(
           unreadMessages?.filteredMessages
         );
-        console.log(readMessagesRes);
+        
       } catch (error) {
         if (
           error?.response?.data?.message ===
@@ -199,7 +199,7 @@ const InstructorMessages = () => {
           <ul className="flex-grow overflow-y-auto">
             {enrolledStudents?.map((enrollment) => {
               const studentObj = enrollment?.student;
-              console.log(studentObj)
+              
               const unreadCount = getUnreadCountForStudent(studentObj?._id);
 
               // Skip rendering if the student name matches currentUser name

@@ -229,7 +229,8 @@ const CourseDescription = () => {
               }`}
             >
               {currentCourse?.studentsEnrolled?.includes(currentUser?._id) &&
-              currentOrder?.paymentStatus !== "Pending" ? (
+              (currentOrder?.paymentStatus !== "Pending" ||
+                currentCourse?.paymentStatus !== "Failed") ? (
                 <Link
                   to={`/classroom/${courseId}`}
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl mb-4 flex items-center justify-center"

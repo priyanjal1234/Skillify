@@ -3,13 +3,16 @@ import orderService from "../services/Order";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setDiscountValue, setDiscountVisible } from "../redux/reducers/CouponReducer";
+import {
+  setDiscountValue,
+  setDiscountVisible,
+} from "../redux/reducers/CouponReducer";
 
 const PaymentButton = ({ courseId, amount, instructor }) => {
   let { currentUser } = useSelector((state) => state.user);
   let { currentCourse } = useSelector((state) => state.course);
 
-  let dispatch = useDispatch()
+  let dispatch = useDispatch();
 
   let navigate = useNavigate();
   async function handlePayment() {
@@ -35,11 +38,15 @@ const PaymentButton = ({ courseId, amount, instructor }) => {
               newResponse,
               courseId
             );
-            console.log(verifyRes)
-            toast.success("Payment Successfull");
-            dispatch(setDiscountValue(0))
-            dispatch(setDiscountVisible(false))
-            navigate(`/course/${courseId}`);
+            if (verifyRes.data.success) {
+              toast.success("Payment Successfull");
+              dispatch(setDiscountValue(0));
+              dispatch(setDiscountVisible(false));
+              navigate(`/course/${courseId}`);
+            } else {
+              toast.error("Payment Failed. Try again after some time. Your amount has not been deducted")
+              
+            }
           } catch (error) {
             toast.error("Payment verification failed!");
           }
