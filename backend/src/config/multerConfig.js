@@ -4,20 +4,11 @@ import cloudinary from '../config/cloudinary.js';
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: async (req, file) => {
-    let resourceType = 'image';
-
-    if (file.mimetype === 'application/pdf') {
-      resourceType = 'raw';
-    } else if (file.mimetype.startsWith('video/')) {
-      resourceType = 'video';
-    }
-
-    return {
-      folder: 'learnify-uploads',
-      resource_type: resourceType,
-      access_mode: 'public'
-    };
+  params: {
+    folder: 'learnify-uploads',
+    resource_type: 'auto', 
+    type: 'upload', 
+    access_mode: 'public', 
   },
 });
 
