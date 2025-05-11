@@ -16,6 +16,7 @@ const storage = new CloudinaryStorage({
     return {
       folder: 'learnify-uploads',
       resource_type: resourceType,
+      access_mode: 'public'
     };
   },
 });
