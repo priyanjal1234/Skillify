@@ -4,8 +4,19 @@ import cloudinary from '../config/cloudinary.js';
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: {
-    folder: 'learnify-uploads',
+  params: async (req, file) => {
+    let resourceType = 'image';
+
+    if (file.mimetype === 'application/pdf') {
+      resourceType = 'raw';
+    } else if (file.mimetype.startsWith('video/')) {
+      resourceType = 'video';
+    }
+
+    return {
+      folder: 'learnify-uploads',
+      resource_type: resourceType,
+    };
   },
 });
 
