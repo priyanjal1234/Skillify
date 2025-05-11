@@ -188,7 +188,7 @@ const ClassRoom = () => {
                               (resource, index) => (
                                 <li key={index}>
                                   <a
-                                    href={resource?.url}
+                                    href={`${resource?.url}?raw=true`}
                                     className="text-blue-500 hover:underline"
                                     target="_blank"
                                     rel="noopener noreferrer"
