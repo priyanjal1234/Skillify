@@ -56,13 +56,13 @@ router
 router.route('/auth/google/callback').get(
   passport.authenticate('google', {
     failureRedirect:
-      'https://skillify-lms-frontend.vercel.app/login/student?error=google_login_failed',
+      'https://www.skillify-lms.xyz/login/student?error=google_login_failed',
   }),
   async function (req, res) {
     try {
       if (!req.user) {
         return res.redirect(
-          'https://skillify-lms-frontend.vercel.app/login/student?error=auth_failed'
+          'https://www.skillify-lms.xyz/login/student?error=auth_failed'
         );
       }
 
@@ -76,18 +76,18 @@ router.route('/auth/google/callback').get(
 
       res.cookie('token', token,{httpOnly: true,secure: true, sameSite: 'None'});
 
-      return res.redirect('https://skillify-lms-frontend.vercel.app');
+      return res.redirect('https://www.skillify-lms.xyz');
     } catch (error) {
       console.error('Google Auth Error:', error);
 
       if (error.code === 11000) {
         return res.redirect(
-          'https://skillify-lms-frontend.vercel.app/login/student?error=account_exists'
+          'https://www.skillify-lms.xyz/login/student?error=account_exists'
         );
       }
 
       return res.redirect(
-        'https://skillify-lms-frontend.vercel.app/login/student?error=google_login_failed'
+        'https://www.skillify-lms.xyz/login/student?error=google_login_failed'
       );
     }
   }
@@ -95,7 +95,7 @@ router.route('/auth/google/callback').get(
 
 router.route('/logout').get(function (req, res) {
   req.logout(() => {
-    res.redirect('https://skillify-lms-frontend.vercel.app');
+    res.redirect('https://www.skillify-lms.xyz');
   });
 });
 
