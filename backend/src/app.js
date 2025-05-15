@@ -14,7 +14,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: 'https://skillify-lms-frontend.vercel.app',
+    origin: ['https://skillify-lms-frontend.vercel.app','https://www.skillify-lms.xyz'],
     credentials: true,
   },
 });
