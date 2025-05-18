@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import enrollmentService from "../services/Enrollment";
 import { useDispatch, useSelector } from "react-redux";
 import { setEnrolledStudents } from "../redux/reducers/EnrollmentReducer";
@@ -28,11 +28,28 @@ const InstructorStudents = () => {
     },
   });
 
+  const uniqueStudents = useMemo(() => {
+      const seen = new Set()
+      const filtered = []
+  
+      for(const enrollment of enrolledStudents || []) {
+        let student = enrollment?.student
+        let key = student?.email
+  
+        if(key && !seen.has(key)) {
+          seen.add(key)
+          filtered.push(enrollment)
+        }
+      }
+  
+      return filtered
+    },[enrolledStudents])
+
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-5">Enrolled Students</h1>
 
-      {Array.isArray(enrolledStudents) && enrolledStudents.length > 0 ? (
+      {Array.isArray(uniqueStudents) && uniqueStudents.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="w-full">
             {/* TABLE HEADER */}
@@ -70,7 +87,7 @@ const InstructorStudents = () => {
                   : "divide-y divide-gray-200 text-gray-900"
               }
             >
-              {enrolledStudents.map((student) => (
+              {uniqueStudents.map((student) => (
                 <tr
                   key={student._id}
                   className={
