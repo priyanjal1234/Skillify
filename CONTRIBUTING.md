@@ -1,4 +1,4 @@
-### 3. Submitting Code Changes
+### Submitting Code Changes
 We welcome pull requests! To contribute code:
 1. Fork the repository.
 2. Create a new branch (`git checkout -b feature-name`).
