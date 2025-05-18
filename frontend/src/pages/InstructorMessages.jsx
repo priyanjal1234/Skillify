@@ -27,7 +27,7 @@ const InstructorMessages = () => {
     const filtered = []
 
     for(const enrollment of enrolledStudents || []) {
-      let student = enrolledStudents?.student
+      let student = enrollment?.student
       let key = student?.email
 
       if(key && !seen.has(key)) {
