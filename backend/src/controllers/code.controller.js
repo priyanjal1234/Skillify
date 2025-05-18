@@ -1,57 +1,39 @@
-import Docker from 'dockerode';
+import axios from 'axios';
 import ApiError from '../utils/ApiError.js';
 
-const docker = new Docker();
+const languageMap = {
+  javascript: 63,
+  c: 50,
+  cpp: 54,
+};
 
-const runCode = async function (req, res, next) {
+export const runCode = async (req, res, next) => {
   try {
-    let { language, code } = req.body;
+    const { language, code } = req.body;
 
-    let image, command;
-
-    if (language === 'javascript') {
-      // Escape single quotes properly
-      const escapedCode = String(code).replace(/'/g, "'\\''");
-      command = `sh -c "mkdir -p /app && echo '${escapedCode}' > /app/code.js && node /app/code.js"`;
-      image = 'node:18';
-    } else if (language === 'c') {
-      command = `sh -c "mkdir -p /app && printf '%s' '${String(code)}' > /app/code.c && gcc /app/code.c -o /app/a.out && /app/a.out"`;
-      image = 'gcc:latest';
-    } else if (language === 'cpp') {
-      command = `sh -c "mkdir -p /app && printf '%s' '${String(code)}' > /app/code.cpp && g++ /app/code.cpp -o /app/a.out && /app/a.out"`;
-      image = 'gcc:latest';
-    } else {
+    const language_id = languageMap[language];
+    if (!language_id) {
       return res.status(400).json({ error: 'Unsupported language' });
     }
 
-    const container = await docker.createContainer({
-      Image: image,
-      Cmd: ['sh', '-c', command],
-      Tty: false,
-      HostConfig: { AutoRemove: true },
-      AttachStdout: true,
-      AttachStderr: true,
-    });
+    const response = await axios.post(
+      'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true',
+      {
+        language_id,
+        source_code: code,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-RapidAPI-Key': process.env.JUDGE0_API_KEY, // ENV mein rakho
+          'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+        },
+      }
+    );
 
-    await container.start();
-
-    const stream = await container.logs({
-      stdout: true,
-      stderr: true,
-      follow: true,
-    });
-
-    let output = '';
-    stream.on('data', (chunk) => {
-      output += chunk.slice(8).toString();
-    });
-
-    await container.wait();
-
-    res.json(output);
+    const output = response.data.stdout || response.data.stderr || 'No output';
+    res.json({ output });
   } catch (error) {
-    return next(new ApiError(500, error.message || 'Error running code'));
+    return next(new ApiError(500, error.message || 'Execution failed'));
   }
 };
-
-export { runCode };
