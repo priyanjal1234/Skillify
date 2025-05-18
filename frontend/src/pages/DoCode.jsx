@@ -17,7 +17,7 @@ const DoCode = () => {
 
     try {
       let runCodeRes = await codeService.runCode(code, language);
-      setoutput(runCodeRes.data);
+      setoutput(runCodeRes?.data?.output);
       setcode("");
       setlanguage("javascript");
     } catch (error) {
