@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import socket, { connectSocket } from "../socket/socket.js";
 import { useQuery } from "@tanstack/react-query";
@@ -21,6 +21,23 @@ const InstructorMessages = () => {
   const [room, setRoom] = useState(null);
 
   const dispatch = useDispatch();
+
+  const uniqueStudents = useMemo(() => {
+    const seen = new Set()
+    const filtered = []
+
+    for(const enrollment of enrolledStudents || []) {
+      let student = enrolledStudents?.student
+      let key = student?.email
+
+      if(key && !seen.has(key)) {
+        seen.add(key)
+        filtered.push(enrollment)
+      }
+    }
+
+    return filtered
+  },[enrolledStudents])
 
   // Connect to socket and set up listeners
   useEffect(() => {
@@ -197,7 +214,7 @@ const InstructorMessages = () => {
             <h2 className="text-lg">Chats</h2>
           </div>
           <ul className="flex-grow overflow-y-auto">
-            {enrolledStudents?.map((enrollment) => {
+            {uniqueStudents?.map((enrollment) => {
               const studentObj = enrollment?.student;
               
               const unreadCount = getUnreadCountForStudent(studentObj?._id);
