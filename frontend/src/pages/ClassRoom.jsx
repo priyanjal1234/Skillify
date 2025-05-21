@@ -72,7 +72,7 @@ const ClassRoom = () => {
 
         videoElement.addEventListener("loadedmetadata", () => {
           // Set currentTime to 1 second (or adjust as needed)
-          videoElement.currentTime = 1;
+          videoElement.currentTime = 2;
         });
 
         videoElement.addEventListener("seeked", () => {
