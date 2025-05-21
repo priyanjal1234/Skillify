@@ -12,7 +12,7 @@ const CourseCard = ({ course }) => {
   let { darkMode } = useContext(ThemeDataContext);
   let { currentUser, isLoggedin } = useSelector((state) => state.user);
   const [rating, setRating] = useState(0);
-  const [currentOrder, setcurrentOrder] = useState(null)
+  const [currentOrder, setcurrentOrder] = useState(null);
 
   useQuery({
     queryKey: ["fetchsingleorder"],
@@ -45,14 +45,15 @@ const CourseCard = ({ course }) => {
     },
   });
 
-
   return (
     <div
-      className={`${darkMode ? "bg-gray-800" : "bg-white"} w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-fit rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 mx-auto`}
+      className={`${
+        darkMode ? "bg-gray-800" : "bg-white"
+      } w-full sm:w-[90%] md:w-[350px] lg:w-[380px] xl:w-[400px] h-fit rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 mx-auto`}
     >
       {/* Course Thumbnail */}
       {course?.thumbnail !== "" && (
-        <div className="w-full h-40 sm:h-48 md:h-56 lg:h-60 xl:h-64 overflow-hidden">
+        <div className="w-full h-40 sm:h-44 md:h-48 lg:h-52 overflow-hidden">
           <img
             src={course?.thumbnail}
             alt={course?.title}
@@ -61,8 +62,9 @@ const CourseCard = ({ course }) => {
         </div>
       )}
 
-      <div className="p-4 sm:p-6">
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4 justify-between mb-2">
+      <div className="p-4 sm:p-5 md:p-6">
+        {/* Badges */}
+        <div className="flex items-center gap-2 justify-between mb-2">
           <span
             className={`text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full ${
               darkMode
@@ -82,6 +84,8 @@ const CourseCard = ({ course }) => {
             {course?.category}
           </span>
         </div>
+
+        {/* Title */}
         <h3
           className={`text-lg sm:text-xl font-bold ${
             darkMode ? "text-white" : "text-gray-900"
@@ -89,18 +93,22 @@ const CourseCard = ({ course }) => {
         >
           {course?.title}
         </h3>
+
+        {/* Description */}
         <p
-          className={`text-gray-600 ${
-            darkMode ? "dark:text-gray-300" : ""
-          } mb-4 text-sm sm:text-base`}
+          className={`text-sm sm:text-base ${
+            darkMode ? "text-gray-300" : "text-gray-600"
+          } mb-4`}
         >
           {truncateText(course?.description, 50)}
         </p>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2 sm:gap-0">
+
+        {/* Duration & Students */}
+        <div className="flex flex-wrap items-center justify-between mb-4 gap-2">
           <div className="flex items-center space-x-2">
             <Clock className="h-4 w-4 text-gray-400" />
             <span
-              className={`text-xs sm:text-sm ${
+              className={`text-sm ${
                 darkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
@@ -109,10 +117,11 @@ const CourseCard = ({ course }) => {
                 : `${course?.duration} weeks`}
             </span>
           </div>
+
           <div className="flex items-center space-x-2">
             <Users className="h-4 w-4 text-gray-400" />
             <span
-              className={`text-xs sm:text-sm ${
+              className={`text-sm ${
                 darkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
@@ -124,34 +133,40 @@ const CourseCard = ({ course }) => {
             </span>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+
+        {/* Rating & Link */}
+        <div className="flex items-center justify-between">
           <div className="flex items-center space-x-1">
             <Star className="h-5 w-5 text-yellow-400 fill-current" />
             <span
-              className={`text-xs sm:text-sm ${
+              className={`text-sm ${
                 darkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
               {Number(rating).toFixed(1)}
             </span>
           </div>
+
           <Link
             to={`/course/${course?._id}`}
             className={`flex items-center space-x-2 ${
               darkMode
                 ? "text-indigo-400 hover:text-indigo-500"
                 : "text-indigo-600 hover:text-indigo-500"
-            } font-medium text-xs sm:text-sm`}
+            } font-medium text-sm`}
           >
             <span>View Details</span>
             <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
 
-        {course?.studentsEnrolled?.includes(currentUser?._id) && isLoggedin && currentOrder?.paymentStatus !== "Pending" ? (
+        {/* Go to Classroom Button */}
+        {course?.studentsEnrolled?.includes(currentUser?._id) &&
+        isLoggedin &&
+        currentOrder?.paymentStatus !== "Pending" ? (
           <Link
             to={`/classroom/${course?._id}`}
-            className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-center text-sm sm:text-base"
+            className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-xl flex items-center justify-center text-sm sm:text-base"
           >
             Go to Classroom
           </Link>
