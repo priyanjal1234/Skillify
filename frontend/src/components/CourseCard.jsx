@@ -48,11 +48,11 @@ const CourseCard = ({ course }) => {
 
   return (
     <div
-      className={`${darkMode ? "bg-gray-800" : "bg-white"} w-[400px] h-fit rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300`}
+      className={`${darkMode ? "bg-gray-800" : "bg-white"} w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-fit rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 mx-auto`}
     >
       {/* Course Thumbnail */}
       {course?.thumbnail !== "" && (
-        <div className="w-full h-48 overflow-hidden">
+        <div className="w-full h-40 sm:h-48 md:h-56 lg:h-60 xl:h-64 overflow-hidden">
           <img
             src={course?.thumbnail}
             alt={course?.title}
@@ -61,10 +61,10 @@ const CourseCard = ({ course }) => {
         </div>
       )}
 
-      <div className="p-6">
-        <div className="flex items-center gap-4 justify-between mb-2">
+      <div className="p-4 sm:p-6">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 justify-between mb-2">
           <span
-            className={`text-sm font-medium px-3 py-1 rounded-full ${
+            className={`text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full ${
               darkMode
                 ? "bg-indigo-900 text-indigo-200"
                 : "bg-indigo-100 text-indigo-800"
@@ -73,7 +73,7 @@ const CourseCard = ({ course }) => {
             {course?.level}
           </span>
           <span
-            className={`text-sm font-medium px-3 py-1 rounded-full ${
+            className={`text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full ${
               darkMode
                 ? "bg-purple-900 text-purple-200"
                 : "bg-purple-100 text-purple-800"
@@ -83,7 +83,7 @@ const CourseCard = ({ course }) => {
           </span>
         </div>
         <h3
-          className={`text-xl font-bold ${
+          className={`text-lg sm:text-xl font-bold ${
             darkMode ? "text-white" : "text-gray-900"
           } mb-2`}
         >
@@ -92,15 +92,15 @@ const CourseCard = ({ course }) => {
         <p
           className={`text-gray-600 ${
             darkMode ? "dark:text-gray-300" : ""
-          } mb-4`}
+          } mb-4 text-sm sm:text-base`}
         >
           {truncateText(course?.description, 50)}
         </p>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2 sm:gap-0">
           <div className="flex items-center space-x-2">
             <Clock className="h-4 w-4 text-gray-400" />
             <span
-              className={`text-sm ${
+              className={`text-xs sm:text-sm ${
                 darkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
@@ -112,7 +112,7 @@ const CourseCard = ({ course }) => {
           <div className="flex items-center space-x-2">
             <Users className="h-4 w-4 text-gray-400" />
             <span
-              className={`text-sm ${
+              className={`text-xs sm:text-sm ${
                 darkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
@@ -124,11 +124,11 @@ const CourseCard = ({ course }) => {
             </span>
           </div>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
           <div className="flex items-center space-x-1">
             <Star className="h-5 w-5 text-yellow-400 fill-current" />
             <span
-              className={`text-sm ${
+              className={`text-xs sm:text-sm ${
                 darkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
@@ -141,7 +141,7 @@ const CourseCard = ({ course }) => {
               darkMode
                 ? "text-indigo-400 hover:text-indigo-500"
                 : "text-indigo-600 hover:text-indigo-500"
-            } font-medium`}
+            } font-medium text-xs sm:text-sm`}
           >
             <span>View Details</span>
             <ChevronRight className="h-4 w-4" />
@@ -151,7 +151,7 @@ const CourseCard = ({ course }) => {
         {course?.studentsEnrolled?.includes(currentUser?._id) && isLoggedin && currentOrder?.paymentStatus !== "Pending" ? (
           <Link
             to={`/classroom/${course?._id}`}
-            className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center"
+            className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-center text-sm sm:text-base"
           >
             Go to Classroom
           </Link>
