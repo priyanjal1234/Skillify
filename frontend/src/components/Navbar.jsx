@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import socket from "../socket/socket";
 import notificationService from "../services/Notification";
 import { setAllNotifications } from "../redux/reducers/NotificationReducer";
+import { setLoggedin } from "../redux/reducers/UserReducer";
 
 const Navbar = () => {
   const { darkMode, setDarkMode } = useContext(ThemeDataContext);
@@ -28,6 +29,12 @@ const Navbar = () => {
     );
     setColor(rgbColor);
   }, []);
+
+  useEffect(() => {
+    if(currentUser === undefined) {
+      setLoggedin(false)
+    }
+  },[])
 
   let { data: unreadMessages } = useQuery({
     queryKey: ["fetchLoggedinUserUnreadChats"],
