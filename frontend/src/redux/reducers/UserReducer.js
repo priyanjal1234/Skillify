@@ -10,23 +10,17 @@ export const UserSlice = createSlice({
   initialState,
   reducers: {
     setLoggedin: function (state, action) {
-        console.log("from user reducer")
-        console.log(initialState.currentUser)
-      if(initialState.currentUser) {
-        setLoggedin(true)
-      }
-      else {
-        setLoggedin(false)
-      }
+      state.isLoggedin = action.payload;
     },
     setCurrentUser: function (state, action) {
-      if(action.payload) {
-        setCurrentUser(action.payload)
-        setLoggedin(true)
-      }
-      else {
-        setLoggedin(false)
-      }
+      state.currentUser = action.payload;
+      //   if(action.payload) {
+      //     setCurrentUser(action.payload)
+      //     setLoggedin(true)
+      //   }
+      //   else {
+      //     setLoggedin(false)
+      //   }
     },
   },
 });

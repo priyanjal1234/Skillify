@@ -67,7 +67,7 @@ const StudentLogin = () => {
       await userService.loginAccount(newValues);
       setloading(false);
       toast.success("Login Success");
-      // dispatch(setLoggedin(true));
+      dispatch(setLoggedin(true));
       navigate("/");
     } catch (error) {
       setloading(false);

@@ -18,7 +18,7 @@ const Hero = () => {
           Access world-class education from anywhere, at any time.
         </p>
         <div className="mt-8 flex justify-center space-x-4">
-          <Link to={'/course-display'} className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+          <Link to={'/register'} className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200">
             Get Started
           </Link>
           <button
