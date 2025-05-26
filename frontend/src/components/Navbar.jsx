@@ -30,7 +30,7 @@ const Navbar = () => {
     setColor(rgbColor);
   }, []);
 
-  console.log(typeof currentUser);
+  console.log(currentUser);
 
   useEffect(() => {
     if (currentUser === null) {
