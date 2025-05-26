@@ -30,10 +30,10 @@ const Navbar = () => {
     setColor(rgbColor);
   }, []);
 
-  console.log(typeof currentUser)
+  console.log(typeof currentUser);
 
   useEffect(() => {
-    if (typeof currentUser === "undefined") {
+    if (currentUser === null) {
       setLoggedin(false);
     } else {
       setLoggedin(true);
