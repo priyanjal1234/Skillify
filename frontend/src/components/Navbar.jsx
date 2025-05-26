@@ -149,7 +149,7 @@ const Navbar = () => {
               )}
             </button>
 
-            {isLoggedin === false && currentUser ? (
+            {isLoggedin === false && !currentUser ? (
               <>
                 {/* Sign Up Link */}
                 <Link
