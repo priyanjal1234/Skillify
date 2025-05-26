@@ -15,9 +15,13 @@ export const UserSlice = createSlice({
       console.log(action.payload);
     },
     setCurrentUser: function (state, action) {
-      console.log("currentUser");
-      setCurrentUser(action.payload);
-      console.log(action.payload);
+      if(action.payload) {
+        setCurrentUser(action.payload)
+        setLoggedin(true)
+      }
+      else {
+        setLoggedin(false)
+      }
     },
   },
 });

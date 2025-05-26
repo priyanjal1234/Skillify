@@ -33,13 +33,7 @@ const Navbar = () => {
   console.log("Keys of current user");
   console.log(Object.keys(currentUser));
 
-  useEffect(() => {
-    if (Object.keys(currentUser).length === 0) {
-      setLoggedin(false);
-    } else {
-      setLoggedin(true);
-    }
-  }, [currentUser]);
+  
 
   useEffect(() => {
     if (currentUser === null) {
