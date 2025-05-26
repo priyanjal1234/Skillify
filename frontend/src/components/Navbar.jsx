@@ -149,7 +149,7 @@ const Navbar = () => {
               )}
             </button>
 
-            {isLoggedin === false ? (
+            {isLoggedin === false && currentUser?.name === "UNDEFINED" ? (
               <>
                 {/* Sign Up Link */}
                 <Link
