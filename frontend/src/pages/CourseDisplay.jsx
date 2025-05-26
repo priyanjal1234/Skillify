@@ -16,6 +16,7 @@ const CourseDisplay = () => {
 
   let {isLoggedin} = useSelector(state => state.user)
 
+  console.log("From Course Display")
   console.log(isLoggedin)
 
   const [category, setCategory] = useState("");
