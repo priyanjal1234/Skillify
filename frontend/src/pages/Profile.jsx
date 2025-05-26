@@ -35,6 +35,7 @@ const Profile = () => {
   let { currentUser } = useSelector((state) => state.user);
   let { darkMode } = useContext(ThemeDataContext);
   const [location, setlocation] = useState("");
+  const [loading, setloading] = useState(false)
 
   useEffect(() => {
     async function fetchLocation() {
@@ -54,11 +55,12 @@ const Profile = () => {
   let navigate = useNavigate();
 
   async function handleLogout() {
+    setloading(true)
     try {
       await userService.logoutAccount();
       toast.success("Logout Success");
       dispatch(setLoggedin(false));
-      dispatch(setCurrentUser({}));
+      dispatch(setCurrentUser(null));
       dispatch(setSenderChats([]));
       dispatch(setReceiverChats([]));
       dispatch(setDiscountVisible(false));
@@ -71,6 +73,8 @@ const Profile = () => {
       dispatch(setTotalStudents(0));
       dispatch(setTotalRevenue(0));
       dispatch(setCurrentQuiz({}));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      setloading(false)
       navigate("/");
     } catch (error) {
       toast.error(error?.response?.data?.message);
@@ -160,6 +164,9 @@ const Profile = () => {
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>
+                  {
+                    loading && <span className="loader"></span>
+                  }
                 </button>
 
                 {currentUser?.role === "instructor" && (
