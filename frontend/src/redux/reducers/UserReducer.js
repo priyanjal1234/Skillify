@@ -14,13 +14,7 @@ export const UserSlice = createSlice({
     },
     setCurrentUser: function (state, action) {
       
-        if(action.payload) {
-          setCurrentUser(action.payload)
-          setLoggedin(true)
-        }
-        else {
-          setLoggedin(false)
-        }
+       state.currentUser = action.payload
     },
   },
 });
