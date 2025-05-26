@@ -30,11 +30,7 @@ const Navbar = () => {
     setColor(rgbColor);
   }, []);
 
-  useEffect(() => {
-    if(currentUser === undefined) {
-      setLoggedin(false)
-    }
-  },[])
+  
 
   let { data: unreadMessages } = useQuery({
     queryKey: ["fetchLoggedinUserUnreadChats"],
@@ -193,7 +189,7 @@ const Navbar = () => {
                 </Link>
               </>
             ) : (
-              currentUser !== undefined && (
+              
                 <>
                   <Link
                     to={"/profile"}
@@ -261,7 +257,7 @@ const Navbar = () => {
                     </a>
                   )}
                 </>
-              )
+              
             )}
           </div>
         </div>
