@@ -31,21 +31,6 @@ const Navbar = () => {
     setColor(rgbColor);
   }, []);
 
-
-  useEffect(() => {
-    async function fetchLoggedinUser() {
-      try {
-        let googleUserRes = await userService.getGoogleUser()
-        if(googleUserRes.status === 200) {
-          dispatch(setCurrentUser(googleUserRes.data))
-          dispatch(setLoggedin(true))
-        }
-      } catch (error) {
-        dispatch(setLoggedin(false));
-      }
-    }
-    fetchLoggedinUser()
-  },[])
   
 
   let { data: unreadMessages } = useQuery({
