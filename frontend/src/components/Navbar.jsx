@@ -10,7 +10,8 @@ import { toast } from "react-toastify";
 import socket from "../socket/socket";
 import notificationService from "../services/Notification";
 import { setAllNotifications } from "../redux/reducers/NotificationReducer";
-import { setLoggedin } from "../redux/reducers/UserReducer";
+import { setCurrentUser, setLoggedin } from "../redux/reducers/UserReducer";
+import userService from "../services/User";
 
 const Navbar = () => {
   const { darkMode, setDarkMode } = useContext(ThemeDataContext);
@@ -29,6 +30,22 @@ const Navbar = () => {
     );
     setColor(rgbColor);
   }, []);
+
+
+  useEffect(() => {
+    async function fetchLoggedinUser() {
+      try {
+        let googleUserRes = await userService.getGoogleUser()
+        if(googleUserRes.status === 200) {
+          dispatch(setCurrentUser(googleUserRes.data))
+          dispatch(setLoggedin(true))
+        }
+      } catch (error) {
+        dispatch(setLoggedin(false));
+      }
+    }
+    fetchLoggedinUser()
+  },[])
   
 
   let { data: unreadMessages } = useQuery({
