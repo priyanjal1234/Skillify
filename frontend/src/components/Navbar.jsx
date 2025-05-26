@@ -30,7 +30,8 @@ const Navbar = () => {
     setColor(rgbColor);
   }, []);
 
-  console.log(currentUser);
+  console.log("Keys of current user")
+  console.log(Object.keys(currentUser));
 
   useEffect(() => {
     if (currentUser === null) {
@@ -149,7 +150,7 @@ const Navbar = () => {
               )}
             </button>
 
-            {isLoggedin === false && !currentUser ? (
+            {isLoggedin === false ? (
               <>
                 {/* Sign Up Link */}
                 <Link
