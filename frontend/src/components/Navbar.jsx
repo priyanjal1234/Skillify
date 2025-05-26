@@ -29,10 +29,6 @@ const Navbar = () => {
     );
     setColor(rgbColor);
   }, []);
-
-  console.log("Keys of current user");
-  console.log(Object.keys(currentUser));
-
   
 
   useEffect(() => {
