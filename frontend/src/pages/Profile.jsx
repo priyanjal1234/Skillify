@@ -73,7 +73,7 @@ const Profile = () => {
       dispatch(setTotalStudents(0));
       dispatch(setTotalRevenue(0));
       dispatch(setCurrentQuiz({}));
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      
       setloading(false)
       navigate("/");
     } catch (error) {
