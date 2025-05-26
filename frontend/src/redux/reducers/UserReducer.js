@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 
 const initialState = {
   currentUser: null,
@@ -10,9 +10,12 @@ export const UserSlice = createSlice({
   initialState,
   reducers: {
     setLoggedin: function (state, action) {
-      console.log("isLoggedin")
-      state.isLoggedin = action.payload;
-      console.log(action.payload);
+      if(initialState.currentUser) {
+        setLoggedin(true)
+      }
+      else {
+        setLoggedin(false)
+      }
     },
     setCurrentUser: function (state, action) {
       if(action.payload) {
