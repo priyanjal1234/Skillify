@@ -1,23 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    currentUser: null,
-    isLoggedin: false
-}
+  currentUser: null,
+  isLoggedin: false,
+};
 
 export const UserSlice = createSlice({
-    name: "user",
-    initialState,
-    reducers: {
-        setLoggedin: function(state,action) {
-            state.isLoggedin = action.payload
-        },
-        setCurrentUser: function(state,action) {
-            state.currentUser = action.payload
-        }
-    }
-})
+  name: "user",
+  initialState,
+  reducers: {
+    setLoggedin: function (state, action) {
+      console.log("isLoggedin")
+      state.isLoggedin = action.payload;
+      console.log(action.payload);
+    },
+    setCurrentUser: function (state, action) {
+      console.log("currentUser");
+      setCurrentUser(action.payload);
+      console.log(action.payload);
+    },
+  },
+});
 
-export default UserSlice.reducer
+export default UserSlice.reducer;
 
-export const { setLoggedin,setCurrentUser } = UserSlice.actions
+export const { setLoggedin, setCurrentUser } = UserSlice.actions;
