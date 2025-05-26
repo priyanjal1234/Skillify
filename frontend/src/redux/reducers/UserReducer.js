@@ -13,14 +13,14 @@ export const UserSlice = createSlice({
       state.isLoggedin = action.payload;
     },
     setCurrentUser: function (state, action) {
-      state.currentUser = action.payload;
-      //   if(action.payload) {
-      //     setCurrentUser(action.payload)
-      //     setLoggedin(true)
-      //   }
-      //   else {
-      //     setLoggedin(false)
-      //   }
+      
+        if(action.payload) {
+          setCurrentUser(action.payload)
+          setLoggedin(true)
+        }
+        else {
+          setLoggedin(false)
+        }
     },
   },
 });
