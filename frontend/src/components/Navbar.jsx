@@ -30,6 +30,16 @@ const Navbar = () => {
     setColor(rgbColor);
   }, []);
 
+  console.log(typeof currentUser)
+
+  useEffect(() => {
+    if (typeof currentUser === "undefined") {
+      setLoggedin(false);
+    } else {
+      setLoggedin(true);
+    }
+  }, [isLoggedin]);
+
   let { data: unreadMessages } = useQuery({
     queryKey: ["fetchLoggedinUserUnreadChats"],
     queryFn: async function () {
@@ -174,8 +184,7 @@ const Navbar = () => {
                     window.location.href ===
                       "https://skillify-frontend-alpha.vercel.app/register/instructor" ||
                     window.location.href ===
-                      "https://skillify-frontend-alpha.vercel.app/login/instructor" 
-                    
+                      "https://skillify-frontend-alpha.vercel.app/login/instructor"
                       ? "hidden"
                       : "block"
                   } font-medium ${
@@ -188,75 +197,73 @@ const Navbar = () => {
                 </Link>
               </>
             ) : (
-             
-                <>
-                  <Link
-                    to={"/profile"}
-                    style={{ backgroundColor: color }}
-                    className="w-[40px] h-[40px] cursor-pointer text-lg flex items-center justify-center rounded-full"
-                  >
-                    {String(currentUser?.name).split("")[0]}
-                  </Link>
-                  {currentUser?.role !== "instructor" ? (
-                    <>
-                      <Link
-                        onClick={handleMessageReadability}
-                        to={"/student-messages"}
-                        className={`text-sm font-medium flex items-center gap-2 ${
-                          darkMode
-                            ? "text-white hover:text-indigo-400"
-                            : "text-indigo-600 hover:text-indigo-800"
-                        }`}
-                      >
-                        Messages
-                      </Link>
-
-                      {unreadMessages?.length > 0 && (
-                        <span className="w-[25px] h-[25px] flex items-center justify-center bg-blue-600 rounded-full">
-                          {unreadMessages?.length}
-                        </span>
-                      )}
-
-                      <Link
-                        onClick={handleMarkNotificationsRead}
-                        to={"/notifications"}
-                        className={`text-sm font-medium flex items-center gap-2 ${
-                          darkMode
-                            ? "text-white hover:text-indigo-400"
-                            : "text-indigo-600 hover:text-indigo-800"
-                        }`}
-                      >
-                        Notifications
-                      </Link>
-
-                      {notificationCount > 0 && (
-                        <span className="w-[25px] h-[25px] flex items-center justify-center bg-blue-600 rounded-full">
-                          {notificationCount}
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        onClick={handleGoLive}
-                        className="px-3 py-2 bg-blue-600 rounded-lg"
-                      >
-                        Go Live
-                      </button>
-                    </>
-                  )}
-                  {["priyanjal362@gmail.com"].includes(currentUser?.email) && (
-                    <a
-                      className="px-3 py-2 bg-gray-600 rounded-lg"
-                      href="https://skillify-admin-dashboard.vercel.app"
-                      target="_blank"
-                      rel="noopener noreferrer"
+              <>
+                <Link
+                  to={"/profile"}
+                  style={{ backgroundColor: color }}
+                  className="w-[40px] h-[40px] cursor-pointer text-lg flex items-center justify-center rounded-full"
+                >
+                  {String(currentUser?.name).split("")[0]}
+                </Link>
+                {currentUser?.role !== "instructor" ? (
+                  <>
+                    <Link
+                      onClick={handleMessageReadability}
+                      to={"/student-messages"}
+                      className={`text-sm font-medium flex items-center gap-2 ${
+                        darkMode
+                          ? "text-white hover:text-indigo-400"
+                          : "text-indigo-600 hover:text-indigo-800"
+                      }`}
                     >
-                      Admin Panel
-                    </a>
-                  )}
-                </>
-              
+                      Messages
+                    </Link>
+
+                    {unreadMessages?.length > 0 && (
+                      <span className="w-[25px] h-[25px] flex items-center justify-center bg-blue-600 rounded-full">
+                        {unreadMessages?.length}
+                      </span>
+                    )}
+
+                    <Link
+                      onClick={handleMarkNotificationsRead}
+                      to={"/notifications"}
+                      className={`text-sm font-medium flex items-center gap-2 ${
+                        darkMode
+                          ? "text-white hover:text-indigo-400"
+                          : "text-indigo-600 hover:text-indigo-800"
+                      }`}
+                    >
+                      Notifications
+                    </Link>
+
+                    {notificationCount > 0 && (
+                      <span className="w-[25px] h-[25px] flex items-center justify-center bg-blue-600 rounded-full">
+                        {notificationCount}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleGoLive}
+                      className="px-3 py-2 bg-blue-600 rounded-lg"
+                    >
+                      Go Live
+                    </button>
+                  </>
+                )}
+                {["priyanjal362@gmail.com"].includes(currentUser?.email) && (
+                  <a
+                    className="px-3 py-2 bg-gray-600 rounded-lg"
+                    href="https://skillify-admin-dashboard.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Admin Panel
+                  </a>
+                )}
+              </>
             )}
           </div>
         </div>

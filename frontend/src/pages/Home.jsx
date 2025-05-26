@@ -20,8 +20,8 @@ const Home = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    connectSocket()
-  },[])
+    connectSocket();
+  }, []);
 
   // useEffect(() => {
   //   const cookie = document.cookie;
@@ -40,13 +40,12 @@ const Home = () => {
         return {};
       } catch (error) {
         console.log(error?.response?.data?.message);
-        if(error?.response?.data?.message === "Token not found") {
-          dispatch(setLoggedin(false))
+        if (error?.response?.data?.message === "Token not found") {
+          dispatch(setLoggedin(false));
         }
         return {};
       }
     },
-    
   });
 
   useQuery({
@@ -60,7 +59,6 @@ const Home = () => {
         return {};
       }
     },
-    
   });
 
   useQuery({
@@ -78,7 +76,9 @@ const Home = () => {
 
   return (
     <div
-      className={`min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}
+      className={`min-h-screen ${
+        darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"
+      }`}
     >
       <div className="transition-colors duration-200">
         <Navbar />
