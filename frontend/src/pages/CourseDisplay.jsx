@@ -14,6 +14,10 @@ const CourseDisplay = () => {
 
   let { allCourses } = useSelector((state) => state.course);
 
+  let {isLoggedin} = useSelector(state => state.user)
+
+  console.log(isLoggedin)
+
   const [category, setCategory] = useState("");
   const [level, setlevel] = useState("");
   const [searchVal, setsearchVal] = useState("");
