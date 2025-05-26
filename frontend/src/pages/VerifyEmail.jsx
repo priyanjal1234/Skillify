@@ -40,7 +40,7 @@ const VerifyEmail = () => {
       await userService.verifyEmail(values);
       toast.success("Email Verified Successfully");
       setloading(false)
-      dispatch(setLoggedin(true));
+      // dispatch(setLoggedin(true));
       navigate("/");
     } catch (error) {
       setloading(false)
