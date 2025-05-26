@@ -152,8 +152,7 @@ const Navbar = () => {
                     window.location.href ===
                       "https://skillify-frontend-alpha.vercel.app/register/instructor" ||
                     window.location.href ===
-                      "https://skillify-frontend-alpha.vercel.app/login/instructor"||
-                    currentUser?.name !== undefined
+                      "https://skillify-frontend-alpha.vercel.app/login/instructor"
                       ? "hidden"
                       : "block"
                   } font-medium ${
@@ -175,8 +174,8 @@ const Navbar = () => {
                     window.location.href ===
                       "https://skillify-frontend-alpha.vercel.app/register/instructor" ||
                     window.location.href ===
-                      "https://skillify-frontend-alpha.vercel.app/login/instructor" ||
-                      currentUser?.name !== undefined
+                      "https://skillify-frontend-alpha.vercel.app/login/instructor" 
+                    
                       ? "hidden"
                       : "block"
                   } font-medium ${
@@ -189,7 +188,7 @@ const Navbar = () => {
                 </Link>
               </>
             ) : (
-              currentUser?.name !== undefined && (
+             
                 <>
                   <Link
                     to={"/profile"}
@@ -257,7 +256,7 @@ const Navbar = () => {
                     </a>
                   )}
                 </>
-              )
+              
             )}
           </div>
         </div>
