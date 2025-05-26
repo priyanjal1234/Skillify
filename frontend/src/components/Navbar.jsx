@@ -31,14 +31,6 @@ const Navbar = () => {
   }, []);
   
 
-  useEffect(() => {
-    if (currentUser === null) {
-      setLoggedin(false);
-    } else {
-      setLoggedin(true);
-    }
-  }, [isLoggedin]);
-
   let { data: unreadMessages } = useQuery({
     queryKey: ["fetchLoggedinUserUnreadChats"],
     queryFn: async function () {
