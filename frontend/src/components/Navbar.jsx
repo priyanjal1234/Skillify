@@ -30,8 +30,6 @@ const Navbar = () => {
     setColor(rgbColor);
   }, []);
 
-  
-
   let { data: unreadMessages } = useQuery({
     queryKey: ["fetchLoggedinUserUnreadChats"],
     queryFn: async function () {
@@ -189,7 +187,7 @@ const Navbar = () => {
                 </Link>
               </>
             ) : (
-              
+              currentUser?.name !== undefined && (
                 <>
                   <Link
                     to={"/profile"}
@@ -257,7 +255,7 @@ const Navbar = () => {
                     </a>
                   )}
                 </>
-              
+              )
             )}
           </div>
         </div>
