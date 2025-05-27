@@ -53,7 +53,7 @@ const InstructorRegister = () => {
   async function handleGoogleLogin() {
     try {
       window.open("https://skillify-lms-backend.onrender.com/api/users/google", "_self");
-      dispatch(setLoggedin(true))
+      // dispatch(setLoggedin(true))
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Error logging with google"
