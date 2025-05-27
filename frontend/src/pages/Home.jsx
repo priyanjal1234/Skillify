@@ -53,8 +53,7 @@ const Home = () => {
     queryFn: async function () {
       try {
         const res = await userService.getGoogleUser();
-        console.log("From Home")
-        console.log(res.data)
+        
         if(res.data) dispatch(setLoggedin(true))
         return res.data;
       } catch (error) {
