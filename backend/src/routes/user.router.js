@@ -96,7 +96,7 @@ router.route('/auth/google/callback').get(
 router.route('/google/logout').get(function (req, res) {
   req.logout(() => {
     req.session.destroy(() => {
-      res.clearCookie('connect.sid', {
+      res.clearCookie('token', {
         path: '/',
         httpOnly: true,
         sameSite: 'None',
