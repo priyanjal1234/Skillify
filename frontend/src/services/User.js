@@ -51,6 +51,7 @@ class UserService {
   async logoutAccount() {
     try {
       await this.api.get(`${this.baseUrl}/logout`, { withCredentials: true });
+      await this.api.get(`${this.baseUrl}/google/logout`,{withCredentials: true})
     } catch (error) {
       throw error;
     }

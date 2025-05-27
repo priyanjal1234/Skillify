@@ -93,7 +93,7 @@ router.route('/auth/google/callback').get(
   }
 );
 
-router.route('/logout').get(function (req, res) {
+router.route('/google/logout').get(function (req, res) {
   req.logout(() => {
     res.redirect('https://www.skillify-lms.xyz');
   });
