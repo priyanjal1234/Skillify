@@ -95,9 +95,18 @@ router.route('/auth/google/callback').get(
 
 router.route('/google/logout').get(function (req, res) {
   req.logout(() => {
-    res.redirect('https://www.skillify-lms.xyz');
+    req.session.destroy(() => {
+      res.clearCookie('connect.sid', {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'None',
+        secure: true,
+      });
+      res.status(200).json({ message: 'Logged out successfully' });
+    });
   });
 });
+
 
 router.route('/me').get(isLoggedin, function (req, res) {
   try {
