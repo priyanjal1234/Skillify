@@ -13,7 +13,7 @@ const EditProfile = () => {
   const { values, handleChange } = useFormHandler({
     name: "",
     email: "",
-    role: "student",
+    role: "",
   });
 
   let navigate = useNavigate();
