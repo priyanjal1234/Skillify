@@ -3,7 +3,7 @@ import api from "./api";
 class CodeService {
   constructor() {
     this.api = api;
-    this.baseUrl = "https://skillify-lms-backend.onrender.com/api/code";
+    this.baseUrl = "http://localhost:3000/api/code";
   }
 
   async runCode(code, language) {

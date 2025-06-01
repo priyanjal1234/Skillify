@@ -55,10 +55,7 @@ const InstructorLogin = () => {
 
   async function handleGoogleLogin() {
     try {
-      window.open(
-        "https://skillify-lms-backend.onrender.com/api/users/google",
-        "_self"
-      );
+      window.open("http://localhost:3000/api/users/google", "_self");
       // dispatch(setLoggedin(true));
     } catch (error) {
       toast.error(
@@ -73,8 +70,6 @@ const InstructorLogin = () => {
         darkMode ? "bg-gray-900 text-white" : "bg-indigo-100 text-gray-900"
       } min-h-screen`}
     >
-      
-
       <div className="py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
         <div className="max-w-md w-full">
           {/* Logo & Welcome Message */}

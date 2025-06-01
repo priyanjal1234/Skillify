@@ -14,7 +14,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ['https://skillify-lms-frontend.vercel.app','https://www.skillify-lms.xyz'],
+    origin: ['http://localhost:5173'],
     credentials: true,
   },
 });
@@ -48,7 +48,7 @@ app.use(express.urlencoded({ limit: "50mb",extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['https://skillify-lms-frontend.vercel.app','https://skillify-admin-dashboard.vercel.app','https://www.skillify-lms.xyz'],
+    origin: ['http://localhost:5173'],
 methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })

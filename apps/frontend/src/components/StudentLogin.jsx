@@ -77,7 +77,7 @@ const StudentLogin = () => {
 
   function handleGoogleLogin() {
     try {
-      window.open("https://skillify-lms-backend.onrender.com/api/users/google", "_self");
+      window.open("http://localhost:3000/api/users/google", "_self");
       // dispatch(setLoggedin(true))
     } catch (error) {
       toast.error(

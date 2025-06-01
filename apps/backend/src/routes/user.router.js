@@ -56,13 +56,13 @@ router
 router.route('/auth/google/callback').get(
   passport.authenticate('google', {
     failureRedirect:
-      'https://www.skillify-lms.xyz/login/student?error=google_login_failed',
+      'http://localhost:5173/login/student?error=google_login_failed',
   }),
   async function (req, res) {
     try {
       if (!req.user) {
         return res.redirect(
-          'https://www.skillify-lms.xyz/login/student?error=auth_failed'
+          'http://localhost:5173/login/student?error=auth_failed'
         );
       }
 
@@ -76,18 +76,18 @@ router.route('/auth/google/callback').get(
 
       res.cookie('token', token,{httpOnly: true,secure: true, sameSite: 'None'});
 
-      return res.redirect('https://www.skillify-lms.xyz');
+      return res.redirect('http://localhost:5173');
     } catch (error) {
       console.error('Google Auth Error:', error);
 
       if (error.code === 11000) {
         return res.redirect(
-          'https://www.skillify-lms.xyz/login/student?error=account_exists'
+          'http://localhost:5173/login/student?error=account_exists'
         );
       }
 
       return res.redirect(
-        'https://www.skillify-lms.xyz/login/student?error=google_login_failed'
+        'http://localhost:5173/login/student?error=google_login_failed'
       );
     }
   }

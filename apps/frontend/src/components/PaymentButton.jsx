@@ -7,6 +7,7 @@ import {
   setDiscountValue,
   setDiscountVisible,
 } from "../redux/reducers/CouponReducer";
+import courseService from "../services/Course";
 
 const PaymentButton = ({ courseId, amount, instructor }) => {
   let { currentUser } = useSelector((state) => state.user);
@@ -39,6 +40,7 @@ const PaymentButton = ({ courseId, amount, instructor }) => {
               courseId
             );
             if (verifyRes.data.success) {
+              await courseService.enrollInCourse(courseId)
               toast.success("Payment Successfull");
               dispatch(setDiscountValue(0));
               dispatch(setDiscountVisible(false));

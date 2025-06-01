@@ -30,8 +30,10 @@ export const runCode = async (req, res, next) => {
         },
       }
     );
+    console.log("Response is",response)
 
     const output = response.data.stdout || response.data.stderr || 'No output';
+    console.log("Output is",output)
     res.json({ output });
   } catch (error) {
     return next(new ApiError(500, error.message || 'Execution failed'));

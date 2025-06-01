@@ -3,7 +3,7 @@ import api from "./api";
 class EnrollmentService {
   constructor() {
     this.api = api;
-    this.baseUrl = "https://skillify-lms-backend.onrender.com/api/enrollments";
+    this.baseUrl = "http://localhost:3000/api/enrollments";
   }
 
   async getEnrolledStudents() {

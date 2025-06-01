@@ -12,7 +12,7 @@ const getInstructorAnalytics = async function (req, res, next) {
       instructor: instructorId,
     });
 
-    let orders = await orderModel.find({ instructor: instructorId });
+    let orders = await orderModel.find({ instructor: instructorId,paymentStatus: "Success" });
     const totalRevenue = orders.reduce((sum, o) => sum + o.amountPaid, 0);
 
     return res.status(200).json({ totalCourses, totalStudents, totalRevenue });

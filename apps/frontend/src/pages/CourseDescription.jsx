@@ -71,7 +71,7 @@ const CourseDescription = () => {
     setloading(true);
     new Promise((res, rej) => setTimeout(res, 4000));
     try {
-      await courseService.enrollInCourse(courseId);
+      // await courseService.enrollInCourse(courseId);
       setloading(false);
       navigate(`/payment/${currentCourse?._id}`);
     } catch (error) {

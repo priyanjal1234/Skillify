@@ -3,7 +3,7 @@ import api from "./api";
 class QuizService {
   constructor() {
     this.api = api;
-    this.baseUrl = "https://skillify-lms-backend.onrender.com/api/quiz";
+    this.baseUrl = "http://localhost:3000/api/quiz";
   }
 
   async createQuiz(quizData, lessonId) {

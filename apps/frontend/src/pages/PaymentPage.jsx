@@ -80,9 +80,9 @@ const PaymentPage = () => {
     <div className="w-full min-h-screen bg-[#101828] text-white flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-5xl flex flex-col sm:flex-row gap-6 bg-[#1E2939] rounded-xl p-6 sm:p-10">
         {/* Back Button */}
-        <div onClick={handleGoBack} className="cursor-pointer">
+        {/* <div onClick={handleGoBack} className="cursor-pointer">
           <ArrowLeft />
-        </div>
+        </div> */}
 
         {/* Course Details Section */}
         <div className="w-full sm:w-[60%]">
