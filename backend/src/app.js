@@ -14,7 +14,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ['https://skillify-frontend-prod.vercel.app','https://skillify-admin-dashboard.vercel.app'],
+    origin: [
+      'https://skillify-frontend-prod.vercel.app',
+      'https://skillify-admin-dashboard.vercel.app',
+    ],
     credentials: true,
   },
 });
@@ -27,7 +30,7 @@ import chatModel from './models/chat.model.js';
 import userRouter from './routes/user.router.js';
 import courseRouter from './routes/course.router.js';
 import orderRouter from './routes/order.router.js';
-import analyticsRouter from './routes/analytics.router.js'
+import analyticsRouter from './routes/analytics.router.js';
 import lessonRouter from './routes/lesson.router.js';
 import enrollmentRouter from './routes/enrollment.router.js';
 import quizRouter from './routes/quiz.router.js';
@@ -41,15 +44,16 @@ import codeRouter from './routes/code.router.js';
 import notificationModel from './models/notification.model.js';
 import userModel from './models/user.model.js';
 
-
-
-app.use(express.json({limit: "50mb"}));
-app.use(express.urlencoded({ limit: "50mb",extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['http://localhost:5173'],
-methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    origin: [
+      'https://skillify-frontend-prod.vercel.app',
+      'https://skillify-admin-dashboard.vercel.app',
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   })
 );
