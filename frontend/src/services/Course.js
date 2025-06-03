@@ -3,7 +3,7 @@ import api from "./api";
 class CourseService {
   constructor() {
     this.api = api;
-    this.baseUrl = "http://localhost:3000/api/courses";
+    this.baseUrl = "https://skillify-backend-7pex.onrender.com/api/courses";
   }
 
   async createCourse(courseData) {

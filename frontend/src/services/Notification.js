@@ -3,7 +3,7 @@ import api from "./api";
 class NotificationService {
   constructor() {
     this.api = api;
-    this.baseUrl = "http://localhost:3000/api/notifications";
+    this.baseUrl = "https://skillify-backend-7pex.onrender.com/api/notifications";
   }
 
   async getUnreadNotifications() {
