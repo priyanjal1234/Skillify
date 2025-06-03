@@ -52,7 +52,7 @@ const InstructorRegister = () => {
 
   async function handleGoogleLogin() {
     try {
-      window.open("http://localhost:3000/api/users/google", "_self");
+      window.open("https://skillify-backend-7pex.onrender.com/api/users/google", "_self");
       // dispatch(setLoggedin(true))
     } catch (error) {
       toast.error(
