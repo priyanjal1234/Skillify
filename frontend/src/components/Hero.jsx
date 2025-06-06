@@ -8,7 +8,7 @@ const Hero = () => {
     <div className="relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 text-center">
         <h1 className="text-4xl font-[poppins] sm:text-5xl md:text-6xl font-extrabold">
-          Hello World
+          Transform Your Learning Journey
         </h1>
         <p
           className={`mt-4 font-[jost] text-xl font-jost ${
