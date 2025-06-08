@@ -163,6 +163,7 @@ const CourseCard = ({ course }) => {
         {/* Go to Classroom Button */}
         {course?.studentsEnrolled?.includes(currentUser?._id) &&
         isLoggedin &&
+         currentOrder?.paymentStatus &&
         currentOrder?.paymentStatus !== "Pending" ? (
           <Link
             to={`/classroom/${course?._id}`}
