@@ -49,7 +49,7 @@ const CourseCard = ({ course }) => {
     <div
       className={`${
         darkMode ? "bg-gray-800" : "bg-white"
-      } w-full   h-fit rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 `}
+      } w-full sm:w-[90%] md:w-[350px] lg:w-[380px] xl:w-[400px]  h-fit rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 `}
     >
       {/* Course Thumbnail */}
       {course?.thumbnail !== "" && (
