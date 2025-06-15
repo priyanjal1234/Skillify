@@ -18,6 +18,7 @@ const CourseDisplay = () => {
   const [searchVal, setsearchVal] = useState("");
   const [filteredCourses, setFilteredCourses] = useState([]);
 
+  // Fetch published courses and initialize state
   useQuery({
     queryKey: ["getPublishedCourses"],
     queryFn: async () => {
@@ -33,12 +34,14 @@ const CourseDisplay = () => {
     },
   });
 
+  // Filter logic whenever dependencies change
   useEffect(() => {
     function filterCourses() {
       let result = allCourses || [];
       if (category) {
         result = result.filter(
-          (course) => course?.category?.toLowerCase() === category.toLowerCase()
+          (course) =>
+            course?.category?.toLowerCase() === category.toLowerCase()
         );
       }
       if (level) {
@@ -53,7 +56,8 @@ const CourseDisplay = () => {
       }
       setFilteredCourses(result);
     }
-    if (allCourses?.length >= 0) {
+    // Even if allCourses is empty array, we run filterCourses
+    if (allCourses !== undefined) {
       filterCourses();
     }
   }, [allCourses, category, level, searchVal]);
@@ -61,6 +65,7 @@ const CourseDisplay = () => {
   return (
     <div className={`${darkMode ? "bg-gray-900" : "bg-gray-50"} min-h-screen`}>
       <Navbar />
+
       {/* Hero Section */}
       <div
         className={`${
@@ -148,7 +153,7 @@ const CourseDisplay = () => {
           </div>
         </div>
 
-        {/* Course Grid */}
+        {/* Course Grid: responsive columns */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredCourses?.length > 0 ? (
             filteredCourses.map((course) => (

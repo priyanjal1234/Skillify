@@ -9,166 +9,142 @@ import courseService from "../services/Course";
 import orderService from "../services/Order";
 
 const CourseCard = ({ course }) => {
-  let { darkMode } = useContext(ThemeDataContext);
-  let { currentUser, isLoggedin } = useSelector((state) => state.user);
+  const { darkMode } = useContext(ThemeDataContext);
+  const { currentUser, isLoggedin } = useSelector((state) => state.user);
   const [rating, setRating] = useState(0);
   const [currentOrder, setcurrentOrder] = useState(null);
 
+  // Fetch single order if exists (business logic unchanged)
   useQuery({
-    queryKey: ["fetchsingleorder"],
+    queryKey: ["fetchsingleorder", course?._id],
     queryFn: async () => {
       try {
-        let order = await orderService.getOneOrder(course?._id);
-        return setcurrentOrder(order.data);
+        const order = await orderService.getOneOrder(course?._id);
+        setcurrentOrder(order.data);
       } catch (error) {
         console.log(error?.response?.data?.message);
       }
     },
   });
 
+  // Fetch rating (business logic unchanged)
   useQuery({
     queryKey: ["fetchCourseRating", course?._id],
-    queryFn: async function () {
+    queryFn: async () => {
       try {
-        let getRatingRes = await courseService.getCourseRating(course?._id);
-
-        if (getRatingRes.status === 200) {
-          setRating(Number(getRatingRes.data));
+        const res = await courseService.getCourseRating(course?._id);
+        if (res.status === 200) {
+          setRating(Number(res.data));
         }
-
-        return getRatingRes.data;
       } catch (error) {
         console.log(error?.response?.data?.message);
-
-        return false;
       }
     },
   });
 
   return (
     <div
-      className={`${
-        darkMode ? "bg-gray-800" : "bg-white"
-      } w-full sm:w-[90%] md:w-[350px] lg:w-[380px] xl:w-[400px]  h-fit rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 `}
+      className={`flex flex-col w-full bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden`}
     >
-      {/* Course Thumbnail */}
-      {course?.thumbnail !== "" && (
-        <div className="w-full h-40 sm:h-44 md:h-48 lg:h-52 overflow-hidden">
+      {/* Thumbnail */}
+      {course?.thumbnail && (
+        <div className="w-full h-40 sm:h-44 md:h-48 lg:h-52 xl:h-56 overflow-hidden">
           <img
-            src={course?.thumbnail}
-            alt={course?.title}
+            src={course.thumbnail}
+            alt={course.title}
             className="w-full h-full object-cover"
           />
         </div>
       )}
-
-      <div className="p-4 sm:p-5 md:p-6">
+      <div className="p-4 sm:p-5 md:p-6 flex flex-col flex-1">
         {/* Badges */}
-        <div className="flex items-center gap-2 justify-between mb-2">
+        <div className="flex flex-wrap items-center justify-between mb-2 gap-2">
           <span
-            className={`text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full ${
-              darkMode
-                ? "bg-indigo-900 text-indigo-200"
-                : "bg-indigo-100 text-indigo-800"
+            className={`text-xs sm:text-sm font-medium px-2 py-1 rounded-full ${
+              darkMode ? "bg-indigo-900 text-indigo-200" : "bg-indigo-100 text-indigo-800"
             }`}
           >
-            {course?.level}
+            {course.level}
           </span>
           <span
-            className={`text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full ${
-              darkMode
-                ? "bg-purple-900 text-purple-200"
-                : "bg-purple-100 text-purple-800"
+            className={`text-xs sm:text-sm font-medium px-2 py-1 rounded-full ${
+              darkMode ? "bg-purple-900 text-purple-200" : "bg-purple-100 text-purple-800"
             }`}
           >
-            {course?.category}
+            {course.category}
           </span>
         </div>
 
         {/* Title */}
         <h3
-          className={`text-lg sm:text-xl font-bold ${
+          className={`font-bold mb-2 text-base sm:text-lg md:text-xl ${
             darkMode ? "text-white" : "text-gray-900"
-          } mb-2`}
+          }`}
         >
-          {course?.title}
+          {course.title}
         </h3>
 
         {/* Description */}
         <p
-          className={`text-sm sm:text-base ${
+          className={`text-sm sm:text-base mb-4 ${
             darkMode ? "text-gray-300" : "text-gray-600"
-          } mb-4`}
+          }`}
         >
-          {truncateText(course?.description, 50)}
+          {truncateText(course.description, 60)}
         </p>
 
         {/* Duration & Students */}
         <div className="flex flex-wrap items-center justify-between mb-4 gap-2">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <Clock className="h-4 w-4 text-gray-400" />
-            <span
-              className={`text-sm ${
-                darkMode ? "text-gray-300" : "text-gray-600"
-              }`}
-            >
-              {course?.duration === 1
-                ? `${course?.duration} week`
-                : `${course?.duration} weeks`}
+            <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+              {course.duration === 1 ? `${course.duration} week` : `${course.duration} weeks`}
             </span>
           </div>
-
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <Users className="h-4 w-4 text-gray-400" />
-            <span
-              className={`text-sm ${
-                darkMode ? "text-gray-300" : "text-gray-600"
-              }`}
-            >
-              {course?.studentsEnrolled?.length === 0
+            <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+              {course.studentsEnrolled?.length === 0
                 ? "0 Student"
-                : course?.studentsEnrolled?.length === 1
+                : course.studentsEnrolled?.length === 1
                 ? "1 Student"
-                : `${course?.studentsEnrolled?.length} students`}
+                : `${course.studentsEnrolled.length} students`}
             </span>
           </div>
         </div>
 
-        {/* Rating & Link */}
-        <div className="flex items-center justify-between">
+        {/* Rating & Details Link */}
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-1">
             <Star className="h-5 w-5 text-yellow-400 fill-current" />
-            <span
-              className={`text-sm ${
-                darkMode ? "text-gray-300" : "text-gray-600"
-              }`}
-            >
+            <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
               {Number(rating).toFixed(1)}
             </span>
           </div>
-
           <Link
-            to={`/course/${course?._id}`}
-            className={`flex items-center space-x-2 ${
+            to={`/course/${course._id}`}
+            className={`flex items-center space-x-1 text-sm font-medium ${
               darkMode
                 ? "text-indigo-400 hover:text-indigo-500"
                 : "text-indigo-600 hover:text-indigo-500"
-            } font-medium text-sm`}
+            }`}
           >
             <span>View Details</span>
             <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
 
-        {/* Go to Classroom Button */}
-        {course?.studentsEnrolled?.includes(currentUser?._id) && isLoggedin ? (
-          <Link
-            to={`/classroom/${course?._id}`}
-            className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-xl flex items-center justify-center text-sm sm:text-base"
-          >
-            Go to Classroom
-          </Link>
-        ) : null}
+        {/* Spacer pushes button to bottom */}
+        <div className="mt-auto">
+          {course.studentsEnrolled?.includes(currentUser?._id) && isLoggedin && (
+            <Link
+              to={`/classroom/${course._id}`}
+              className="w-full block bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl text-center text-sm sm:text-base transition-colors"
+            >
+              Go to Classroom
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );
