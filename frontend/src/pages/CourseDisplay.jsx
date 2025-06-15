@@ -153,7 +153,7 @@ const CourseDisplay = () => {
         </div>
 
         {/* Course Grid: responsive columns */}
-        <div className="[grid-template-columns:repeat(auto-fill,minmax(260px,1fr))] gap-6">
+        <div className="flex gap-6">
           {filteredCourses?.length > 0 ? (
             filteredCourses.map((course) => (
               <CourseCard key={course?._id} course={course} />
