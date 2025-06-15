@@ -44,7 +44,8 @@ const CourseCard = ({ course }) => {
 
   return (
     <div
-      className={`flex flex-col w-full bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden`}
+      className={`flex flex-col w-full bg-white dark:bg-gray-800
+                  rounded-2xl shadow-md hover:shadow-lg transition-shadow`}
     >
       {/* Thumbnail */}
       {course?.thumbnail && (
@@ -61,14 +62,18 @@ const CourseCard = ({ course }) => {
         <div className="flex flex-wrap items-center justify-between mb-2 gap-2">
           <span
             className={`text-xs sm:text-sm font-medium px-2 py-1 rounded-full ${
-              darkMode ? "bg-indigo-900 text-indigo-200" : "bg-indigo-100 text-indigo-800"
+              darkMode
+                ? "bg-indigo-900 text-indigo-200"
+                : "bg-indigo-100 text-indigo-800"
             }`}
           >
             {course.level}
           </span>
           <span
             className={`text-xs sm:text-sm font-medium px-2 py-1 rounded-full ${
-              darkMode ? "bg-purple-900 text-purple-200" : "bg-purple-100 text-purple-800"
+              darkMode
+                ? "bg-purple-900 text-purple-200"
+                : "bg-purple-100 text-purple-800"
             }`}
           >
             {course.category}
@@ -97,13 +102,23 @@ const CourseCard = ({ course }) => {
         <div className="flex flex-wrap items-center justify-between mb-4 gap-2">
           <div className="flex items-center space-x-1">
             <Clock className="h-4 w-4 text-gray-400" />
-            <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
-              {course.duration === 1 ? `${course.duration} week` : `${course.duration} weeks`}
+            <span
+              className={`text-sm ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
+              {course.duration === 1
+                ? `${course.duration} week`
+                : `${course.duration} weeks`}
             </span>
           </div>
           <div className="flex items-center space-x-1">
             <Users className="h-4 w-4 text-gray-400" />
-            <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+            <span
+              className={`text-sm ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               {course.studentsEnrolled?.length === 0
                 ? "0 Student"
                 : course.studentsEnrolled?.length === 1
@@ -117,7 +132,11 @@ const CourseCard = ({ course }) => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-1">
             <Star className="h-5 w-5 text-yellow-400 fill-current" />
-            <span className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+            <span
+              className={`text-sm ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               {Number(rating).toFixed(1)}
             </span>
           </div>
@@ -136,14 +155,15 @@ const CourseCard = ({ course }) => {
 
         {/* Spacer pushes button to bottom */}
         <div className="mt-auto">
-          {course.studentsEnrolled?.includes(currentUser?._id) && isLoggedin && (
-            <Link
-              to={`/classroom/${course._id}`}
-              className="w-full block bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl text-center text-sm sm:text-base transition-colors"
-            >
-              Go to Classroom
-            </Link>
-          )}
+          {course.studentsEnrolled?.includes(currentUser?._id) &&
+            isLoggedin && (
+              <Link
+                to={`/classroom/${course._id}`}
+                className="w-full block bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl text-center text-sm sm:text-base transition-colors"
+              >
+                Go to Classroom
+              </Link>
+            )}
         </div>
       </div>
     </div>

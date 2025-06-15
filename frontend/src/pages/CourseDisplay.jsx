@@ -40,8 +40,7 @@ const CourseDisplay = () => {
       let result = allCourses || [];
       if (category) {
         result = result.filter(
-          (course) =>
-            course?.category?.toLowerCase() === category.toLowerCase()
+          (course) => course?.category?.toLowerCase() === category.toLowerCase()
         );
       }
       if (level) {
@@ -154,7 +153,7 @@ const CourseDisplay = () => {
         </div>
 
         {/* Course Grid: responsive columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="[grid-template-columns:repeat(auto-fill,minmax(260px,1fr))] gap-6">
           {filteredCourses?.length > 0 ? (
             filteredCourses.map((course) => (
               <CourseCard key={course?._id} course={course} />
