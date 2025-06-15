@@ -11,11 +11,7 @@ import { setAllCourses } from "../redux/reducers/CourseReducer";
 const CourseDisplay = () => {
   const { darkMode } = useContext(ThemeDataContext);
   const dispatch = useDispatch();
-
-  let { allCourses } = useSelector((state) => state.course);
-
-  
-
+  const { allCourses } = useSelector((state) => state.course);
 
   const [category, setCategory] = useState("");
   const [level, setlevel] = useState("");
@@ -26,11 +22,10 @@ const CourseDisplay = () => {
     queryKey: ["getPublishedCourses"],
     queryFn: async () => {
       try {
-        let getPublishedCoursesRes = await courseService.getPublishedCourses();
-        dispatch(setAllCourses(getPublishedCoursesRes.data));
-        setFilteredCourses(getPublishedCoursesRes.data);
-        
-        return getPublishedCoursesRes.data;
+        const res = await courseService.getPublishedCourses();
+        dispatch(setAllCourses(res.data));
+        setFilteredCourses(res.data);
+        return res.data;
       } catch (error) {
         console.log(error?.response?.data?.message);
         return [];
@@ -40,39 +35,36 @@ const CourseDisplay = () => {
 
   useEffect(() => {
     function filterCourses() {
-      let result = allCourses;
-
-      if (category !== "") {
+      let result = allCourses || [];
+      if (category) {
         result = result.filter(
           (course) => course?.category?.toLowerCase() === category.toLowerCase()
         );
       }
-
-      if (level !== "") {
+      if (level) {
         result = result.filter(
           (course) => course?.level?.toLowerCase() === level.toLowerCase()
         );
       }
-
-      if (searchVal !== "") {
+      if (searchVal) {
         result = result.filter((course) =>
           course?.title?.toLowerCase().includes(searchVal.toLowerCase())
         );
       }
-
       setFilteredCourses(result);
     }
-
-    if (allCourses?.length) filterCourses();
-  }, [allCourses, level, category, searchVal]);
+    if (allCourses?.length >= 0) {
+      filterCourses();
+    }
+  }, [allCourses, category, level, searchVal]);
 
   return (
-    <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-50"}`}>
+    <div className={`${darkMode ? "bg-gray-900" : "bg-gray-50"} min-h-screen`}>
       <Navbar />
-
       {/* Hero Section */}
       <div
-        className={`${darkMode
+        className={`${
+          darkMode
             ? "bg-gradient-to-r from-indigo-800 to-purple-800"
             : "bg-gradient-to-r from-indigo-600 to-purple-600"
         }`}
@@ -88,8 +80,10 @@ const CourseDisplay = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-6 md:py-8">
-        <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-6 md:mb-8">
+      {/* Filters & Search */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
+          {/* Search Input */}
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -98,23 +92,24 @@ const CourseDisplay = () => {
                 onChange={(e) => setsearchVal(e.target.value)}
                 type="text"
                 placeholder="Search courses by title..."
-                className={`w-full pl-10 pr-4 py-2 md:py-3 rounded-lg md:rounded-xl border-2 ${
+                className={`w-full pl-10 pr-4 py-2 md:py-3 rounded-lg md:rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm md:text-base ${
                   darkMode
-                    ? "border-gray-700 bg-gray-800 text-white"
-                    : "border-gray-200 bg-white text-gray-900"
-                } focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm md:text-base`}
+                    ? "border-gray-700 bg-gray-800 text-white placeholder-gray-400"
+                    : "border-gray-200 bg-white text-gray-900 placeholder-gray-500"
+                }`}
               />
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 w-full md:w-auto">
+          {/* Category & Level Selects */}
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className={`px-3 md:px-4 py-2 md:py-3 rounded-lg md:rounded-xl border-2 ${
+              className={`w-full sm:w-auto px-3 md:px-4 py-2 md:py-3 rounded-lg md:rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm md:text-base ${
                 darkMode
                   ? "border-gray-700 bg-gray-800 text-white"
                   : "border-gray-200 bg-white text-gray-900"
-              } focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm md:text-base`}
+              }`}
             >
               <option value="">All Categories</option>
               <option value="programming">Programming</option>
@@ -136,15 +131,14 @@ const CourseDisplay = () => {
                 Photography & Video Editing
               </option>
             </select>
-
             <select
               value={level}
               onChange={(e) => setlevel(e.target.value)}
-              className={`px-3 md:px-4 py-2 md:py-3 rounded-lg md:rounded-xl border-2 ${
+              className={`w-full sm:w-auto px-3 md:px-4 py-2 md:py-3 rounded-lg md:rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm md:text-base ${
                 darkMode
                   ? "border-gray-700 bg-gray-800 text-white"
                   : "border-gray-200 bg-white text-gray-900"
-              } focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm md:text-base`}
+              }`}
             >
               <option value="">All Levels</option>
               <option value="beginner">Beginner</option>
@@ -155,22 +149,16 @@ const CourseDisplay = () => {
         </div>
 
         {/* Course Grid */}
-        <div
-          className="
-            grid 
-            grid-cols-3 
-             
-            gap-4 
-            
-          "
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredCourses?.length > 0 ? (
-            filteredCourses?.map((course) => (
+            filteredCourses.map((course) => (
               <CourseCard key={course?._id} course={course} />
             ))
           ) : (
             <p
-              className={`text-gray-500 ${darkMode && "text-gray-300"} text-base md:text-lg col-span-full`}
+              className={`col-span-full text-center text-base md:text-lg ${
+                darkMode ? "text-gray-300" : "text-gray-500"
+              }`}
             >
               No courses available at the moment.
             </p>
