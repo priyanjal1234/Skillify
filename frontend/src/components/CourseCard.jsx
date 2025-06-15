@@ -49,7 +49,7 @@ const CourseCard = ({ course }) => {
     >
       {/* Thumbnail */}
       {course?.thumbnail && (
-        <div className="w-full h-40 sm:h-44 md:h-48 lg:h-52 xl:h-56 overflow-hidden">
+        <div className="w-full rounded-lg h-40 sm:h-44 md:h-48 lg:h-52 xl:h-56 overflow-hidden">
           <img
             src={course.thumbnail}
             alt={course.title}
