@@ -119,7 +119,7 @@ const Navbar = () => {
           {/* ---------- Auth Links ---------- */}
           <Link
             to={"/register/student"}
-            className={`text-sm font-medium ${
+            className={`text-sm font-medium mr-3 ${
               darkMode
                 ? "text-white hover:text-indigo-400"
                 : "text-indigo-600 hover:text-indigo-800"
