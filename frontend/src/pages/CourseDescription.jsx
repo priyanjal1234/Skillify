@@ -1,10 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
 import React, { useContext, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import courseService from "../services/Course";
-import { useNavigate, useParams } from "react-router-dom";
+import orderService from "../services/Order";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setcurrentCourse } from "../redux/reducers/CourseReducer";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Clock,
@@ -17,66 +17,68 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import { ThemeDataContext } from "../context/ThemeContext";
-import orderService from "../services/Order";
 
 const CourseDescription = () => {
   const { darkMode } = useContext(ThemeDataContext);
   const { courseId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { currentCourse } = useSelector((state) => state.course);
-  const [loading, setloading] = useState(false);
-  let navigate = useNavigate();
-  let { currentUser } = useSelector((state) => state.user);
-  const [currentOrder, setcurrentOrder] = useState(null);
+  const { currentUser, isLoggedin } = useSelector((state) => state.user);
 
-  // State for user rating and submission status
+  const [loading, setLoading] = useState(false);
+  const [currentOrder, setCurrentOrder] = useState(null);
   const [userRating, setUserRating] = useState(0);
-  const [ratingSubmitted, setRatingSubmitted] = useState(null);
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
 
+  // Fetch course details
+  useQuery({
+    queryKey: ["fetchsinglecourse", courseId],
+    queryFn: async () => {
+      try {
+        const res = await courseService.getSingleCourse(courseId);
+        dispatch(setcurrentCourse(res.data));
+      } catch (err) {
+        console.log(err?.response?.data?.message);
+      }
+    },
+  });
+
+  // Fetch order for this course
+  useQuery({
+    queryKey: ["fetchsingleorder", courseId],
+    queryFn: async () => {
+      try {
+        const res = await orderService.getOneOrder(courseId);
+        setCurrentOrder(res.data);
+      } catch (err) {
+        console.log(err?.response?.data?.message);
+      }
+    },
+  });
+
+  // Check if user already rated
   useEffect(() => {
     if (currentCourse?._id && currentUser?._id) {
-      const ratingPresent = currentCourse.ratings.find(
+      const rated = currentCourse.ratings?.some(
         (r) => r.user.toString() === currentUser._id.toString()
       );
-      setRatingSubmitted(!!ratingPresent);
+      setRatingSubmitted(rated);
     }
   }, [currentCourse, currentUser]);
 
-  useQuery({
-    queryKey: ["fetchsinglecourse"],
-    queryFn: async () => {
-      try {
-        const singleCourseRes = await courseService.getSingleCourse(courseId);
-        return dispatch(setcurrentCourse(singleCourseRes.data));
-      } catch (error) {
-        console.log(error?.response?.data?.message);
-        return;
-      }
-    },
-  });
-
-  useQuery({
-    queryKey: ["fetchsingleorder"],
-    queryFn: async () => {
-      try {
-        let order = await orderService.getOneOrder(courseId);
-        return setcurrentOrder(order.data);
-      } catch (error) {
-        console.log(error?.response?.data?.message);
-      }
-    },
-  });
-
+  // Enrollment handler
   async function handleEnrollment() {
-    setloading(true);
-    new Promise((res, rej) => setTimeout(res, 4000));
+    setLoading(true);
     try {
-      // await courseService.enrollInCourse(courseId);
-      setloading(false);
-      navigate(`/payment/${currentCourse?._id}`);
-    } catch (error) {
-      setloading(false);
-      toast.error(error?.response?.data?.message);
+      // simulate delay
+      await new Promise((r) => setTimeout(r, 500));
+      navigate(`/payment/${currentCourse._id}`);
+    } catch (err) {
+      toast.error(err?.response?.data?.message);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -89,205 +91,145 @@ const CourseDescription = () => {
       await courseService.rateCourse(courseId, userRating);
       toast.success("Thanks for your feedback");
       setRatingSubmitted(true);
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
+    } catch (err) {
+      toast.error(err?.response?.data?.message);
     }
   }
 
-  function changeToTitleCase(word) {
-    if (!word || typeof word !== "string") return;
-
-    let splitted = word.split(" ");
-    let newWordArr = splitted.map((each, index) => {
-      return each.charAt(0).toUpperCase() + each.slice(1).toLowerCase();
-    });
-
-    return newWordArr.join(" ");
+  function toTitleCase(text) {
+    return text
+      ?.split(" ")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ");
   }
 
   return (
-    <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-50"}`}>
+    <div className={`${darkMode ? "bg-gray-900" : "bg-gray-50"} min-h-screen`}> 
+      {/* Hero Banner */}
       <div className="relative">
-        <div className="w-full h-[300px] md:h-[400px] overflow-hidden">
-          <div className="w-full h-full bg-gray-300"></div>
-          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-        </div>
+        <div className="w-full h-64 sm:h-72 md:h-80 lg:h-96 bg-gray-300"></div>
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-3xl">
               <Link
-                onClick={() => dispatch(setcurrentCourse({}))}
                 to="/course-display"
-                className="inline-flex items-center text-white bg-black bg-opacity-30 hover:bg-opacity-40 py-2 rounded-lg mb-4"
+                onClick={() => dispatch(setcurrentCourse({}))}
+                className="inline-flex items-center text-white bg-black bg-opacity-30 hover:bg-opacity-40 px-3 py-1 rounded-md mb-4 text-sm"
               >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Courses
+                <ArrowLeft className="h-4 w-4 mr-1" /> Back
               </Link>
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
                 {currentCourse?.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-4 text-white">
+              <div className="flex flex-wrap items-center gap-4 text-white text-sm sm:text-base">
+                <span>{
+                  currentCourse?.studentsEnrolled?.length === 1
+                    ? '1 Student'
+                    : `${currentCourse?.studentsEnrolled?.length || 0} Students`
+                }</span>
                 <div className="flex items-center">
-                  <span className="ml-1">
-                    {currentCourse?.studentsEnrolled?.length === 0 ||
-                    currentCourse?.studentsEnrolled?.length === 1
-                      ? `${currentCourse?.studentsEnrolled?.length} Student`
-                      : `${currentCourse?.studentsEnrolled?.length} Students`}
-                  </span>
-                </div>
-                <div className="flex items-center">
-                  <Clock className="h-5 w-5 text-gray-300" />
-                  <span className="ml-1">{currentCourse?.duration} weeks</span>
+                  <Clock className="h-5 w-5 text-gray-300 mr-1" />
+                  <span>{currentCourse?.duration} weeks</span>
                 </div>
                 <div className="flex items-center">
-                  <BarChart className="h-5 w-5 text-gray-300" />
-                  <span className="ml-1">{currentCourse?.level}</span>
+                  <BarChart className="h-5 w-5 text-gray-300 mr-1" />
+                  <span>{currentCourse?.level}</span>
                 </div>
                 <div className="flex items-center">
-                  <BookOpen className="h-5 w-5 text-gray-300" />
-                  <span className="ml-1">
-                    {changeToTitleCase(currentCourse?.category)}
-                  </span>
+                  <BookOpen className="h-5 w-5 text-gray-300 mr-1" />
+                  <span>{toTitleCase(currentCourse?.category)}</span>
                 </div>
-                <div>
-                  <span className="ml-1 text-lg font-semibold">
-                    Created By: {currentCourse?.instructor?.name}
-                  </span>
-                </div>
+                <span className="block sm:inline">Instructor: {currentCourse?.instructor?.name}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <div
-              className={`rounded-xl shadow-sm p-6 ${
-                darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
-              }`}
-            >
-              <h2 className="text-2xl font-bold mb-4">About This Course</h2>
-              <p>{currentCourse?.description}</p>
-              <div className="mt-6">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                  What You'll Learn
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {currentCourse?.courseOutcome?.map((item, index) => (
-                    <div key={index} className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                      <span className="text-gray-600 dark:text-gray-300">
-                        {item}
-                      </span>
-                    </div>
+          {/* Description Column */}
+          <div className="lg:col-span-2 space-y-6">
+            <section className={`${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"} rounded-lg p-6 shadow`}>\
+n              <h2 className="text-2xl font-bold mb-4">About This Course</h2>
+              <p className="text-sm sm:text-base leading-relaxed">{currentCourse?.description}</p>
+            </section>
+
+            <section className={`${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"} rounded-lg p-6 shadow`}>\
+n              <h3 className="text-xl font-semibold mb-4">What You'll Learn</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {currentCourse?.courseOutcome?.map((item, idx) => (
+                  <div key={idx} className="flex items-start">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+                    <span className="text-sm sm:text-base">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Rating Section */}
+            {currentCourse?._id && !ratingSubmitted && (
+              <section className={`${darkMode ? "bg-gray-800" : "bg-gray-100"} rounded-lg p-6 shadow`}>\
+n                <h3 className="text-xl font-semibold mb-3">Rate this course</h3>
+                <div className="flex items-center mb-4">
+                  {[1,2,3,4,5].map((star) => (
+                    <button key={star} onClick={() => handleStarClick(star)} className="focus:outline-none mx-1">
+                      <Star fill={star <= userRating ? "currentColor" : "none"} className={`${star <= userRating ? "text-yellow-400" : "text-gray-400"} h-6 w-6`} />
+                    </button>
                   ))}
                 </div>
-              </div>
-              {/* Interactive Star Rating Component */}
-              {currentCourse?._id && ratingSubmitted === false && (
-                <div
-                  className="mt-8 p-4 rounded-xl shadow-sm"
-                  style={{ backgroundColor: darkMode ? "#2d3748" : "#f7fafc" }}
-                >
-                  <h3 className="text-xl font-bold mb-4">Rate this course</h3>
-                  <div className="flex items-center">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        onClick={() => handleStarClick(star)}
-                        className="focus:outline-none mr-3 mb-4"
-                      >
-                        <Star
-                          fill={star <= userRating ? "currentColor" : "none"}
-                          className={`h-6 w-6 ${
-                            star <= userRating
-                              ? "text-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    onClick={handleSubmitRating}
-                    disabled={userRating === 0 || ratingSubmitted}
-                    className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
-                  >
-                    {ratingSubmitted ? "Rated" : "Submit Rating"}
-                  </button>
-                </div>
-              )}
-            </div>
+                <button onClick={handleSubmitRating} disabled={userRating===0} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                  Submit Rating
+                </button>
+              </section>
+            )}
           </div>
 
-          <div className="lg:col-span-1">
-            <div
-              className={`rounded-xl shadow-sm p-6 sticky top-8 ${
-                darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
-              }`}
-            >
-              {currentCourse?.studentsEnrolled?.includes(currentUser?._id) &&
-              (currentOrder?.paymentStatus !== "Pending" ||
-                currentCourse?.paymentStatus !== "Failed") ? (
-                <Link
-                  to={`/classroom/${courseId}`}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl mb-4 flex items-center justify-center"
-                >
+          {/* Sidebar Column */}
+          <aside className="lg:col-span-1 space-y-6">
+            <div className={`${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"} rounded-lg p-6 shadow sticky top-4`}>\
+n              {currentCourse.studentsEnrolled?.includes(currentUser?._id) && isLoggedin ? (
+                <Link to={`/classroom/${courseId}`} className="w-full block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded">
                   Go to Classroom
                 </Link>
               ) : (
                 <>
-                  <div className="text-3xl font-bold mb-4">
-                    Price: ₹ {currentCourse?.price}
-                  </div>
-                  <button
-                    onClick={handleEnrollment}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl mb-4 flex items-center justify-center"
-                  >
-                    <ShoppingCart className="h-5 w-5 mr-2" />
-                    Enroll Now
-                    {loading && <span className="loader ml-2"></span>}
+                  <div className="text-2xl font-bold mb-4">Price: ₹{currentCourse?.price}</div>
+                  <button onClick={handleEnrollment} disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded mb-4 flex items-center justify-center">
+                    <ShoppingCart className="h-5 w-5 mr-2" /> Enroll Now
                   </button>
                 </>
               )}
 
               <div className="space-y-4">
                 <div className="flex items-center">
-                  <Clock className="h-5 w-5 text-gray-400 mr-3" />
-                  <p>Duration: {currentCourse?.duration} weeks</p>
+                  <Clock className="h-5 w-5 text-gray-400 mr-2" />
+                  <span>{currentCourse?.duration} weeks</span>
                 </div>
                 <div className="flex items-center">
-                  <Users className="h-5 w-5 text-gray-400 mr-3" />
-                  <p>
-                    Students Enrolled: {currentCourse?.studentsEnrolled?.length}
-                  </p>
+                  <Users className="h-5 w-5 text-gray-400 mr-2" />
+                  <span>{currentCourse?.studentsEnrolled?.length || 0} enrolled</span>
                 </div>
               </div>
-              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <h4 className="font-medium mb-2">This course includes:</h4>
-                <ul className="space-y-2">
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                    Full lifetime access
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                    Access on mobile and desktop
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                    Certificate of completion
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                    Downloadable resources
-                  </li>
-                </ul>
+
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2 text-sm">
+                <div className="flex items-center">
+                  <CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Full lifetime access
+                </div>
+                <div className="flex items-center">
+                  <CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Access on mobile & desktop
+                </div>
+                <div className="flex items-center">
+                  <CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Certificate of completion
+                </div>
+                <div className="flex items-center">
+                  <CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Downloadable resources
+                </div>
               </div>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
     </div>
