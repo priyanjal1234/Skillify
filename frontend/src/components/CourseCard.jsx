@@ -44,7 +44,7 @@ const CourseCard = ({ course }) => {
 
   return (
     <div
-      className={`flex flex-col w-full bg-white dark:bg-gray-800
+      className={`flex flex-col w-[400px] sm:w-[380px] bg-white dark:bg-gray-800
                   rounded-2xl shadow-md hover:shadow-lg transition-shadow`}
     >
       {/* Thumbnail */}
