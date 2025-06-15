@@ -19,18 +19,15 @@ const Home = () => {
   const { isLoggedin } = useSelector((state) => state.user);
   let navigate = useNavigate();
 
+  /* ---------------- SOCKET ---------------- */
   useEffect(() => {
     connectSocket();
   }, []);
 
-  // useEffect(() => {
-  //   const cookie = document.cookie;
-  //   dispatch(setLoggedin(!!cookie));
-  // }, [dispatch]);
-
+  /* ---------------- QUERIES ---------------- */
   useQuery({
     queryKey: ["loggedinUser"],
-    queryFn: async function () {
+    queryFn: async () => {
       try {
         const res = await userService.getLoggedinUser();
         if (res.status === 200) {
@@ -39,7 +36,6 @@ const Home = () => {
         }
         return {};
       } catch (error) {
-        console.log(error?.response?.data?.message);
         if (error?.response?.data?.message === "Token not found") {
           dispatch(setLoggedin(false));
         }
@@ -50,14 +46,12 @@ const Home = () => {
 
   useQuery({
     queryKey: ["getGoogleUser"],
-    queryFn: async function () {
+    queryFn: async () => {
       try {
         const res = await userService.getGoogleUser();
-        
-        if(res.data) dispatch(setLoggedin(true))
+        if (res.data) dispatch(setLoggedin(true));
         return res.data;
       } catch (error) {
-        console.log(error?.response?.data?.message);
         return {};
       }
     },
@@ -65,12 +59,11 @@ const Home = () => {
 
   useQuery({
     queryKey: ["getAllCourses"],
-    queryFn: async function () {
+    queryFn: async () => {
       try {
         let getAllCoursesRes = await courseService.getAllCourses();
         return dispatch(setAllCourses(getAllCoursesRes.data));
-      } catch (error) {
-        console.log(error?.response?.data?.message);
+      } catch {
         return;
       }
     },
@@ -78,24 +71,24 @@ const Home = () => {
 
   return (
     <div
-      className={`min-h-screen ${
+      className={`min-h-screen flex flex-col ${
         darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"
       }`}
     >
-      <div className="transition-colors duration-200">
-        <Navbar />
+      {/* Wrapper is needed so that footer (if you add one later) can stick to bottom */}
+      <Navbar />
+      <main className="flex-1">
         <Hero />
         <Features />
         <CalltoAction />
-
-        <button
-          onClick={() => navigate("/bot")}
-          className="fixed bottom-5 right-5 bg-blue-600 text-white py-3 px-6 
-                   rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-        >
-          Ask the Bot
-        </button>
-      </div>
+      </main>
+      {/* Floating Bot Button */}
+      <button
+        onClick={() => navigate("/bot")}
+        className="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 bg-blue-600 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+      >
+        Ask the Bot
+      </button>
     </div>
   );
 };
